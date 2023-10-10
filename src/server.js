@@ -10,8 +10,6 @@ server.use(morgan('dev'));
 server.use(cors());
 server.use(express.json());
 
-// server.use('/rickandmorty', router);
-
 server.listen(3001, async () => {
     console.log('Server listening at port 3001');
     await conn.sync({ alter: true });

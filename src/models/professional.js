@@ -43,28 +43,28 @@ const Professional = conn.define('Professional', {
     },
 
     experience: {
-        type: DataTypes.JSONB,
-        allowNull: false,
-        defaultValue: [], // Valor por defecto: un array vacío
-        validate: {
-          isValidExperienceArray(value) {
-            if (!Array.isArray(value)) {
-              throw new Error('experience debe ser un array de objetos.');
+      type: DataTypes.JSONB,
+      allowNull: false,
+      defaultValue: [], // Valor por defecto: un array vacío
+      validate: {
+        isValidExperienceArray(value) {
+          if (!Array.isArray(value)) {
+            throw new Error('experience debe ser un array de objetos.');
+          }
+          // Valida cada objeto en el array contra la estructura de DataEx
+          for (const obj of value) {
+            if (
+              typeof obj.date_start !== 'object' ||
+              typeof obj.date_end !== 'object' ||
+              typeof obj.company !== 'string' ||
+              typeof obj.description !== 'string'
+            ) {
+              throw new Error('Cada objeto en experience debe tener la estructura correcta.');
             }
-            // Valida cada objeto en el array contra la estructura de DataEx
-            for (const obj of value) {
-              if (
-                typeof obj.date_start !== 'object' ||
-                typeof obj.date_end !== 'object' ||
-                typeof obj.company !== 'string' ||
-                typeof obj.description !== 'string'
-              ) {
-                throw new Error('Cada objeto en experience debe tener la estructura correcta.');
-              }
-            }
-          },
+          }
         },
       },
+    },
 
     password: {
         type: DataTypes.STRING,
