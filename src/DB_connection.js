@@ -11,10 +11,10 @@ const sequelize = new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}
   logging: false, 
   native: false, 
 });
-const basename = path.basename(__filename);
 
 //carga automatica de modelos
 
+const basename = path.basename(__filename);
 const modelDefiners = [];
 
 fs.readdirSync(path.join(__dirname, '/models'))

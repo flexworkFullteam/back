@@ -41,7 +41,7 @@ module.exports = (sequelize) => {
         data: {
             type: DataTypes.JSONB,
             allowNull: false,
-            defaultValue: data,            
+            defaultValue: data,
             validate: {
                 isValidData(value) {
                     if (
@@ -72,11 +72,11 @@ module.exports = (sequelize) => {
             type: DataTypes.FLOAT,
             allowNull: false
         },
-
         state: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
-        },
+            defaultValue: true,
+        }
     });
 
     return Company;
