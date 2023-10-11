@@ -3,6 +3,7 @@ const { Sequelize } = require("sequelize");
 
 const fs = require('fs');
 const path = require('path');
+const { log } = require("console");
 const {
   DB_USER, DB_PASSWORD, DB_HOST,
 } = process.env;
@@ -31,7 +32,21 @@ let capsEntries = entries.map((entry) => [entry[0][0].toUpperCase() + entry[0].s
 sequelize.models = Object.fromEntries(capsEntries);
 
 
+
+//Relaciones
+const { Project, Professional } = sequelize.models;
+
+Project.belongsToMany(Professional, { through: "AceptedProfessionals"});
+Professional.belongsToMany(Project, { through: "AceptedProfessionals"});
+
+Project.belongsToMany(Professional, { through: "RefusedProfessionals"});
+Professional.belongsToMany(Project, { through: "RefusedProfessionals"});
+
+Project.belongsToMany(Professional, { through: "PostulateProfessionals"});
+Professional.belongsToMany(Project, { through: "PostulateProfessionals"});
+
+
 module.exports = {
-  ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./db.js');
-  conn: sequelize,     // para importart la conexión { conn } = require('./db.js');
+  ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./DB_connection.js');
+  conn: sequelize,     // para importart la conexión { conn } = require('./DB_connection.js');
 };

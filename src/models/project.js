@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes , model } = require('sequelize');
 
 module.exports = (sequelize) => {
   const Project = sequelize.define('Project', {
@@ -14,16 +14,15 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING(100),
       allowNull: false
     },
-
-    /*
+    
     id_empresa: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'company', // Nombre de la tabla referenciada
-        key: 'id' // Clave primaria referenciada en la tabla Empresas
+        model: 'Companies', // Nombre del modelo de Empresa
+        key: 'id' // Clave primaria en el modelo de Empresa
       }
-    },*/
+    },
 
     descripcion: {
       type: DataTypes.TEXT,
@@ -55,7 +54,7 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER, //tiempo revisar fecha inicio y fin tipo date agegar fecha inicio
       allowNull: false
     },
-    
+
     conocimientos_informaticos: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
       allowNull: false
@@ -66,17 +65,17 @@ module.exports = (sequelize) => {
       allowNull: false
     },
 
-    postulantes: {
+    id_postulantes: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
       allowNull: false
     },
 
-    ganadores: {
+    id_ganadores: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
       allowNull: false
     },
 
-    perdedores: {
+    id_perdedores: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
       allowNull: false
     },
