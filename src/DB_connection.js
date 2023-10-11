@@ -9,8 +9,8 @@ const {
 } = process.env;
 
 const sequelize = new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/flexworks`, {
-  logging: false, 
-  native: false, 
+  logging: false,
+  native: false,
 });
 
 //carga automatica de modelos
@@ -34,16 +34,28 @@ sequelize.models = Object.fromEntries(capsEntries);
 
 
 //Relaciones
-const { Project, Professional } = sequelize.models;
+const { Project, Professional, User, Review, ITSkills, Language, Company  } = sequelize.models;
 
-Project.belongsToMany(Professional, { through: "AceptedProfessionals"});
-Professional.belongsToMany(Project, { through: "AceptedProfessionals"});
+Project.belongsToMany(Professional, { through: "Acepted_Professionals" });
+Professional.belongsToMany(Project, { through: "Acepted_Professionals" });
 
-Project.belongsToMany(Professional, { through: "RefusedProfessionals"});
-Professional.belongsToMany(Project, { through: "RefusedProfessionals"});
+Project.belongsToMany(Professional, { through: "Refused_Professionals" });
+Professional.belongsToMany(Project, { through: "Refused_Professionals" });
 
-Project.belongsToMany(Professional, { through: "PostulateProfessionals"});
-Professional.belongsToMany(Project, { through: "PostulateProfessionals"});
+Project.belongsToMany(Professional, { through: "Postulate_Professionals" });
+Professional.belongsToMany(Project, { through: "Postulate_Professionals" });
+
+Review.belongsToMany(User, { through: "User_Review" });
+User.belongsToMany(Review, { through: "User_Review" });
+
+ITSkills.belongsToMany(Project, { through: "Project_ITSkills" });
+Project.belongsToMany(ITSkills, { through: "Project_ITSkills" });
+
+Language.belongsToMany(Professional,{through: "Professional_Language"});
+Professional.belongsToMany(Language,{through: "Professional_Language"});
+
+Language.belongsToMany(Company,{through: "Company_Language"});
+Company.belongsToMany(Language,{through: "Company_Language"});
 
 
 module.exports = {
