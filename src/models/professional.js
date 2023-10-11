@@ -10,7 +10,7 @@ module.exports = (sequelize) => {
     },
     userId: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'Users', // Nombre del modelo de usuario
         key: 'id',      // Clave primaria en el modelo de usuario
@@ -80,9 +80,13 @@ module.exports = (sequelize) => {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
       allowNull: false,
     },
-    nationality: {
+    id_nationality: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: 'Nationalitys', // Nombre del modelo de usuario
+        key: 'id',      // Clave primaria en el modelo de usuario
+      },
     },
     development_skills: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
