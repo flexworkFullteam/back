@@ -1,4 +1,4 @@
-const { DataTypes , model } = require('sequelize');
+const { DataTypes, model } = require('sequelize');
 
 module.exports = (sequelize) => {
   const Project = sequelize.define('Project', {
@@ -14,7 +14,7 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING(100),
       allowNull: false
     },
-    
+
     id_empresa: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -46,7 +46,7 @@ module.exports = (sequelize) => {
     },
 
     exp_reque: {
-      type: DataTypes.STRING(255), //tabla?
+      type: DataTypes.STRING(255), //tabla?  ---> ERROR
       allowNull: false
     },
 
