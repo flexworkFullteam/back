@@ -95,7 +95,8 @@ module.exports = (sequelize) => {
     state: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-    },
+      defaultValue: true,
+    }
   });
 
   return Professional;
