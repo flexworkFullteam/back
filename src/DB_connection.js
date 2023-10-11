@@ -34,7 +34,7 @@ sequelize.models = Object.fromEntries(capsEntries);
 
 
 //Relaciones
-const { Project, Professional, User, Review, ITSkills, ProjectType  } = sequelize.models;
+const { Project, Professional, User, Review, ITSkills, Language, Company  } = sequelize.models;
 
 Project.belongsToMany(Professional, { through: "Acepted_Professionals" });
 Professional.belongsToMany(Project, { through: "Acepted_Professionals" });
@@ -51,6 +51,11 @@ User.belongsToMany(Review, { through: "User_Review" });
 ITSkills.belongsToMany(Project, { through: "Project_ITSkills" });
 Project.belongsToMany(ITSkills, { through: "Project_ITSkills" });
 
+Language.belongsToMany(Professional,{through: "Professional_Language"});
+Professional.belongsToMany(Language,{through: "Professional_Language"});
+
+Language.belongsToMany(Company,{through: "Company_Language"});
+Company.belongsToMany(Language,{through: "Company_Language"});
 
 
 module.exports = {
