@@ -10,12 +10,12 @@ module.exports = (sequelize) => {
       allowNull: false
     },
 
-    titulo: {
+    title: {
       type: DataTypes.STRING(100),
       allowNull: false
     },
 
-    id_empresa: {
+    id_company: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -24,59 +24,50 @@ module.exports = (sequelize) => {
       }
     },
 
-    descripcion: {
+    description: {
       type: DataTypes.TEXT,
       allowNull: false
     },
 
-    tipo: {
+    field: {
       type: DataTypes.INTEGER, //tabla type
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'ProjectFields', // Nombre del modelo de Empresa
+        key: 'id' // Clave primaria en el modelo de Empresa
+      }
     },
 
-    ubicacion: {
+    type: {
+      type: DataTypes.INTEGER, //tabla type
+      allowNull: false,
+      references: {
+        model: 'ProjectTypes', // Nombre del modelo de Empresa
+        key: 'id' // Clave primaria en el modelo de Empresa
+      }
+    },
+
+    location: {
       type: DataTypes.INTEGER,// id tabla location
       allowNull: false
     },
-
     //sueldo
-    sueldo: {
-      type: DataTypes.FLOAT,
+    salary: {
+      type: DataTypes.INTEGER,
       allowNull: false
     },
 
-    exp_reque: {
-      type: DataTypes.STRING(255), //tabla?  ---> ERROR
-      allowNull: false
+    exp_req: {
+      type: DataTypes.INTEGER, //tabla?
+      allowNull: false,
+      references: {
+        model: 'ExperienceLevels', // Nombre del modelo de Empresa
+        key: 'id' // Clave primaria en el modelo de Empresa
+      }
     },
 
-    lapso: {
+    lapse: {
       type: DataTypes.INTEGER, //tiempo revisar fecha inicio y fin tipo date agegar fecha inicio
-      allowNull: false
-    },
-
-    conocimientos_informaticos: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER),
-      allowNull: false
-    },
-
-    idiomas: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER),
-      allowNull: false
-    },
-
-    id_postulantes: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER),
-      allowNull: false
-    },
-
-    id_ganadores: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER),
-      allowNull: false
-    },
-
-    id_perdedores: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER),
       allowNull: false
     },
 
@@ -85,6 +76,7 @@ module.exports = (sequelize) => {
       allowNull: false,
       defaultValue: true,
     }
+
   });
 
   return Project;

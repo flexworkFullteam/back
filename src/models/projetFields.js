@@ -1,25 +1,23 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-    const ExperinceLevel = sequelize.define('ExperinceLevel', {
+    const projectFields = sequelize.define('ProjectFields', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
             allowNull: false
         },
-
-        experinceLevel: {
+        project_fields: {
             type: DataTypes.STRING,
             allowNull: false
         },
-
         state: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: true,
         }
     });
-    
-    return ExperinceLevel;
+
+    return projectFields;
 };
