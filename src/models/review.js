@@ -9,11 +9,11 @@ module.exports = (sequelize) => {
             allowNull: false
         },
         value: {
-            type: DataTypes.INTEGER(),
+            type: DataTypes.INTEGER,
             allowNull: false,
             validate: {
-                isRange(value) {
-                    if (value > 5 || value < 1)
+                isRange(valor) {
+                    if (valor > 5 || valor < 1)
                         throw new Error("Rango de valoracion debe estar dentro de 1 y 5");
                 }
             }
