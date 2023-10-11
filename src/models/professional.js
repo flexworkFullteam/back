@@ -8,6 +8,14 @@ module.exports = (sequelize) => {
       allowNull: false,
       unique: true,
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'Users', // Nombre del modelo de usuario
+        key: 'id',      // Clave primaria en el modelo de usuario
+      },
+    },
     data: {
       type: DataTypes.JSONB,
       allowNull: false,

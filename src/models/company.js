@@ -18,23 +18,31 @@ module.exports = (sequelize) => {
             primaryKey: true,
             autoIncrement: true
         },
-        razon_Social: {
+        userId: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: 'Users', // Nombre del modelo de usuario
+                key: 'id',      // Clave primaria en el modelo de usuario
+            },
+        },
+        business_name: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        tipo_Actividad: {
+        activity_type: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        fecha_Inicio: {
+        start_date: {
             type: DataTypes.DATE,
             allowNull: false
         },
-        domicilio_Fiscal: {
+        fiscal_address: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        representante_Legal: {
+        legal_representative: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -57,18 +65,7 @@ module.exports = (sequelize) => {
                 }
             }
         },
-        /*
-        ESTE CAMPO DEBE SER ELABORADO CON UNA CONSULTA AL CREAR LOS CONTROLADORES
-
-        RESEÑA:{
-            id: tabla relacional
-        }
-
-        calificacion: {
-            type: DataTypes.FLOAT,
-            allowNull: false
-        },*/
-        cuenta_Banco: {
+        Bank_account: {
             type: DataTypes.FLOAT,
             allowNull: false
         },

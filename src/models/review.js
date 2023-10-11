@@ -26,12 +26,15 @@ module.exports = (sequelize) => {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: true,
+        },
+        id_user: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'Users', // Nombre del modelo de Empresa
+                key: 'id' // Clave primaria en el modelo de Empresa
+            }
         }
-        /*
-        id user:{
-            campo relacionado al User para detectar quien ha escrito al reseña
-        }
-        */
     });
     return review;
 };
