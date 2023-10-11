@@ -1,18 +1,18 @@
-const { conn } = require('../DB_connection');
+
 const { DataTypes } = require('sequelize');
 
 const data = {
-    nombre: "",
-    telefono: "",
-    email: "",
-    nacionalidad: "",
-    idioma: "",
-    horario: "",
-    contacto: ""
+    nombre: DataTypes.STRING,
+    telefono: DataTypes.INTEGER,
+    email: DataTypes.STRING,
+    nacionalidad: DataTypes.INTEGER,
+    idioma: DataTypes.ARRAY(DataTypes.INTEGER),
+    horario: DataTypes.STRING,
+    contacto: DataTypes.STRING
 };
 
-module.exports = () => {
-    conn.define('company', {
+module.exports = (sequelize) => {
+    const Company = sequelize.define('Company', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -39,24 +39,21 @@ module.exports = () => {
             allowNull: false
         },
         data: {
-            nombre: DataTypes.JSONB,
+            type: DataTypes.JSONB,
             allowNull: false,
-            defaultValue: data,
+            defaultValue: data,            
             validate: {
                 isValidData(value) {
-                    if (!Array.isArray(value))
-                        throw new Error("Datos de contacto de la compañia deben ser un array");
-                    for (const obj of value)
-                        if (
-                            typeof obj.nombre !== 'string' ||
-                            typeof obj.telefono !== 'string' ||
-                            typeof obj.email !== 'string' ||
-                            typeof obj.nacionalidad !== 'string' ||
-                            typeof obj.idioma !== 'string' ||
-                            typeof obj.horario !== 'string' ||
-                            typeof obj.contacto !== 'string'
-                        )
-                            throw new Error("Error: las propiedades deben ser string");
+                    if (
+                        typeof value.nombre !== 'string' ||
+                        typeof value.telefono !== 'number' ||
+                        typeof value.email !== 'string' ||
+                        typeof value.nacionalidad !== 'number' ||
+                        typeof value.idioma !== 'objet' ||
+                        typeof value.horario !== 'string' ||
+                        typeof value.contacto !== 'string'
+                    )
+                        throw new Error("Error: las propiedades deben ser string");
                 }
             }
         },
@@ -74,9 +71,13 @@ module.exports = () => {
         cuenta_Banco: {
             type: DataTypes.FLOAT,
             allowNull: false
-        }
+        },
 
-    },
-        { timestamps: false }
-    );
+        state: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+        },
+    });
+
+    return Company;
 };
