@@ -12,7 +12,7 @@ const data = {
 };
 
 module.exports = (sequelize) => {
-    const Company = sequelize.define('Company', {
+    sequelize.define('Company', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -23,6 +23,14 @@ module.exports = (sequelize) => {
             allowNull: true,
             references: {
                 model: 'Users', // Nombre del modelo de usuario
+                key: 'id',      // Clave primaria en el modelo de usuario
+            },
+        },
+        id_nationality: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'Nationalities', // Nombre del modelo de usuario
                 key: 'id',      // Clave primaria en el modelo de usuario
             },
         },
@@ -75,6 +83,4 @@ module.exports = (sequelize) => {
             defaultValue: true,
         }
     });
-
-    return Company;
 };

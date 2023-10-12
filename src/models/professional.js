@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  const Professional = sequelize.define('Professional', {
+  sequelize.define('Professional', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -10,9 +10,17 @@ module.exports = (sequelize) => {
     },
     userId: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'Users', // Nombre del modelo de usuario
+        key: 'id',      // Clave primaria en el modelo de usuario
+      },
+    },
+    id_nationality: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Nationalities', // Nombre del modelo de usuario
         key: 'id',      // Clave primaria en el modelo de usuario
       },
     },
@@ -80,10 +88,6 @@ module.exports = (sequelize) => {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
       allowNull: false,
     },
-    nationality: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     development_skills: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
       allowNull: false,
@@ -106,6 +110,4 @@ module.exports = (sequelize) => {
       defaultValue: true,
     }
   });
-
-  return Professional;
 };
