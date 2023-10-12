@@ -32,7 +32,9 @@ sequelize.models = Object.fromEntries(capsEntries);
 
 
 //Relaciones
+
 const { Project, Professional, User, Review, Itskills, Language, Company } = sequelize.models;
+
 
 Project.belongsToMany(Professional, { through: "Acepted_Professionals" });
 Professional.belongsToMany(Project, { through: "Acepted_Professionals" });
@@ -48,6 +50,7 @@ User.belongsToMany(Review, { through: "User_Review" });
 
 Itskills.belongsToMany(Project, { through: "Project_Itskills" });
 Project.belongsToMany(Itskills, { through: "Project_Itskills" });
+
 
 
 Language.belongsToMany(Professional, { through: "Professional_Language" });
