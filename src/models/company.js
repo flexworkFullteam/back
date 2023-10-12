@@ -12,7 +12,7 @@ const data = {
 };
 
 module.exports = (sequelize) => {
-    const Company = sequelize.define('Company', {
+    sequelize.define('Company', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -83,6 +83,4 @@ module.exports = (sequelize) => {
             defaultValue: true,
         }
     });
-
-    return Company;
 };

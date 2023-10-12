@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-    const projectFields = sequelize.define('ProjectFields', {
+    sequelize.define('ProjectFields', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -18,6 +18,4 @@ module.exports = (sequelize) => {
             defaultValue: true,
         }
     });
-
-    return projectFields;
 };
