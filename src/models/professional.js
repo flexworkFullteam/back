@@ -16,6 +16,14 @@ module.exports = (sequelize) => {
         key: 'id',      // Clave primaria en el modelo de usuario
       },
     },
+    id_nationality: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Nationalities', // Nombre del modelo de usuario
+        key: 'id',      // Clave primaria en el modelo de usuario
+      },
+    },
     data: {
       type: DataTypes.JSONB,
       allowNull: false,
@@ -79,14 +87,6 @@ module.exports = (sequelize) => {
     languages: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
       allowNull: false,
-    },
-    id_nationality: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Nationalitys', // Nombre del modelo de usuario
-        key: 'id',      // Clave primaria en el modelo de usuario
-      },
     },
     development_skills: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),

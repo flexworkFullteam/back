@@ -30,10 +30,10 @@ module.exports = (sequelize) => {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-              model: 'Nationalitys', // Nombre del modelo de usuario
-              key: 'id',      // Clave primaria en el modelo de usuario
+                model: 'Nationalities', // Nombre del modelo de usuario
+                key: 'id',      // Clave primaria en el modelo de usuario
             },
-          },
+        },
         business_name: {
             type: DataTypes.STRING,
             allowNull: false
