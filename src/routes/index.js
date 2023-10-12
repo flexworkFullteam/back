@@ -1,8 +1,10 @@
 const { Router } = require('express')
 const userRoutes = require('./userRoutes');
+const professionalRoutes = require('./professionalRoutes');
 const router = Router();
 
 router.use(userRoutes);
+router.use(professionalRoutes);
 
 //GETS
 

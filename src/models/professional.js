@@ -96,7 +96,7 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    briefcase: {
+    portfolio: {
       type: DataTypes.STRING,
       allowNull: false,
     },
