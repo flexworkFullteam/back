@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-    const location = sequelize.define('Location', {
+    sequelize.define('Location', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -18,5 +18,4 @@ module.exports = (sequelize) => {
             defaultValue: true,
         }
     });
-    return location;
 };
