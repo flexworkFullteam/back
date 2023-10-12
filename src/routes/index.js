@@ -1,18 +1,17 @@
 const { Router } = require('express')
 const router = Router();
+const itRoutes = require('./itskillsRouter')
+const languageRouter = require('./languageRouter')
+const nationalityRouter = require('./nationalityRouter')
+const projetFieldsRouter = require('./projetFieldsRouter')
+const projettypeRouter = require('./projettypeRouter')
 
+router.use(itRoutes);
+router.use(languageRouter);
+router.use(nationalityRouter);
+router.use(projetFieldsRouter);
+router.use(projettypeRouter);
 
-//GETS
-
-router.get("/company", () => { });
-router.get("/itskills", () => { });
-router.get("/language", () => { });
-router.get("/location", () => { });
-router.get("/professional", () => { });
-router.get("/projecttype", () => { });
-router.get("/review", () => { });
-router.get("/user", () => { });
-router.get("/nationality", () => { });
 
 
 module.exports = router;
