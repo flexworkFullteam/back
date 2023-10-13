@@ -1,14 +1,13 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { User } = require('../models/user.js');
+const { User } = require('../DB_connection');
 const { SECRET }= require('../config.js')
 
 const createUser = async (req, res) => {
-    const { id, username, email, password, type, state } = req.body;
+    const { username, email, password, type, state } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({
-            id,
             username,
             email,
             password: hashedPassword,
@@ -17,14 +16,15 @@ const createUser = async (req, res) => {
         });
         res.status(201).json(user);
     } catch (error) {
-        res.status(500).json({ message: "Error al crear el usuario", error });
+        console.log(error)
+        res.status(500).json({ message: "Error al crear el usuario", error : error.message});
     }
 };
 
 const login = async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     try {
-        const user = await User.findOne({ where: { username } });
+        const user = await User.findOne({ where: { email } });
         if (!user) {
             return res.status(400).send({ message: 'Usuario o contraseña incorrectos.' });
         }
