@@ -1,14 +1,13 @@
 const { Router } = require('express')
 const router = Router();
-const getAllCompanies = require("../controllers/getAllCompanies");
+const getCompany = require("../controllers/companyController");
 
 
 //GETS
 
-router.get("/company", () => { 
-    console.log("COMPANY!");
-    getAllCompanies();
-});
+router.get("/company/:id", getCompany.getCompanyById);
+router.get("/company", getCompany.getCompanies);
+router.post("/company", getCompany.postCompany);
 router.get("/itskills", () => { });
 router.get("/language", () => { });
 router.get("/location", () => { });
