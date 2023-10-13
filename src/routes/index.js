@@ -1,12 +1,13 @@
-const { Router } = require('express')
+const { Router } = require('express');
+const router = Router();
 const userRoutes = require('./userRoutes');
 const professionalRoutes = require('./professionalRoutes');
-const router = Router();
-const itRoutes = require('./itskillsRouter')
-const languageRouter = require('./languageRouter')
-const nationalityRouter = require('./nationalityRouter')
-const projetFieldsRouter = require('./projetFieldsRouter')
+const itRoutes = require('./itskillsRouter');
+const languageRouter = require('./languageRouter');
+const nationalityRouter = require('./nationalityRouter');
+const projetFieldsRouter = require('./projetFieldsRouter');
 const projettypeRouter = require('./projettypeRouter');
+const projectRoutes = require('./projectRoutes');
 const companyRouter = require('./companyRouter');
 
 
@@ -17,9 +18,8 @@ router.use(languageRouter);
 router.use(nationalityRouter);
 router.use(projetFieldsRouter);
 router.use(projettypeRouter);
+router.use(projectRoutes);
 router.use(companyRouter);
-
-
 
 
 module.exports = router;
