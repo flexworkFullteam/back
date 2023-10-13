@@ -1,6 +1,4 @@
-const axios = require("axios");
 const { Company } = require("../DB_connection");
-
 
 const getCompanies = async (req, res) => {
     try {
@@ -31,8 +29,7 @@ const getCompanies = async (req, res) => {
             return res.status(400).send("Error la busqueda de compañias");
 
     } catch (error) {
-        console.log(error.message);
-        res.status(500).json({ message: error.message });
+        return res.status(500).send(error.message);
     }
 
 };
@@ -42,7 +39,13 @@ const getCompanyById = async (req, res) => {
     const { id } = req.params;
     if (id) {
         try {
-            const company = await Company.findByPk(id)
+            const company = await Company.findByPk(
+                {
+                    where: {
+                        id,
+                        state: true
+                    }
+                })
             if (company) {
                 const response = {
                     businessName: company.business_name,
@@ -69,7 +72,6 @@ const getCompanyById = async (req, res) => {
 }
 
 const postCompany = async (req, res) => {
-    //console.log(req.body);
     const { businessName, activityType, startDate, fiscalAddress, legalRepresentative, data, bankAccount } = req.body;
     if (businessName && activityType && startDate && fiscalAddress && legalRepresentative && data && bankAccount)
         try {
@@ -83,11 +85,8 @@ const postCompany = async (req, res) => {
                         legal_representative: legalRepresentative,
                         data: data,
                         Bank_account: bankAccount,
-                        /*userId: 1,
-                        id_nationality:1*/
                     }
                 })
-            console.log(newCompany, "-----", created);
             if (created)
                 return res.status(200).send("Se creo, exitosamente la empresa");
             else
@@ -96,12 +95,79 @@ const postCompany = async (req, res) => {
         } catch (error) {
             return res.status(500).send(error.message);
         }
+};
 
+const editCompany = async (req, res) => {
+    const { businessName, activityType, startDate, fiscalAddress, legalRepresentative, contactData, bankAccount } = req.body;
+    const { id } = req.params;
+    if (id)
+        try {
+            const company = await Company.findByPk(id,
+                {
+                    where: {
+                        state: true
+                    }
+                })
+            if (company) {
+                const response = {
+                    business_name: businessName,
+                    activity_type: activityType,
+                    start_date: startDate,
+                    fiscal_address: fiscalAddress,
+                    legal_representative: legalRepresentative,
+                    data: contactData,
+                    Bank_account: bankAccount,
+                };
+                const update = await company.update(response);
+                if (update)
+                    return res.status(200).json(response);
+                else
+                    return res.status(400).send("Error actualizando");
+            }
+            else
+                return res.status(404).send("No se encontro empresa o esta borrada");
+        } catch (error) {
+            return res.status(500).send(error.message);
+        }
+    else
+        return res.status(400).send("No se detecto id de empresa");
 
+};
+
+const deleteCompany = async (req, res) => {
+    const { id } = req.params;
+    console.log(id);
+    if (id)
+        try {
+            const company = await Company.findByPk(id, {
+                where: {
+                    status: true
+                }
+            });
+            console.log(company);
+            if (company) {
+                const response = await company.update({
+                    ...company,
+                    state: false
+                });
+                if (response)
+                    return res.status(200).json(response);
+                else
+                    return res.status(400).send("Error eliminando la empresa");
+            }
+            else
+                return res.status(404).send("Empresa no existe o esta borrada");
+        } catch (error) {
+            return res.status(500).send(error.message);
+        }
+    else
+        return res.status(400).send("Error obteniendo el id");
 };
 
 module.exports = {
     getCompanies,
     getCompanyById,
     postCompany,
+    editCompany,
+    deleteCompany
 };
