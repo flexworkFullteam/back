@@ -5,7 +5,6 @@ const data = {
     nombre: DataTypes.STRING,
     telefono: DataTypes.INTEGER,
     email: DataTypes.STRING,
-    nacionalidad: DataTypes.INTEGER,
     idioma: DataTypes.ARRAY(DataTypes.INTEGER),
     horario: DataTypes.STRING,
     contacto: DataTypes.STRING
@@ -20,7 +19,7 @@ module.exports = (sequelize) => {
         },
         userId: {
             type: DataTypes.INTEGER,
-            allowNull: true,
+            allowNull: false,
             references: {
                 model: 'Users', // Nombre del modelo de usuario
                 key: 'id',      // Clave primaria en el modelo de usuario
@@ -28,7 +27,7 @@ module.exports = (sequelize) => {
         },
         id_nationality: {
             type: DataTypes.INTEGER,
-            allowNull: true,
+            allowNull: false,
             references: {
                 model: 'Nationalities', // Nombre del modelo de usuario
                 key: 'id',      // Clave primaria en el modelo de usuario
