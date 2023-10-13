@@ -28,7 +28,7 @@ module.exports = (sequelize) => {
         },
         id_nationality: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: 'Nationalities', // Nombre del modelo de usuario
                 key: 'id',      // Clave primaria en el modelo de usuario
@@ -43,7 +43,9 @@ module.exports = (sequelize) => {
             allowNull: false
         },
         start_date: {
-            type: DataTypes.DATE,
+            
+            //type: DataTypes.DATE,
+            type: DataTypes.STRING,
             allowNull: false
         },
         fiscal_address: {
@@ -65,16 +67,16 @@ module.exports = (sequelize) => {
                         typeof value.telefono !== 'number' ||
                         typeof value.email !== 'string' ||
                         typeof value.nacionalidad !== 'number' ||
-                        typeof value.idioma !== 'objet' ||
+                        typeof value.idioma !== 'object' ||
                         typeof value.horario !== 'string' ||
                         typeof value.contacto !== 'string'
                     )
-                        throw new Error("Error: las propiedades deben ser string");
+                        throw new Error("Error: revisa las propiedades del objeto data");
                 }
             }
         },
         Bank_account: {
-            type: DataTypes.FLOAT,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         state: {

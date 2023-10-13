@@ -8,10 +8,10 @@ const {
   deleteProfessional
 } = require('../controllers/professionalController');
 
-router.get('/', getProfessionals);
-router.get('/:id', getProfessional);
-router.post('/', createProfessional);
-router.put('/:id', updateProfessional);
-router.delete('/:id', deleteProfessional);
+router.get('/professional', getProfessionals);
+router.get('/professional/:id', getProfessional);
+router.post('/professional', createProfessional);
+router.put('/professional/:id', updateProfessional);
+router.delete('/professional/:id', deleteProfessional);
 
 module.exports = router;
