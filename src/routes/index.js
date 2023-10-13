@@ -7,6 +7,7 @@ const languageRouter = require('./languageRouter')
 const nationalityRouter = require('./nationalityRouter')
 const projetFieldsRouter = require('./projetFieldsRouter')
 const projettypeRouter = require('./projettypeRouter')
+const projectRoutes = require('./projectRoutes')
 
 
 router.use(userRoutes);
@@ -17,6 +18,7 @@ router.use(languageRouter);
 router.use(nationalityRouter);
 router.use(projetFieldsRouter);
 router.use(projettypeRouter);
+router.use(projectRoutes);
 
 
 

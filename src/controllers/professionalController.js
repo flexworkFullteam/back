@@ -1,9 +1,10 @@
-const { Professional } = require('../models/professional');
+const { Professional } = require('../DB_connection');
 
 const getProfessionals = async (req, res) => {
   try {
     const professionals = await Professional.findAll();
-    res.json(professionals);
+    console.log(professionals)
+    res.status(200).json(professionals);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
