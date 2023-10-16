@@ -73,7 +73,7 @@ const getCompanyById = async (req, res) => {
 }
 
 const postCompany = async (req, res) => {
-    const { businessName, activityType, startDate, fiscalAddress, legalRepresentative, data, bankAccount,nacionalidad , userId} = req.body;
+    const { businessName, activityType, startDate, fiscalAddress, legalRepresentative, data, bankAccount, nationalityId , userId} = req.body;
     console.log(data);
     if (businessName && activityType && startDate && fiscalAddress && legalRepresentative && data && bankAccount)
         try {
@@ -88,7 +88,7 @@ const postCompany = async (req, res) => {
                         legal_representative: legalRepresentative,
                         data: data,
                         Bank_account: bankAccount,
-                        id_nationality: nacionalidad
+                        id_nationality: nationalityId
                     }
                 })
             if (created)
