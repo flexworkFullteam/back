@@ -70,7 +70,6 @@ module.exports = {
                             typeof value.nombre !== 'string' ||
                             typeof value.telefono !== 'number' ||
                             typeof value.email !== 'string' ||
-                            typeof value.nacionalidad !== 'number' ||
                             typeof value.idioma !== 'object' ||
                             typeof value.horario !== 'string' ||
                             typeof value.contacto !== 'string'
