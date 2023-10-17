@@ -11,7 +11,7 @@ module.exports = {
                 allowNull: false
             },
 
-            experinceLevel: {
+            experienceLevel: {
                 type: DataTypes.STRING,
                 allowNull: false
             },
