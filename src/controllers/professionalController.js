@@ -1,9 +1,16 @@
-const { Professional } = require('../DB_connection');
+const { Professional, User, Nationality } = require('../DB_connection');
 
 const getProfessionals = async (req, res) => {
   try {
-    const professionals = await Professional.findAll();
-    console.log(professionals)
+    const professionals = await Professional.findAll({
+      include: [
+        { model: User, attributes: ['username', 'email'] },
+        { model: Nationality, attributes: ['nationality'] },
+      ],
+    });
+    if (professionals.length === 0) {
+      return res.status(200).json({ message: 'No hay profesionistas en la lista, lista vacia.' });
+    }
     res.status(200).json(professionals);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -13,11 +20,16 @@ const getProfessionals = async (req, res) => {
 const getProfessional = async (req, res) => {
   const { id } = req.params;
   try {
-    const professional = await Professional.findByPk(id);
+    const professional = await Professional.findByPk(id, {
+      include: [
+        { model: User, attributes: ['username', 'email'] },
+        { model: Nationality, attributes: ['nationality'] },
+      ],
+    });
     if (professional) {
       res.json(professional);
     } else {
-      res.status(404).json({ error: 'No se encontro al Profesionista' });
+      res.status(404).json({ error: 'No se encontro al profesionista.' });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -66,7 +78,6 @@ const deleteProfessional = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 module.exports = {
   getProfessionals,

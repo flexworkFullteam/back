@@ -7,6 +7,7 @@ module.exports = (sequelize) => {
       primaryKey: true,
       allowNull: false,
       unique: true,
+      // autoIncrement: true
     },
     userId: {
       type: DataTypes.INTEGER,
@@ -52,12 +53,14 @@ module.exports = (sequelize) => {
           }
           for (const obj of value) {
             if (
-              typeof obj.date_start !== 'object' ||
-              typeof obj.date_end !== 'object' ||
+              typeof obj.date_start !== 'string' ||
+              typeof obj.date_end !== 'string' ||
               typeof obj.company !== 'string' ||
-              typeof obj.description !== 'string'
+              typeof obj.description !== 'string' ||
+              !Date.parse(obj.date_start) ||
+              !Date.parse(obj.date_end)
             ) {
-              throw new Error('Cada objeto en experience debe tener la estructura correcta.');
+              throw new Error('EXP Cada objeto en experience debe tener la estructura correcta.');
             }
           }
         },
@@ -74,11 +77,12 @@ module.exports = (sequelize) => {
           }
           for (const obj of value) {
             if (
-              typeof obj.year_end !== 'object' ||
+              typeof obj.year_end !== 'string' ||
               typeof obj.degree !== 'string' ||
-              typeof obj.institution !== 'string'
+              typeof obj.institution !== 'string' ||
+              !Date.parse(obj.year_end)
             ) {
-              throw new Error('Cada objeto en experience debe tener la estructura correcta.');
+              throw new Error('ED Cada objeto en experience debe tener la estructura correcta.');
             }
           }
         },
