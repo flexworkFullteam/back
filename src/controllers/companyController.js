@@ -154,7 +154,7 @@ const editCompany = async (req, res) => {
                     start_date: startDate,
                     fiscal_address: fiscalAddress,
                     legal_representative: legalRepresentative,
-                    data: data,
+                    data: contactData,
                     Bank_account: bankAccount,
                     id_nationality: nationalityId,
                 };
