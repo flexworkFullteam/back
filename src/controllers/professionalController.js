@@ -39,14 +39,31 @@ const getProfessionals = async (req, res) => {
 const getProfessional = async (req, res) => {
   const { id } = req.params;
   try {
-    const professional = await Professional.findByPk(id, {
-      include: [
-        { model: User, attributes: ['username', 'email'] },
-        { model: Nationality, attributes: ['nationality'] },
-      ],
-    });
+    const professional = await Professional.findByPk(id);
+
     if (professional) {
-      res.json(professional);
+
+      const languages = await Language.findAll({ attributes: ['id', 'language'] });
+      const nationality = await Nationality.findAll({ attributes: ['id', 'nationality'] });
+      const itskills = await Itskills.findAll({ attributes: ['id', 'it_skill'] });
+
+      const languagesMap = new Map(languages.map((lang) => [lang.id, lang.language]));
+      const nationalityMap = new Map(nationality.map((national) => [national.id, national.nationality]));
+      const itskillsMap = new Map(itskills.map((it) => [it.id, it.it_skill]));
+      console.log(nationalityMap);
+
+      const professionalsWithMappedData = {
+        id: professional.id,
+        nationality: nationalityMap.get(professional.id_nationality),
+        data: professional.data,
+        experience: professional.experience,
+        education: professional.education,
+        extra_information: professional.extra_information,
+        portfolio: professional.portfolio,
+        cci: professional.cci,
+      };
+
+      res.json(professionalsWithMappedData);
     } else {
       res.status(404).json({ error: 'No se encontro al profesionista.' });
     }

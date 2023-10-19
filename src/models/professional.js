@@ -94,10 +94,6 @@ module.exports = {
           },
         },
       },
-      languages: {
-        type: DataTypes.ARRAY(DataTypes.INTEGER),
-        allowNull: false,
-      },
       development_skills: {
         type: DataTypes.ARRAY(DataTypes.INTEGER),
         allowNull: false,
