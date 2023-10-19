@@ -1,8 +1,8 @@
 const { ExperienceLevel } = require('../DB_connection');
-const textRegex = /^[A-Za-z]+([- ][A-Za-z]+)*$/;
+const textRegex = /^[A-Za-záéíóúñÁÉÍÓÚ]+([- ][A-Za-záéíóúñÁÉÍÓÚ]+)*$/;
 
 const DB = ExperienceLevel;
-const fieldName = "experinceLevel" ;
+const fieldName = "experienceLevel" ;
 const text = "Experince Level" ;
 
 const getAll = async (req, res) => {

@@ -1,5 +1,6 @@
 const { Company } = require("../DB_connection");
 const { User, Nationality, Language } = require("../DB_connection");
+const { Op } = require("sequelize");
 
 const getCompanies = async (req, res) => {
     try {
@@ -11,10 +12,14 @@ const getCompanies = async (req, res) => {
                 include: [
                     { model: User, as: 'user' }, // Relación con el modelo User (userId)
                     { model: Nationality, as: 'nationality' }, // Relación con el modelo Nationality (id_nationality)
-                    { model: Language, as: 'Languages' } // Relación con el modelo Language (data.idioma)
+                    {
+                        model: Language,
+                        as: "Languages",
+                        attributes: ['language'], // Puedes especificar las columnas que deseas seleccionar
+                        through: { attributes: [] } // Excluye las columnas de la tabla intermedia si no las necesitas
+                    }
                 ]
-            }
-        );
+            })
         if (data) {
             const response = [];
             data.map(company =>
@@ -29,8 +34,7 @@ const getCompanies = async (req, res) => {
                     createdAt: company.createdAt,
                     id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
                     userId: company.user.username, // Obtiene el nombre de usuario
-                    languages: company.languages.map(language => language.language) // Obtiene los nombres de los idiomas
-                    //id_nationality: company.id_nationality
+                    languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
                 })
             );
             return res.status(200).json(response);
@@ -57,13 +61,15 @@ const getCompanyById = async (req, res) => {
                     include: [
                         { model: User, as: 'user' }, // Relación con el modelo User (userId)
                         { model: Nationality, as: 'nationality' }, // Relación con el modelo Nationality (id_nationality)
-                        { model: Language, as: 'Languages' } // Relación con el modelo Language (data.idioma)
+                        {
+                            model: Language,
+                            as: "Languages",
+                            attributes: ['language'], // Puedes especificar las columnas que deseas seleccionar
+                            through: { attributes: [] } // Excluye las columnas de la tabla intermedia si no las necesitas
+                        }
                     ]
                 })
             if (company) {
-                console.log("company.user.username",company.user.username);
-                console.log("company.nationality.nationality",company.nationality.nationality);
-                console.log("company.languages",company.languages);
                 const response = {
                     businessName: company.business_name,
                     activityType: company.activity_type,
@@ -75,9 +81,8 @@ const getCompanyById = async (req, res) => {
                     createdAt: company.createdAt,
                     id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
                     userId: company.user.username, // Obtiene el nombre de usuario
-                    languages: company.languages.map(language => language.language) // Obtiene los nombres de los idiomas
+                    languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
                 };
-                //console.log("Los lenguajes son",response.languages);
                 return res.status(200).json(response);
             }
             else
@@ -93,15 +98,14 @@ const getCompanyById = async (req, res) => {
 }
 
 const postCompany = async (req, res) => {
-    const { businessName, activityType, startDate, fiscalAddress, legalRepresentative, data, bankAccount, nationalityId, userId } = req.body;
-    //console.log(data);
-    if (businessName && activityType && startDate && fiscalAddress && legalRepresentative && data && bankAccount)
+    const { businessName, activityType, startDate, fiscalAddress, legalRepresentative, data, bankAccount, nationalityId, userId, languages } = req.body;
+    console.log(typeof languages);
+    if (businessName && activityType && startDate && fiscalAddress && legalRepresentative && data && bankAccount && nationalityId && userId && languages)
         try {
             const [newCompany, created] = await Company.findOrCreate(
                 {
                     where: { business_name: businessName },
                     defaults: {
-
                         userId: userId,
                         activity_type: activityType,
                         start_date: startDate,
@@ -109,11 +113,19 @@ const postCompany = async (req, res) => {
                         legal_representative: legalRepresentative,
                         data: data,
                         Bank_account: bankAccount,
-                        id_nationality: nationalityId
+                        id_nationality: nationalityId,
                     }
                 })
-            if (created)
+            if (created) {
+                const languageToSet = await Language.findAll({
+                    where: {
+                        id: { [Op.in]: languages },
+                    }
+                });
+                newCompany.setLanguages(languageToSet);
                 return res.status(200).send("Se creo, exitosamente la empresa");
+            }
+
             else
                 return res.status(400).send("nombre de empresa ya existe");
 
@@ -123,7 +135,7 @@ const postCompany = async (req, res) => {
 };
 
 const editCompany = async (req, res) => {
-    const { businessName, activityType, startDate, fiscalAddress, legalRepresentative, contactData, bankAccount } = req.body;
+    const { businessName, activityType, startDate, fiscalAddress, legalRepresentative, contactData, bankAccount, nationalityId, userId, languages } = req.body;
     const { id } = req.params;
     if (id)
         try {
@@ -135,17 +147,25 @@ const editCompany = async (req, res) => {
                 })
             if (company) {
                 const response = {
-                    business_name: businessName,
+                    userId: userId,
                     activity_type: activityType,
                     start_date: startDate,
                     fiscal_address: fiscalAddress,
                     legal_representative: legalRepresentative,
-                    data: contactData,
+                    data: data,
                     Bank_account: bankAccount,
+                    id_nationality: nationalityId,
                 };
                 const update = await company.update(response);
-                if (update)
+                if (update) {
+                    const languageToSet = await Language.findAll({
+                        where: {
+                            id: { [Op.in]: languages },
+                        }
+                    });
+                    newCompany.setLanguages(languageToSet);
                     return res.status(200).json(response);
+                }
                 else
                     return res.status(400).send("Error actualizando");
             }
@@ -169,7 +189,6 @@ const deleteCompany = async (req, res) => {
                     status: true
                 }
             });
-            console.log(company);
             if (company) {
                 const response = await company.update({
                     ...company,

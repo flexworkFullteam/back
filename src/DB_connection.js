@@ -69,15 +69,6 @@ let entries = Object.entries(sequelize.models);
 let capsEntries = entries.map(([modelName, modelDefinition]) => [modelName.charAt(0).toUpperCase() + modelName.slice(1), modelDefinition]);
 sequelize.models = Object.fromEntries(capsEntries);
 
-/*
-let entries = Object.entries(sequelize.models);
-let capsEntries = entries.map((entry) => {
-  const modelName = entry[0];
-  const modelDefinition = entry[1];
-  return [modelName[0].toUpperCase() + modelName.slice(1), modelDefinition.define];
-});
-sequelize.models = Object.fromEntries(capsEntries);
-*/
 console.log(sequelize.models);
 
 //Relaciones
@@ -107,11 +98,14 @@ Company.belongsTo(Nationality, { foreignKey: 'id_nationality', as: 'nationality'
 Itskills.belongsToMany(Project, { through: "Project_Itskills" });
 Project.belongsToMany(Itskills, { through: "Project_Itskills" });
 
+Itskills.belongsToMany(Professional, { through: "Professional_Itskills" });
+Professional.belongsToMany(Itskills, { through: "Professional_Itskills" });
+
 Language.belongsToMany(Professional, { through: "Professional_Language" });
 Professional.belongsToMany(Language, { through: "Professional_Language" });
 
-Language.belongsToMany(Company, { through: "Company_Language" });
-Company.belongsToMany(Language, { through: "Company_Language" });
+Language.belongsToMany(Company, { through: "Company_Language", as: 'Languages' });
+Company.belongsToMany(Language, { through: "Company_Language", as: 'Languages' });
 
 
 module.exports = {
