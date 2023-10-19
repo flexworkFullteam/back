@@ -20,7 +20,8 @@ const getCompanies = async (req, res) => {
                     legalRepresentative: company.legal_representative,
                     contactData: company.data,
                     bankAccount: company.Bank_account,
-                    createdAt: company.createdAt
+                    createdAt: company.createdAt,
+                    id_nationality: company.id_nationality
                 })
             );
             return res.status(200).json(response);
@@ -72,19 +73,22 @@ const getCompanyById = async (req, res) => {
 }
 
 const postCompany = async (req, res) => {
-    const { businessName, activityType, startDate, fiscalAddress, legalRepresentative, data, bankAccount } = req.body;
+    const { businessName, activityType, startDate, fiscalAddress, legalRepresentative, data, bankAccount, nationalityId , userId} = req.body;
+    console.log(data);
     if (businessName && activityType && startDate && fiscalAddress && legalRepresentative && data && bankAccount)
         try {
             const [newCompany, created] = await Company.findOrCreate(
                 {
                     where: { business_name: businessName },
                     defaults: {
+                        userId: userId,
                         activity_type: activityType,
                         start_date: startDate,
                         fiscal_address: fiscalAddress,
                         legal_representative: legalRepresentative,
                         data: data,
                         Bank_account: bankAccount,
+                        id_nationality: nationalityId
                     }
                 })
             if (created)

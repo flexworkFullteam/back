@@ -4,7 +4,7 @@ const { User } = require('../DB_connection');
 const { SECRET }= require('../config.js')
 
 const createUser = async (req, res) => {
-    const { username, email, password, type, state } = req.body;
+    const { username, email, password, type } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({
@@ -12,8 +12,11 @@ const createUser = async (req, res) => {
             email,
             password: hashedPassword,
             type,
-            state
+            state: false
         });
+
+
+        
         res.status(201).json(user);
     } catch (error) {
         console.log(error)

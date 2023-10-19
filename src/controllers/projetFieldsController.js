@@ -1,5 +1,6 @@
 const { ProjectFields } = require('../DB_connection');
-const textRegex = /^[A-Za-z]+([- ][A-Za-z]+)*$/;
+
+const textRegex = /^[A-Za-záéíóúñÁÉÍÓÚ]+([- ][A-Za-záéíóúñÁÉÍÓÚ]+)*$/;
 
 const DB = ProjectFields;
 const fieldName = "project_fields" ;

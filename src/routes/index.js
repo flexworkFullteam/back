@@ -9,6 +9,7 @@ const projetFieldsRouter = require('./projetFieldsRouter');
 const projettypeRouter = require('./projettypeRouter');
 const projectRoutes = require('./projectRoutes');
 const companyRouter = require('./companyRouter');
+const experienceLevel = require('./experienceLevelRouter');
 
 
 router.use(userRoutes);
@@ -20,6 +21,7 @@ router.use(projetFieldsRouter);
 router.use(projettypeRouter);
 router.use(projectRoutes);
 router.use(companyRouter);
+router.use(experienceLevel);
 
 
 module.exports = router;

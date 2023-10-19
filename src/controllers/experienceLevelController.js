@@ -1,10 +1,9 @@
-const { Nationality } = require('../DB_connection');
-
+const { ExperienceLevel } = require('../DB_connection');
 const textRegex = /^[A-Za-záéíóúñÁÉÍÓÚ]+([- ][A-Za-záéíóúñÁÉÍÓÚ]+)*$/;
 
-const DB = Nationality;
-const fieldName = "nationality" ;
-const text = "Nationality" ;
+const DB = ExperienceLevel;
+const fieldName = "experienceLevel" ;
+const text = "Experince Level" ;
 
 const getAll = async (req, res) => {
     try {
@@ -17,7 +16,7 @@ const getAll = async (req, res) => {
         if (response.length === 0) {
             return res.status(404).json({ message: "No records found" });
         }
-
+        
         res.status(200).json({ response });
     } catch (error) {
         res.status(500).json({ message: error.message });

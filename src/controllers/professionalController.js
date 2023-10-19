@@ -1,17 +1,36 @@
-const { Professional, User, Nationality } = require('../DB_connection');
+const { Professional, Language, Nationality, Itskills } = require('../DB_connection');
+
 
 const getProfessionals = async (req, res) => {
   try {
-    const professionals = await Professional.findAll({
-      include: [
-        { model: User, attributes: ['username', 'email'] },
-        { model: Nationality, attributes: ['nationality'] },
-      ],
+    const professionals = await Professional.findAll(    
+      attributes: ['id', 'id_nationality', 'data', 'experience', 'education', 'development_skills', 'extra_information', 'portfolio', 'cci']
     });
+  
     if (professionals.length === 0) {
-      return res.status(200).json({ message: 'No hay profesionistas en la lista, lista vacia.' });
-    }
-    res.status(200).json(professionals);
+          return res.status(200).json({ message: 'No hay profesionistas en la lista, lista vacia.' });
+        }
+    const languages = await Language.findAll({ attributes: ['id', 'language'] });
+    const nationality = await Nationality.findAll({ attributes: ['id', 'nationality'] });
+    const itskills = await Itskills.findAll({ attributes: ['id', 'it_skill'] });
+
+    const languagesMap = new Map(languages.map((lang) => [lang.id, lang.language]));
+    const nationalityMap = new Map(nationality.map((national) => [national.id, national.nationality]));
+    const itskillsMap = new Map(itskills.map((it) => [it.id, it.it_skill]));
+    console.log(nationalityMap);
+
+    const professionalsWithMappedData = professionals.map((professio) => ({
+      id: professio.id,
+      nationality: nationalityMap.get(professio.id_nationality),
+      data: professio.data,
+      experience: professio.experience,
+      education: professio.education,
+      extra_information: professio.extra_information,
+      portfolio: professio.portfolio,
+      cci: professio.cci,
+    }));
+
+    res.status(200).json(professionalsWithMappedData);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
