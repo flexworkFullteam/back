@@ -87,10 +87,16 @@ Professional.belongsToMany(Project, { through: "Postulate_Professionals" });
 
 Review.belongsToMany(User, { through: "User_Review" });
 User.belongsToMany(Review, { through: "User_Review" });
+////
+User.hasMany(Company, { foreignKey: 'userId', as: 'companies' });
+Company.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
+Nationality.hasMany(Company, { foreignKey: 'id_nationality', as: 'companies' });
+Company.belongsTo(Nationality, { foreignKey: 'id_nationality', as: 'nationality' });
+////
+///
 Itskills.belongsToMany(Project, { through: "Project_Itskills" });
 Project.belongsToMany(Itskills, { through: "Project_Itskills" });
-
 
 Itskills.belongsToMany(Professional, { through: "Professional_Itskills" });
 Professional.belongsToMany(Itskills, { through: "Professional_Itskills" });
@@ -98,8 +104,8 @@ Professional.belongsToMany(Itskills, { through: "Professional_Itskills" });
 Language.belongsToMany(Professional, { through: "Professional_Language" });
 Professional.belongsToMany(Language, { through: "Professional_Language" });
 
-Language.belongsToMany(Company, { through: "Company_Language" });
-Company.belongsToMany(Language, { through: "Company_Language" });
+Language.belongsToMany(Company, { through: "Company_Language", as: 'Languages' });
+Company.belongsToMany(Language, { through: "Company_Language", as: 'Languages' });
 
 User.hasMany(Professional, { foreignKey: 'userId' });
 Professional.belongsTo(User, { foreignKey: 'userId' });
