@@ -129,6 +129,7 @@ const postCompany = async (req, res) => {
             else
                 return res.status(400).send("nombre de empresa ya existe");
 
+
         } catch (error) {
             return res.status(500).send(error.message);
         }
@@ -147,6 +148,7 @@ const editCompany = async (req, res) => {
                 })
             if (company) {
                 const response = {
+                    business_name: businessName,
                     userId: userId,
                     activity_type: activityType,
                     start_date: startDate,
