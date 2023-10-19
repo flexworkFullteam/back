@@ -9,7 +9,6 @@ const data = {
     nombre: DataTypes.STRING,
     telefono: DataTypes.INTEGER,
     email: DataTypes.STRING,
-    idioma: DataTypes.ARRAY(DataTypes.INTEGER),
     horario: DataTypes.STRING,
     contacto: DataTypes.STRING
 };
@@ -70,7 +69,6 @@ module.exports = {
                             typeof value.nombre !== 'string' ||
                             typeof value.telefono !== 'number' ||
                             typeof value.email !== 'string' ||
-                            typeof value.idioma !== 'object' ||
                             typeof value.horario !== 'string' ||
                             typeof value.contacto !== 'string'
                         )
