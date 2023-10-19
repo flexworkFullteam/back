@@ -82,7 +82,7 @@ console.log(sequelize.models);
 
 //Relaciones
 
-const { Project, Professional, User, Review, Itskills, Language, Company } = sequelize.models;
+const { Project, Professional, User, Review, Itskills, Language, Company, Nationality } = sequelize.models;
 
 
 Project.belongsToMany(Professional, { through: "Acepted_Professionals" });
@@ -96,11 +96,16 @@ Professional.belongsToMany(Project, { through: "Postulate_Professionals" });
 
 Review.belongsToMany(User, { through: "User_Review" });
 User.belongsToMany(Review, { through: "User_Review" });
+////
+User.hasMany(Company, { foreignKey: 'userId', as: 'companies' });
+Company.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
+Nationality.hasMany(Company, { foreignKey: 'id_nationality', as: 'companies' });
+Company.belongsTo(Nationality, { foreignKey: 'id_nationality', as: 'nationality' });
+////
+///
 Itskills.belongsToMany(Project, { through: "Project_Itskills" });
 Project.belongsToMany(Itskills, { through: "Project_Itskills" });
-
-
 
 Language.belongsToMany(Professional, { through: "Professional_Language" });
 Professional.belongsToMany(Language, { through: "Professional_Language" });

@@ -28,7 +28,7 @@ server.use('/', routes);
 
 server.listen(3001, async () => {
     console.log('Server listening at port 3001');
-    await conn.sync({ force: true });
+    await conn.sync({ alter: true });
     console.log('Database connected');
 });
 

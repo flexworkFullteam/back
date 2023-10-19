@@ -1,4 +1,5 @@
 const { Company } = require("../DB_connection");
+const { User, Nationality, Language } = require("../DB_connection");
 
 const getCompanies = async (req, res) => {
     try {
@@ -6,7 +7,12 @@ const getCompanies = async (req, res) => {
             {
                 where: {
                     state: true
-                }
+                },
+                include: [
+                    { model: User, as: 'user' }, // Relación con el modelo User (userId)
+                    { model: Nationality, as: 'nationality' }, // Relación con el modelo Nationality (id_nationality)
+                    { model: Language, as: 'Languages' } // Relación con el modelo Language (data.idioma)
+                ]
             }
         );
         if (data) {
@@ -21,7 +27,10 @@ const getCompanies = async (req, res) => {
                     contactData: company.data,
                     bankAccount: company.Bank_account,
                     createdAt: company.createdAt,
-                    id_nationality: company.id_nationality
+                    id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
+                    userId: company.user.username, // Obtiene el nombre de usuario
+                    languages: company.languages.map(language => language.language) // Obtiene los nombres de los idiomas
+                    //id_nationality: company.id_nationality
                 })
             );
             return res.status(200).json(response);
@@ -40,14 +49,21 @@ const getCompanyById = async (req, res) => {
     const { id } = req.params;
     if (id) {
         try {
-            const company = await Company.findByPk(
+            const company = await Company.findByPk(id,
                 {
                     where: {
-                        id,
                         state: true
-                    }
+                    },
+                    include: [
+                        { model: User, as: 'user' }, // Relación con el modelo User (userId)
+                        { model: Nationality, as: 'nationality' }, // Relación con el modelo Nationality (id_nationality)
+                        { model: Language, as: 'Languages' } // Relación con el modelo Language (data.idioma)
+                    ]
                 })
             if (company) {
+                console.log("company.user.username",company.user.username);
+                console.log("company.nationality.nationality",company.nationality.nationality);
+                console.log("company.languages",company.languages);
                 const response = {
                     businessName: company.business_name,
                     activityType: company.activity_type,
@@ -56,8 +72,12 @@ const getCompanyById = async (req, res) => {
                     legalRepresentative: company.legal_representative,
                     contactData: company.data,
                     bankAccount: company.Bank_account,
-                    createdAt: company.createdAt
+                    createdAt: company.createdAt,
+                    id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
+                    userId: company.user.username, // Obtiene el nombre de usuario
+                    languages: company.languages.map(language => language.language) // Obtiene los nombres de los idiomas
                 };
+                //console.log("Los lenguajes son",response.languages);
                 return res.status(200).json(response);
             }
             else
@@ -73,14 +93,15 @@ const getCompanyById = async (req, res) => {
 }
 
 const postCompany = async (req, res) => {
-    const { businessName, activityType, startDate, fiscalAddress, legalRepresentative, data, bankAccount, nationalityId , userId} = req.body;
-    console.log(data);
+    const { businessName, activityType, startDate, fiscalAddress, legalRepresentative, data, bankAccount, nationalityId, userId } = req.body;
+    //console.log(data);
     if (businessName && activityType && startDate && fiscalAddress && legalRepresentative && data && bankAccount)
         try {
             const [newCompany, created] = await Company.findOrCreate(
                 {
                     where: { business_name: businessName },
                     defaults: {
+
                         userId: userId,
                         activity_type: activityType,
                         start_date: startDate,
