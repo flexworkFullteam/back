@@ -94,10 +94,6 @@ module.exports = {
           },
         },
       },
-      development_skills: {
-        type: DataTypes.ARRAY(DataTypes.INTEGER),
-        allowNull: false,
-      },
       extra_information: {
         type: DataTypes.STRING,
         allowNull: false,
