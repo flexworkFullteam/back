@@ -73,7 +73,7 @@ console.log(sequelize.models);
 
 //Relaciones
 
-const { Project, Professional, User, Review, Itskills, Language, Company } = sequelize.models;
+const { Project, Professional, User, Review, Itskills, Language, Company, Nationality } = sequelize.models;
 
 
 Project.belongsToMany(Professional, { through: "Acepted_Professionals" });
@@ -101,6 +101,10 @@ Professional.belongsToMany(Language, { through: "Professional_Language" });
 Language.belongsToMany(Company, { through: "Company_Language" });
 Company.belongsToMany(Language, { through: "Company_Language" });
 
+User.hasMany(Professional, { foreignKey: 'userId' });
+Professional.belongsTo(User, { foreignKey: 'userId' });
+Professional.belongsTo(Nationality, { foreignKey: 'id_nationality' });
+Nationality.hasMany(Professional, { foreignKey: 'id_nationality' });
 
 module.exports = {
   ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./DB_connection.js');
