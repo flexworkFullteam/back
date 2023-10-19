@@ -92,6 +92,8 @@ Itskills.belongsToMany(Project, { through: "Project_Itskills" });
 Project.belongsToMany(Itskills, { through: "Project_Itskills" });
 
 
+Itskills.belongsToMany(Professional, { through: "Professional_Itskills" });
+Professional.belongsToMany(Itskills, { through: "Professional_Itskills" });
 
 Language.belongsToMany(Professional, { through: "Professional_Language" });
 Professional.belongsToMany(Language, { through: "Professional_Language" });

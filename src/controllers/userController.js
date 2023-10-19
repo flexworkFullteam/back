@@ -11,8 +11,12 @@ const createUser = async (req, res) => {
             username,
             email,
             password: hashedPassword,
-            type
+            type,
+            state: false
         });
+
+
+        
         res.status(201).json(user);
     } catch (error) {
         console.log(error)
