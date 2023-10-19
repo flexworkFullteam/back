@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 
+
 const modelDependencies = {
   'Professional': ['User', 'Nationality']
 };
@@ -48,6 +49,7 @@ module.exports = {
           },
         },
       },
+
       experience: {
         type: DataTypes.JSONB,
         allowNull: false,
@@ -70,6 +72,7 @@ module.exports = {
           },
         },
       },
+
       education: {
         type: DataTypes.JSONB,
         allowNull: false,
