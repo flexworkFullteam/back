@@ -1,4 +1,4 @@
-const { Project, Company, ProjectType, ProjectFields, ExperienceLevel, Language, Itskills } = require('../DB_connection');
+const { Project, Company, ProjectType, ProjectFields, ExperienceLevel, Language, Itskills, Professional } = require('../DB_connection');
 
 // Crear un proyecto
 const createProject = async (req, res) => {
@@ -42,15 +42,15 @@ const createProject = async (req, res) => {
         const validLanguages = resolvedLanguages.filter((language) => language !== null);
 
         const project = await Project.create({
-            title:title,
-            id_company:companyId,
-            description:description,
-            field:field,
-            type:type,
-            location:location,
-            salary:salary,
-            exp_req:exp_req,
-            lapse:lapse,
+            title: title,
+            id_company: companyId,
+            description: description,
+            field: field,
+            type: type,
+            location: location,
+            salary: salary,
+            exp_req: exp_req,
+            lapse: lapse,
         });
         console.log(project.id_company);
         await project.setItskills(validSiklls);
@@ -105,8 +105,6 @@ const getAllProjects = async (req, res) => {
     }
 };
 
-
-
 // Obtener un proyecto por ID
 const getProjectById = async (req, res) => {
     try {
@@ -147,7 +145,6 @@ const getProjectById = async (req, res) => {
     }
 };
 
-
 // Actualizar un proyecto
 const updateProject = async (req, res) => {
     try {
@@ -179,10 +176,125 @@ const deleteProject = async (req, res) => {
     }
 };
 
+const acceptedProyectProfessional = async (req, res) => {
+    try {
+        const { projectId, professionalId } = req.params
+
+        // Busca el profesional por su ID
+        const professional = await Professional.findByPk(professionalId);
+
+        if (!professional) {
+            return res.status(404).json({ message: 'Profesional no encontrado.' });
+        }
+
+        const project = await Project.findByPk(projectId);
+
+        if (!project) {
+            return res.status(404).json({ message: 'Proyecto no encontrado.' });
+        }
+
+        // Agrega al profesional
+        await professional.removePostulatedProjects(project);
+        // Agrega al profesional a "Acepted_Professionals"
+        await professional.addAcceptedProjects(project);
+
+        res.status(200).json( { message: 'Aceptacion exitosa.' });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const refuceProyectProfessional = async (req, res) => {
+    try {
+        const { projectId, professionalId } = req.params
+
+        // Busca el profesional por su ID
+        const professional = await Professional.findByPk(professionalId);
+
+        if (!professional) {
+            return res.status(404).json({ message: 'Profesional no encontrado.' });
+        }
+
+        const project = await Project.findByPk(projectId);
+
+        if (!project) {
+            return res.status(404).json({ message: 'Proyecto no encontrado.' });
+        }
+
+        // Agrega al profesional
+        await professional.removePostulatedProjects(project);
+        // Agrega al profesional a "Refused_Professionals"
+        await professional.addRefusedProjects(project);
+
+        res.status(200).json({ message: 'Rechazo exitoso.' });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const getProfessionalPostulant = async (req, res) => {
+    try {
+        const {projectId} = req.params;
+        const project = await Project.findByPk(projectId);
+        console.log(projectId);
+
+        if (!project) {
+            return res.status(404).json({ message: 'Proyecto no encontrado.' });
+        }
+
+        const postulados = await project.getPostulatingProfessionals();
+
+        res.status(200).json(postulados);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const getProfessionalAccepted = async (req, res) => {
+    try {
+        const projectId = req.params.projectId;
+        const project = await Project.findByPk(projectId);
+
+        if (!project) {
+            return res.status(404).json({ message: 'Proyecto no encontrado.' });
+        }
+
+        const aceptados = await project.getAcceptedProfessionals();
+
+        res.status(200).json(aceptados);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const getProfessionalRefused = async (req, res) => {
+    try {
+        const projectId = req.params.projectId;
+        const project = await Project.findByPk(projectId);
+
+        if (!project) {
+            return res.status(404).json({ message: 'Proyecto no encontrado.' });
+        }
+
+        const rechazados = await project.getRefusedProfessionals();
+
+        res.status(200).json(rechazados);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 module.exports = {
     createProject,
     getAllProjects,
     getProjectById,
     updateProject,
-    deleteProject
+    deleteProject,
+    acceptedProyectProfessional,
+    refuceProyectProfessional,
+    getProfessionalPostulant,
+    getProfessionalAccepted,
+    getProfessionalRefused
 };
