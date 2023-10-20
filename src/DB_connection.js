@@ -77,14 +77,9 @@ const { Project, Professional, User, Review, Itskills, Language, Company, Nation
 
 //Professional
 
-Project.belongsToMany(Professional, { through: "Acepted_Professionals" });
-Professional.belongsToMany(Project, { through: "Acepted_Professionals" });
 
-Project.belongsToMany(Professional, { through: "Refused_Professionals" });
-Professional.belongsToMany(Project, { through: "Refused_Professionals" });
-
-Project.belongsToMany(Professional, { through: "Postulate_Professionals" });
-Professional.belongsToMany(Project, { through: "Postulate_Professionals" });
+Project.belongsToMany(Professional, { through: 'Postulate_Professionals', as: 'PostulatingProfessionals' });
+Professional.belongsToMany(Project, { through: 'Postulate_Professionals', as: 'PostulatedProjects' });
 
 Itskills.belongsToMany(Professional, { through: "Professional_Itskills" });
 Professional.belongsToMany(Itskills, { through: "Professional_Itskills" });
@@ -117,10 +112,18 @@ Project.belongsToMany(Itskills, { through: "Project_Itskills" });
 Language.belongsToMany(Project, { through: "Project_Language" });
 Project.belongsToMany(Language, { through: "Project_Language" });
 
+Professional.belongsToMany(Project, { through: 'Acepted_Professionals', as: 'AcceptedProjects' });
+Project.belongsToMany(Professional, { through: 'Acepted_Professionals', as: 'AcceptedProfessionals' });
+
+Professional.belongsToMany(Project, { through: "Refused_Professionals", as: 'RefusedProjects' });
+Project.belongsToMany(Professional, { through: "Refused_Professionals", as: 'RefusedProfessionals' });
+
 //Review
+
 
 User.hasMany(Review, { foreignKey: 'id_user', as: 'user'});
 Review.belongsTo(User, { foreignKey: 'id_user', as:'user'});
+
 
 User.hasMany(Review, { foreignKey: 'review_by', as: 'reviewBy'});
 Review.belongsTo(User, { foreignKey: 'review_by', as:'reviewBy'});

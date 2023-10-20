@@ -1,4 +1,4 @@
-const { Professional, Language, Nationality, Itskills } = require('../DB_connection');
+const { Professional, Language, Nationality, Itskills, Project } = require('../DB_connection');
 
 
 const getProfessionals = async (req, res) => {
@@ -170,12 +170,12 @@ const updateProfessional = async (req, res) => {
 
     const skillsPromises = skills.map(async (skillId) => {
       const skill = await Itskills.findByPk(skillId);
-      return skill; 
+      return skill;
     });
 
     const languagePromises = languageIds.map(async (languageId) => {
       const language = await Language.findByPk(languageId);
-      return language; 
+      return language;
     });
 
     const resolvedSkills = await Promise.all(skillsPromises);
@@ -209,6 +209,7 @@ const updateProfessional = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 const addSkillOrLanguageToProfessional = async (req, res) => {
   try {
     const { id, type, itemId } = req.params
@@ -251,6 +252,7 @@ const addSkillOrLanguageToProfessional = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 const removeSkillOrLanguageFromProfessional = async (req, res) => {
   try {
     const { id, type, itemId } = req.params; // ID del profesional, tipo (sikll o language), e ID de la habilidad o idioma
@@ -294,6 +296,33 @@ const removeSkillOrLanguageFromProfessional = async (req, res) => {
   }
 };
 
+
+const addProyectProfessional = async (req, res) => {
+  try {
+    const { projectId, professionalId } = req.params
+
+    // Busca el profesional por su ID
+    const professional = await Professional.findByPk(professionalId);
+
+    if (!professional) {
+      return res.status(404).json({ message: 'Profesional no encontrado.' });
+    }
+
+    const project = await Project.findByPk(projectId);
+
+    if (!project) {
+      return res.status(404).json({ message: 'Proyecto no encontrado.' });
+    }
+
+    // Agrega el idioma al profesional
+    await professional.addPostulatedProjects(project);
+
+    res.status(200).json({ message: 'Postulacion exitosa.' });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 const deleteProfessional = async (req, res) => {
   const { id } = req.params;
   try {
@@ -317,5 +346,6 @@ module.exports = {
   updateProfessional,
   deleteProfessional,
   addSkillOrLanguageToProfessional,
-  removeSkillOrLanguageFromProfessional
+  removeSkillOrLanguageFromProfessional,
+  addProyectProfessional
 };

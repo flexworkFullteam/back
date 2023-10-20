@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { User } = require('../DB_connection');
+
+const { User, Professional, Language, Nationality, Itskills, Company } = require('../DB_connection');
 const { SECRET } = require('../config.js')
 
 const createUser = async (req, res) => {
@@ -27,6 +28,7 @@ const createUser = async (req, res) => {
 const login = async (req, res) => {
     const { email, password } = req.body;
     try {
+        let userMapped = {};
         const user = await User.findOne({ where: { email } });
         if (!user) {
             return res.status(400).send({ message: 'Usuario o contraseña incorrectos.' });
@@ -38,9 +40,109 @@ const login = async (req, res) => {
         const token = jwt.sign({ userId: user.id, type: user.type }, SECRET, {
             expiresIn: '1h' // Sesion dura una hora, *investigar opciones de la duracion de la session (para siempre, por largo tiempo, o por actividad)
         });
-        res.send({ token, user });
+
+        switch (user.type) {
+            case 1: //admin
+
+                break;
+            case 2: //profecional
+
+                const professional = await Professional.findOne({
+                    where: { userId: user.id }
+                });
+
+                if (professional) {
+
+                    const languages = await Language.findAll({ attributes: ['id', 'language'] });
+                    const nationality = await Nationality.findAll({ attributes: ['id', 'nationality'] });
+                    const itskills = await Itskills.findAll({ attributes: ['id', 'it_skill'] });
+
+                    const languagesMap = new Map(languages.map((lang) => [lang.id, lang.language]));
+                    const nationalityMap = new Map(nationality.map((national) => [national.id, national.nationality]));
+                    const itskillsMap = new Map(itskills.map((it) => [it.id, it.it_skill]));
+
+                    // Obten las habilidades del profesional a través de la tabla intermedia
+                    const professionalItskills = await professional.getItskills();
+                    // Obten los idiomas del profesional a través de la tabla intermedia
+                    const professionalLanguages = await professional.getLanguages();
+
+                    const professionalSkills = professionalItskills.map((skill) => itskillsMap.get(skill.id));
+                    const professionalLang = professionalLanguages.map((language) => languagesMap.get(language.id));
+
+                    userMapped = {
+                        id: user.id,
+                        email: user.email,
+                        username: user.username,
+                        type: user.type,
+                        professional_id: professional.id,
+                        nationality: nationalityMap.get(professional.id_nationality),
+                        data: professional.data,
+                        experience: professional.experience,
+                        education: professional.education,
+                        extra_information: professional.extra_information,
+                        portfolio: professional.portfolio,
+                        cci: professional.cci,
+                        itskills: professionalSkills,
+                        languages: professionalLang,
+                    }
+                } else {
+                    userMapped = {
+                        id: user.id,
+                        email: user.email,
+                        username: user.username,
+                        type: user.type,
+                    }
+                };
+                break;
+            case 3: //empresa
+                const company = await Company.findOne({
+                    where: { userId: user.id },
+                    include: [
+                        { model: Nationality, as: 'nationality' }, // Relación con el modelo Nationality (id_nationality)
+                        {
+                            model: Language,
+                            as: "Languages",
+                            attributes: ['language'], // Puedes especificar las columnas que deseas seleccionar
+                            through: { attributes: [] } // Excluye las columnas de la tabla intermedia si no las necesitas
+                        }
+                    ]
+                })
+                console.log(company);
+                if (company) {
+                    userMapped = {
+                        id: user.id,
+                        email: user.email,
+                        username: user.username,
+                        type: user.type,
+                        company_id: company.id,
+                        businessName: company.business_name,
+                        activityType: company.activity_type,
+                        startDate: company.start_date,
+                        fiscalAddress: company.fiscal_address,
+                        legalRepresentative: company.legal_representative,
+                        contactData: company.data,
+                        bankAccount: company.Bank_account,
+                        id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
+                        languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
+                    }
+                } else {
+                    userMapped = {
+                        id: user.id,
+                        email: user.email,
+                        username: user.username,
+                        type: user.type,
+                    }
+                };
+                break;
+
+            default:
+                break;
+        }
+
+        res.send({ token, userMapped });
     } catch (error) {
-        res.status(500).send({ message: 'Error al iniciar sesión.', error });
+        res.status(500).send({ message: 'Error al iniciar sesión.', error: error ? error.message : 'No se proporciona mensaje de error.' });
+
     }
 };
 
@@ -86,7 +188,9 @@ const deleteUser = async (req, res) => {
         if (user) {
             user.state = false;
             await user.save();
+
             res.status(204).send("Se borro el usuario");
+
         } else {
             res.status(404).json({ message: "Usuario no encontrado" });
         }
