@@ -1,12 +1,65 @@
-const { Project, Company, ProjectType, ProjectFields, ExperienceLevel } = require('../DB_connection');
+const { Project, Company, ProjectType, ProjectFields, ExperienceLevel, Language, Itskills } = require('../DB_connection');
 
 // Crear un proyecto
 const createProject = async (req, res) => {
     try {
-        const project = await Project.create(req.body);
+        const {
+            title,
+            companyId,
+            description,
+            field,
+            type,
+            location,
+            salary,
+            exp_req,
+            lapse,
+            itskill,
+            languages
+        } = req.body;
+        console.log(companyId);
+        const siklls = Array.isArray(itskill) ? itskill : [itskill];
+        const lang = Array.isArray(languages) ? languages : [languages];
+        const itskillPromises = siklls.map(async (sikllId) => {
+            const sikll = await Itskills.findByPk(sikllId);
+            if (sikll) {
+                return sikll;
+            } else {
+                return null;
+            }
+        });
+        const langPromises = lang.map(async (languageId) => {
+            const language = await Language.findByPk(languageId);
+            if (language) {
+                return language;
+            } else {
+                return null;
+            }
+        });
+        const resolvedSiklls = await Promise.all(itskillPromises);
+        const resolvedLanguages = await Promise.all(langPromises);
+
+        const validSiklls = resolvedSiklls.filter((sikll) => sikll !== null);
+        const validLanguages = resolvedLanguages.filter((language) => language !== null);
+
+        const project = await Project.create({
+            title:title,
+            id_company:companyId,
+            description:description,
+            field:field,
+            type:type,
+            location:location,
+            salary:salary,
+            exp_req:exp_req,
+            lapse:lapse,
+        });
+        console.log(project.id_company);
+        await project.setItskills(validSiklls);
+        await project.setLanguages(validLanguages);
+
+
         res.status(201).json(project);
     } catch (error) {
-        res.status(500).json({ message: "Error al crear el proyecto", error });
+        res.status(500).json({ message: "Error al crear el proyecto", error: error.message });
     }
 };
 
