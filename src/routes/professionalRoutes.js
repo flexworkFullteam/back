@@ -7,16 +7,21 @@ const {
   updateProfessional,
   deleteProfessional,
   addSkillOrLanguageToProfessional,
-  removeSkillOrLanguageFromProfessional
+  removeSkillOrLanguageFromProfessional,
+  addProyectProfessional
 } = require('../controllers/professionalController');
 
 
 router.get('/professional', getProfessionals);
 router.get('/professional/:id', getProfessional);
+
 router.post('/professional', createProfessional);
+router.post('/professional/:id/:type/:itemId', addSkillOrLanguageToProfessional);
+
 router.put('/professional/:id', updateProfessional);
+router.put('/professional/:professionalId/:projectId', addProyectProfessional);
+
 router.delete('/professional/:id', deleteProfessional);
 router.delete('/professional/:id/:type/:itemId', removeSkillOrLanguageFromProfessional);
-router.post('/professional/:id/:type/:itemId', addSkillOrLanguageToProfessional);
 
 module.exports = router;
