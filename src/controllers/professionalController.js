@@ -296,6 +296,7 @@ const removeSkillOrLanguageFromProfessional = async (req, res) => {
   }
 };
 
+
 const addProyectProfessional = async (req, res) => {
   try {
     const { projectId, professionalId } = req.params
@@ -322,8 +323,6 @@ const addProyectProfessional = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-
 const deleteProfessional = async (req, res) => {
   const { id } = req.params;
   try {
