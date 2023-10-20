@@ -75,6 +75,7 @@ console.log(sequelize.models);
 
 const { Project, Professional, User, Review, Itskills, Language, Company, Nationality } = sequelize.models;
 
+//Professional
 
 Project.belongsToMany(Professional, { through: "Acepted_Professionals" });
 Professional.belongsToMany(Project, { through: "Acepted_Professionals" });
@@ -85,32 +86,46 @@ Professional.belongsToMany(Project, { through: "Refused_Professionals" });
 Project.belongsToMany(Professional, { through: "Postulate_Professionals" });
 Professional.belongsToMany(Project, { through: "Postulate_Professionals" });
 
-Review.belongsToMany(User, { through: "User_Review" });
-User.belongsToMany(Review, { through: "User_Review" });
-////
+Itskills.belongsToMany(Professional, { through: "Professional_Itskills" });
+Professional.belongsToMany(Itskills, { through: "Professional_Itskills" });
+
+User.hasMany(Professional, { foreignKey: 'userId' });
+Professional.belongsTo(User, { foreignKey: 'userId' });
+
+Nationality.hasMany(Professional, { foreignKey: 'id_nationality' });
+Professional.belongsTo(Nationality, { foreignKey: 'id_nationality' });
+
+Language.belongsToMany(Professional, { through: "Professional_Language" });
+Professional.belongsToMany(Language, { through: "Professional_Language" });
+
+//Company
+
 User.hasMany(Company, { foreignKey: 'userId', as: 'companies' });
 Company.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 Nationality.hasMany(Company, { foreignKey: 'id_nationality', as: 'companies' });
 Company.belongsTo(Nationality, { foreignKey: 'id_nationality', as: 'nationality' });
-////
-///
-Itskills.belongsToMany(Project, { through: "Project_Itskills" });
-Project.belongsToMany(Itskills, { through: "Project_Itskills" });
-
-Itskills.belongsToMany(Professional, { through: "Professional_Itskills" });
-Professional.belongsToMany(Itskills, { through: "Professional_Itskills" });
-
-Language.belongsToMany(Professional, { through: "Professional_Language" });
-Professional.belongsToMany(Language, { through: "Professional_Language" });
 
 Language.belongsToMany(Company, { through: "Company_Language", as: 'Languages' });
 Company.belongsToMany(Language, { through: "Company_Language", as: 'Languages' });
 
-User.hasMany(Professional, { foreignKey: 'userId' });
-Professional.belongsTo(User, { foreignKey: 'userId' });
-Professional.belongsTo(Nationality, { foreignKey: 'id_nationality' });
-Nationality.hasMany(Professional, { foreignKey: 'id_nationality' });
+//Project
+
+Itskills.belongsToMany(Project, { through: "Project_Itskills" });
+Project.belongsToMany(Itskills, { through: "Project_Itskills" });
+
+Language.belongsToMany(Project, { through: "Project_Language" });
+Project.belongsToMany(Language, { through: "Project_Language" });
+
+//Review
+
+Review.belongsToMany(User, { through: "User_Review" });
+User.belongsToMany(Review, { through: "User_Review" });
+
+
+
+
+
 
 module.exports = {
   ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./DB_connection.js');
