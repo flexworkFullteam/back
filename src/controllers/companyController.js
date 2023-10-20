@@ -165,7 +165,7 @@ const editCompany = async (req, res) => {
                             id: { [Op.in]: languages },
                         }
                     });
-                    newCompany.setLanguages(languageToSet);
+                    company.setLanguages(languageToSet);
                     return res.status(200).json(response);
                 }
                 else
@@ -183,12 +183,11 @@ const editCompany = async (req, res) => {
 
 const deleteCompany = async (req, res) => {
     const { id } = req.params;
-    console.log(id);
     if (id)
         try {
             const company = await Company.findByPk(id, {
                 where: {
-                    status: true
+                    state: true
                 }
             });
             if (company) {

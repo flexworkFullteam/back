@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { User } = require('../DB_connection');
-const { SECRET }= require('../config.js')
+const { SECRET } = require('../config.js')
 
 const createUser = async (req, res) => {
     const { username, email, password, type } = req.body;
@@ -16,11 +16,11 @@ const createUser = async (req, res) => {
         });
 
 
-        
+
         res.status(201).json(user);
     } catch (error) {
         console.log(error)
-        res.status(500).json({ message: "Error al crear el usuario", error : error.message});
+        res.status(500).json({ message: "Error al crear el usuario", error: error.message });
     }
 };
 
@@ -85,8 +85,8 @@ const deleteUser = async (req, res) => {
         const user = await User.findByPk(req.params.id);
         if (user) {
             user.state = false;
-            await user.save(); 
-            res.status(204).send();
+            await user.save();
+            res.status(204).send("Se borro el usuario");
         } else {
             res.status(404).json({ message: "Usuario no encontrado" });
         }

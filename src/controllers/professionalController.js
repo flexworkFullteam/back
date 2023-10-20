@@ -294,9 +294,6 @@ const removeSkillOrLanguageFromProfessional = async (req, res) => {
   }
 };
 
-
-
-
 const deleteProfessional = async (req, res) => {
   const { id } = req.params;
   try {

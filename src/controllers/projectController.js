@@ -16,7 +16,7 @@ const createProject = async (req, res) => {
             itskill,
             languages
         } = req.body;
-        console.log(companyId);
+        //console.log(companyId);
         const siklls = Array.isArray(itskill) ? itskill : [itskill];
         const lang = Array.isArray(languages) ? languages : [languages];
         const itskillPromises = siklls.map(async (sikllId) => {
@@ -146,7 +146,6 @@ const getProjectById = async (req, res) => {
         res.status(500).json({ message: "Error al obtener el proyecto", error });
     }
 };
-
 
 // Actualizar un proyecto
 const updateProject = async (req, res) => {

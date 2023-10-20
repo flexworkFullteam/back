@@ -119,11 +119,11 @@ Project.belongsToMany(Language, { through: "Project_Language" });
 
 //Review
 
-Review.belongsToMany(User, { through: "User_Review" });
-User.belongsToMany(Review, { through: "User_Review" });
+User.hasMany(Review, { foreignKey: 'id_user', as: 'user'});
+Review.belongsTo(User, { foreignKey: 'id_user', as:'user'});
 
-
-
+User.hasMany(Review, { foreignKey: 'review_by', as: 'reviewBy'});
+Review.belongsTo(User, { foreignKey: 'review_by', as:'reviewBy'});
 
 
 

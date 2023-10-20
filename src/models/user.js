@@ -31,7 +31,7 @@ module.exports = {
             type: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-            }, // 1 admin 2 profeciona 3 empresa
+            }, // 1 admin 2 profesional 3 empresa
             state: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
