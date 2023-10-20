@@ -2,6 +2,10 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { User, Professional, Language, Nationality, Itskills, Company } = require('../DB_connection');
 const { SECRET } = require('../config.js')
+const dotenv = require('dotenv');
+const transporter = require ('../utils/emailConfig');
+
+dotenv.config({ path: '../.env' });
 
 const createUser = async (req, res) => {
     const { username, email, password, type } = req.body;
@@ -13,6 +17,14 @@ const createUser = async (req, res) => {
             password: hashedPassword,
             type,
             state: false
+        });
+        const fromEmail = `"Fred Foo 👻" <${process.env.MAIL_USERNAME}>`;
+
+        await transporter.sendMail({
+            from: fromEmail, // sender address
+            to: email, // list of receivers
+            subject: "Hello ✔", // Subject line
+            html: "<b>Hello world?</b>", // html body
         });
 
 
