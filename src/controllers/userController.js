@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+
 const { User, Professional, Language, Nationality, Itskills, Company } = require('../DB_connection');
 const { SECRET } = require('../config.js')
 const dotenv = require('dotenv');
@@ -199,7 +200,9 @@ const deleteUser = async (req, res) => {
         if (user) {
             user.state = false;
             await user.save();
-            res.status(204).send();
+
+            res.status(204).send("Se borro el usuario");
+
         } else {
             res.status(404).json({ message: "Usuario no encontrado" });
         }

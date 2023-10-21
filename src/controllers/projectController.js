@@ -16,7 +16,7 @@ const createProject = async (req, res) => {
             itskill,
             languages
         } = req.body;
-        console.log(companyId);
+        //console.log(companyId);
         const siklls = Array.isArray(itskill) ? itskill : [itskill];
         const lang = Array.isArray(languages) ? languages : [languages];
         const itskillPromises = siklls.map(async (sikllId) => {

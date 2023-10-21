@@ -33,7 +33,15 @@ module.exports = {
                 allowNull: false,
                 defaultValue: true,
             },
-            id_user: {
+            review_by: { // ID del usuario que esta haciendo el review
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                references: {
+                    model: 'Users',
+                    key: 'id'
+                }
+            },
+            id_user: {  // ID del usuario al que se le va a hacer el review
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
