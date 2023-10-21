@@ -32,6 +32,7 @@ const getCompanies = async (req, res) => {
                     contactData: company.data,
                     bankAccount: company.Bank_account,
                     createdAt: company.createdAt,
+                    image: company.image,
                     id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
                     userId: company.user.username, // Obtiene el nombre de usuario
                     languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
@@ -79,6 +80,7 @@ const getCompanyById = async (req, res) => {
                     contactData: company.data,
                     bankAccount: company.Bank_account,
                     createdAt: company.createdAt,
+                    image: company.image,
                     id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
                     userId: company.user.username, // Obtiene el nombre de usuario
                     languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
@@ -98,7 +100,7 @@ const getCompanyById = async (req, res) => {
 }
 
 const postCompany = async (req, res) => {
-    const { businessName, activityType, startDate, fiscalAddress, legalRepresentative, data, bankAccount, nationalityId, userId, languages } = req.body;
+    const { businessName, imagen, activityType, startDate, fiscalAddress, legalRepresentative, data, bankAccount, nationalityId, userId, languages } = req.body;
     console.log(typeof languages);
     if (businessName && activityType && startDate && fiscalAddress && legalRepresentative && data && bankAccount && nationalityId && userId && languages)
         try {
@@ -114,6 +116,7 @@ const postCompany = async (req, res) => {
                         data: data,
                         Bank_account: bankAccount,
                         id_nationality: nationalityId,
+                        image: imagen
                     }
                 })
             if (created) {
