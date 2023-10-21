@@ -5,9 +5,9 @@ module.exports = {
     define: (sequelize) => {
         sequelize.define('Nationality', {
             id: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 primaryKey: true,
-                autoIncrement: true,
+                defaultValue: DataTypes.UUIDV4, // Puedes usar una función para generar UUIDs aleatorios
                 allowNull: false
             },
             nationality: {

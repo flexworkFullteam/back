@@ -9,9 +9,9 @@ module.exports = {
     define: (sequelize) => {
         sequelize.define('Review', {
             id: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 primaryKey: true,
-                autoIncrement: true,
+                defaultValue: DataTypes.UUIDV4, // Puedes usar una función para generar UUIDs aleatorios
                 allowNull: false
             },
             value: {
@@ -34,7 +34,7 @@ module.exports = {
                 defaultValue: true,
             },
             review_by: { // ID del usuario que esta haciendo el review
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
                     model: 'Users',
@@ -42,7 +42,7 @@ module.exports = {
                 }
             },
             id_user: {  // ID del usuario al que se le va a hacer el review
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
                     model: 'Users', // Nombre del modelo de Empresa

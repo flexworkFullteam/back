@@ -9,13 +9,13 @@ module.exports = {
     define: (sequelize) => {
         sequelize.define('Province', {
             id: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 primaryKey: true,
-                autoIncrement: true,
+                defaultValue: DataTypes.UUIDV4, // Puedes usar una función para generar UUIDs aleatorios
                 allowNull: false
             },
             id_nation: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
                     model: 'Nations', // Nombre del modelo de Empresa

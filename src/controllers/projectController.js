@@ -105,10 +105,56 @@ const getAllProjects = async (req, res) => {
     }
 };
 
+const getAllCompanyProjects = async (req, res) => {
+    try {
+        const projects = await Project.findAll({
+            where: {
+                id_company: req.params.id_company,
+                state: true
+              },
+            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse'],
+        });
+
+        if (projects.length === 0) {
+            return res.status(500).json({ message: "Error al obtener los proyectos" });
+        }
+
+        // Obtén la información adicional de las tablas relacionadas
+        const companys = await Company.findAll({ attributes: ['id', 'business_name'] });
+        const projectType = await ProjectType.findAll({ attributes: ['id', 'project_type'] });
+        const projectFields = await ProjectFields.findAll({ attributes: ['id', 'project_fields'] });
+        const experienceLevel = await ExperienceLevel.findAll({ attributes: ['id', 'experienceLevel'] });
+
+        // Crea mapas para mapear IDs a strings correspondientes
+        const companysMap = new Map(companys.map((company) => [company.id, company.business_name]));
+        const projectTypeMap = new Map(projectType.map((type) => [type.id, type.project_type]));
+        const projectFieldsMap = new Map(projectFields.map((field) => [field.id, field.project_fields]));
+        const experienceLevelMap = new Map(experienceLevel.map((level) => [level.id, level.experienceLevel]));
+
+        // Mapea los IDs de proyectos a sus correspondientes strings
+        const projectsWithMappedData = projects.map((project) => ({
+            id: project.id,
+            title: project.title,
+            id_company: companysMap.get(project.id_company),
+            description: project.description,
+            field: projectFieldsMap.get(project.field),
+            type: projectTypeMap.get(project.type),
+            salary: project.salary,
+            exp_req: experienceLevelMap.get(project.exp_req),
+            lapse: project.lapse,
+        }));
+        console.log(projectsWithMappedData);
+        res.status(200).json(projectsWithMappedData);
+    } catch (error) {
+        res.status(500).json({ message: "Error al obtener los proyectos", error: error.message });
+    }
+};
 // Obtener un proyecto por ID
 const getProjectById = async (req, res) => {
     try {
-        const project = await Project.findByPk(req.params.id);
+        const project = await Project.findByPk(req.params.id,{
+            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse'],
+        });
 
         if (project) {
             // Obtén información adicional de las tablas relacionadas
@@ -292,6 +338,7 @@ module.exports = {
     getProjectById,
     updateProject,
     deleteProject,
+    getAllCompanyProjects,
     acceptedProyectProfessional,
     refuceProyectProfessional,
     getProfessionalPostulant,
