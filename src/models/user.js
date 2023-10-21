@@ -5,11 +5,10 @@ module.exports = {
     define: (sequelize) => {
         const User = sequelize.define('User', {
             id: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 primaryKey: true,
-                allowNull: false,
-                unique: true,
-                autoIncrement: true
+                defaultValue: DataTypes.UUIDV4, // Puedes usar una función para generar UUIDs aleatorios
+                allowNull: false
             },
             username: {
                 type: DataTypes.STRING,

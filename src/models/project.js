@@ -10,17 +10,17 @@ module.exports = {
     const Project = sequelize.define('Project', {
       // ID autoincrementable
       id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+        type: DataTypes.UUID,
         primaryKey: true,
+        defaultValue: DataTypes.UUIDV4, // Puedes usar una función para generar UUIDs aleatorios
         allowNull: false
-      },
+    },
       title: {
         type: DataTypes.STRING(100),
         allowNull: false
       },
       id_company: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
           model: 'Companies', // Nombre del modelo de Empresa
@@ -32,7 +32,7 @@ module.exports = {
         allowNull: false
       },
       field: {
-        type: DataTypes.INTEGER, //tabla type
+        type: DataTypes.UUID, //tabla type
         allowNull: false,
         references: {
           model: 'ProjectFields', // Nombre del modelo de Empresa
@@ -40,7 +40,7 @@ module.exports = {
         }
       },
       type: {
-        type: DataTypes.INTEGER, //tabla type
+        type: DataTypes.UUID, //tabla type
         allowNull: false,
         references: {
           model: 'ProjectTypes', // Nombre del modelo de Empresa
@@ -57,7 +57,7 @@ module.exports = {
         allowNull: false
       },
       exp_req: {
-        type: DataTypes.INTEGER, //tabla?
+        type: DataTypes.UUID, //tabla?
         allowNull: false,
         references: {
           model: 'ExperienceLevels', // Nombre del modelo de Empresa

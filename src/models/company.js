@@ -18,12 +18,13 @@ module.exports = {
     define: (sequelize) => {
         sequelize.define('Company', {
             id: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 primaryKey: true,
-                autoIncrement: true
+                defaultValue: DataTypes.UUIDV4, // Puedes usar una función para generar UUIDs aleatorios
+                allowNull: false
             },
             userId: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
                     model: 'Users', // Nombre del modelo de usuario
@@ -31,7 +32,7 @@ module.exports = {
                 },
             },
             id_nationality: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
                     model: 'Nationalities', // Nombre del modelo de usuario

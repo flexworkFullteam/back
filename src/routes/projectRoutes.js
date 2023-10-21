@@ -6,6 +6,7 @@ const {
     getProjectById,
     updateProject,
     deleteProject,
+    getAllCompanyProjects,
     acceptedProyectProfessional,
     refuceProyectProfessional,
     getProfessionalPostulant,
@@ -17,6 +18,7 @@ router.post('/project', createProject);
 
 router.get('/projects', getAllProjects);
 router.get('/project/:id', getProjectById);
+router.get('/project/:id_company', getAllCompanyProjects);
 router.get('/project/:projectId/postulate', getProfessionalPostulant);
 router.get('/project/:projectId/accepted', getProfessionalAccepted);
 router.get('/project/:projectId/refuced', getProfessionalRefused);
