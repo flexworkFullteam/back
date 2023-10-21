@@ -30,6 +30,7 @@ const getProfessionals = async (req, res) => {
         extra_information: professio.extra_information,
         portfolio: professio.portfolio,
         cci: professio.cci,
+        image: professio.image,
         itskills: skills.map((skill) => skill.it_skill),
         Languages: languages.map((language) => language.language),
       };
@@ -75,6 +76,7 @@ const getProfessional = async (req, res) => {
         extra_information: professional.extra_information,
         portfolio: professional.portfolio,
         cci: professional.cci,
+        image: professional.image,
         itskills: professionalSkills,
         languages: professionalLang,
       };
@@ -100,7 +102,8 @@ const createProfessional = async (req, res) => {
       portfolio,
       cci,
       itskill,
-      languages
+      languages,
+      image
 
     } = req.body
     const siklls = Array.isArray(itskill) ? itskill : [itskill];
@@ -137,7 +140,8 @@ const createProfessional = async (req, res) => {
       education: education,
       extra_information: extra_information,
       portfolio: portfolio,
-      cci: cci
+      cci: cci,
+      image: image
     });
 
     await professional.setItskills(validSiklls);
