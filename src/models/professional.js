@@ -106,6 +106,10 @@ module.exports = {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      image: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
       state: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
