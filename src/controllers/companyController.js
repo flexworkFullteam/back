@@ -99,7 +99,7 @@ const getCompanyById = async (req, res) => {
 
 const postCompany = async (req, res) => {
     const { businessName, activityType, startDate, fiscalAddress, legalRepresentative, data, bankAccount, nationalityId, userId, languages } = req.body;
-    console.log(typeof languages);
+    //console.log(typeof languages);
     if (businessName && activityType && startDate && fiscalAddress && legalRepresentative && data && bankAccount && nationalityId && userId && languages)
         try {
             const [newCompany, created] = await Company.findOrCreate(

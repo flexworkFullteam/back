@@ -54,7 +54,7 @@ const getReviewsById = async (req, res) => {
             });
             return res.status(200).json(reviews);
         }
-        return res.status(400).json({ message: "Error al obtener reseñas", error: "No hay niguna reseña para el id seleccionado o el usuario no existe" });
+        return res.status(404).json({ message: "Error al obtener reseñas", error: "No hay niguna reseña para el id seleccionado o el usuario no existe" });
     } catch (error) {
         return res.status(500).json(error.message);
     }
@@ -92,7 +92,7 @@ const deleteReview = async (req, res) => {
     try {
         const review = await Review.findByPk(id, {
             where: {
-                state:true
+                state: true
             }
         }
         );
