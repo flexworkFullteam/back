@@ -31,6 +31,11 @@ module.exports = {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             }, // 1 admin 2 profesional 3 empresa
+            auth0Id: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                unique: true,
+            },
             state: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
