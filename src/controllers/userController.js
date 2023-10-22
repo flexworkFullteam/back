@@ -50,7 +50,7 @@ const login = async (req, res) => {
             return res.status(400).send({ message: 'Usuario o contraseña incorrectos.' });
         }
         const token = jwt.sign({ userId: user.id, type: user.type }, SECRET, {
-            expiresIn: '1h' // Sesion dura una hora, *investigar opciones de la duracion de la session (para siempre, por largo tiempo, o por actividad)
+            expiresIn: '6h' // Sesion dura una hora, *investigar opciones de la duracion de la session (para siempre, por largo tiempo, o por actividad)
         });
 
         switch (user.type) {
@@ -169,17 +169,46 @@ const getAllUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
     try {
-        const user = await User.findByPk(req.params.id);
-        if (user) {
-            res.status(200).json(user);
-        } else {
-            res.status(404).json({ message: "Usuario no encontrado" });
+      const userMapped = {};
+      const user = await User.findOne({
+        where: { id: req.params.id },
+        include: [
+          {
+            model: Professional,
+            include: [Language],
+          },
+          {
+            model: Nationality,
+          },
+        ],
+      });
+      if (user) {
+        userMapped.id = user.id;
+        userMapped.email = user.email;
+        userMapped.type = user.type;
+        userMapped.state = user.state;
+        if (user.Professional) {
+          userMapped.data = {
+            name: user.Professional.name,
+            lastname: user.Professional.lastname,
+            age: user.Professional.age,
+            dni: user.Professional.dni,
+          };
+          userMapped.experience = user.Professional.experience;
+          userMapped.password = user.Professional.password;
+          userMapped.languages = user.Professional.Languages;
         }
+        if (user.Nationality) {
+          userMapped.nationality = user.Nationality.nationality;
+        }
+        res.status(200).json(userMapped);
+      } else {
+        res.status(404).json({ message: "Usuario no encontrado" });
+      }
     } catch (error) {
-        res.status(500).json({ message: "Error al obtener el usuario", error });
+      res.status(500).json({ message: "Error al obtener el usuario", error });
     }
-};
-
+  };
 const updateUser = async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
