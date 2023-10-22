@@ -5,7 +5,7 @@ const getProfessionals = async (req, res) => {
   try {
     const professionals = await Professional.findAll(
       {
-        attributes: ['id', 'id_nationality', 'data', 'experience', 'education', 'extra_information', 'portfolio', 'cci'],
+        attributes: ['id', 'id_nationality', 'name', 'lastname', 'age', 'dni', 'experience', 'education', 'extra_information', 'portfolio', 'cci'],
       }
     );
 
@@ -24,7 +24,10 @@ const getProfessionals = async (req, res) => {
       return {
         id: professio.id,
         nationality: nationalityMap.get(professio.id_nationality),
-        data: professio.data,
+        name: professio.name,
+        lastname: professio.lastname,
+        age: professio.age,
+        dni: professio.dni,
         experience: professio.experience,
         education: professio.education,
         extra_information: professio.extra_information,
@@ -70,7 +73,12 @@ const getProfessional = async (req, res) => {
       const professionalsWithMappedData = {
         id: professional.id,
         nationality: nationalityMap.get(professional.id_nationality),
-        data: professional.data,
+        // data: {
+          name: professional.name,
+          lastname: professional.lastname,
+          age: professional.age,
+          dni: professional.dni,
+        // },
         experience: professional.experience,
         education: professional.education,
         extra_information: professional.extra_information,
@@ -93,9 +101,12 @@ const getProfessional = async (req, res) => {
 const createProfessional = async (req, res) => {
   try {
     const {
-      user,
-      nationality,
-      data,
+      userId,
+      id_nationality,
+      name,
+      lastname,
+      age,
+      dni,
       experience,
       education,
       extra_information,
@@ -133,9 +144,12 @@ const createProfessional = async (req, res) => {
     const validLanguages = resolvedLanguages.filter((language) => language !== null);
 
     const professional = await Professional.create({
-      userId: user,
-      id_nationality: nationality,
-      data: data,
+      userId: userId,
+      id_nationality: id_nationality,
+      name: name,
+      lastname: lastname,
+      age: age,
+      dni: dni,
       experience: experience,
       education: education,
       extra_information: extra_information,

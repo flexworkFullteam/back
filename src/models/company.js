@@ -82,7 +82,7 @@ module.exports = {
             },
             image: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true
             },
             state: {
                 type: DataTypes.BOOLEAN,

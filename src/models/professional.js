@@ -32,23 +32,24 @@ module.exports = {
           key: 'id',      // Clave primaria en el modelo de usuario
         },
       },
-      data: {
-        type: DataTypes.JSONB,
-        allowNull: false,
-        defaultValue: {
-          name: DataTypes.STRING,
-          lastname: DataTypes.STRING,
-          age: DataTypes.INTEGER,
-          dni: DataTypes.INTEGER,
-        },
-        validate: {
-          isValidJSON(value) {
-            if (!value.name || !value.lastname || !value.age || !value.dni) {
-              throw new Error('Error de validación.');
-            }
-          },
-        },
+
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false
       },
+      lastname: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
+      age: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      dni: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+
 
       experience: {
         type: DataTypes.JSONB,
@@ -108,7 +109,7 @@ module.exports = {
       },
       image: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true,
       },
       state: {
         type: DataTypes.BOOLEAN,
