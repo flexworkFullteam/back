@@ -36,6 +36,9 @@ module.exports = {
                 allowNull: true,
                 unique: true,
             },
+            emailToken:{
+                type: DataTypes.STRING
+            },
             tc: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
@@ -44,7 +47,7 @@ module.exports = {
             validate: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
-                defaultValue: true,
+                defaultValue: false,
             },
             state: {
                 type: DataTypes.BOOLEAN,
