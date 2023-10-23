@@ -48,14 +48,22 @@ module.exports = {
                 allowNull: false
             },
             start_date: {
-                //type: DataTypes.DATE,
-                type: DataTypes.STRING,
+                type: DataTypes.DATE,
+                //type: DataTypes.STRING,
                 allowNull: false
             },
             fiscal_address: {
                 type: DataTypes.STRING,
                 allowNull: false
             },
+            ruc: {
+                type: DataTypes.STRING(11),
+                allowNull: false,
+                validate: {
+                  isNumeric: true,
+                  len: [11, 11], // Validar exactamente 11 caracteres
+                },
+              },
             legal_representative: {
                 type: DataTypes.STRING,
                 allowNull: false
@@ -82,7 +90,7 @@ module.exports = {
                 allowNull: false
             },
             image: {
-                type: DataTypes.STRING,
+                type: DataTypes.TEXT,
                 allowNull: false
             },
             state: {

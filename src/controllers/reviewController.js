@@ -9,11 +9,10 @@ const postReview = async (req, res) => {
             description,
             id_user,
             review_by
-
         });
         if (response)
             return res.status(200).json({ message: "Reseña creada con éxito", review: response });
-        return res.status(400).json({ message: "Error al crear la reseña", error: "No se pudo insertar revise los tipos de dato" });
+        return res.status(400).json({ message: "Error al crear la reseña", error: "No se pudo insertar revise los tipos de datos" });
     } catch (error) {
         return res.status(500).json(error.message);
     }
@@ -54,7 +53,7 @@ const getReviewsById = async (req, res) => {
             });
             return res.status(200).json(reviews);
         }
-        return res.status(400).json({ message: "Error al obtener reseñas", error: "No hay niguna reseña para el id seleccionado o el usuario no existe" });
+        return res.status(404).json({ message: "Error al obtener reseñas", error: "No hay niguna reseña para el id seleccionado o el usuario no existe" });
     } catch (error) {
         return res.status(500).json(error.message);
     }
@@ -92,7 +91,7 @@ const deleteReview = async (req, res) => {
     try {
         const review = await Review.findByPk(id, {
             where: {
-                state:true
+                state: true
             }
         }
         );

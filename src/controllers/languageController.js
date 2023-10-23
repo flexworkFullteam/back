@@ -24,11 +24,11 @@ const getAll = async (req, res) => {
     }
 };
 const post = async (req, res) => {
+    let {new_resource} = req.body;
+    //if(fieldRegex.test(new_resource))
     try {
         const errors = [];
-        let {new_resource} = req.body;
         console.log(new_resource);
-
         new_resource = new_resource.trim();
         new_resource = new_resource.charAt(0).toUpperCase() + new_resource.slice(1).toLowerCase();
 
@@ -60,6 +60,7 @@ const post = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
+
 };
 const delet = async (req, res) => {
     try {

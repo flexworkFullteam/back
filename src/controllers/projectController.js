@@ -2,21 +2,41 @@ const { Project, Company, ProjectType, ProjectFields, ExperienceLevel, Language,
 
 // Crear un proyecto
 const createProject = async (req, res) => {
+
+    const fieldRegex = /^[^\n\r\t\v\f\p{P}]{5,}$/u; //   Esto asegurará que la cadena cumpla con la longitud mínima de 5 caracteres y no contenga signos de puntuación.
+    const positiveNumberRegex = /^[1-9]\d*$/;
+    const arrayUUID = /^\[\s*([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}(?:,\s*)?)+\s*\]$/;
+    const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+
     try {
         const {
-            title,
-            companyId,
-            description,
-            field,
-            type,
-            location,
-            salary,
-            exp_req,
-            lapse,
-            itskill,
-            languages
+            title,  // New Project",
+            companyId, // 1
+            description, //  "This is a new project.",
+            field, // 2
+            type, // 1
+            location, // 1
+            salary, // 50000
+            exp_req, // 1
+            lapse, // 30
+            itskill, // [1]
+            languages // [1]
         } = req.body;
-        //console.log(companyId);
+        /*console.log(fieldRegex.test(title));
+        console.log(fieldRegex.test(description));
+        console.log(positiveNumberRegex.test(salary));
+        console.log(positiveNumberRegex.test(lapse));*/
+        /*console.log(uuidRegex.test(companyId));
+        console.log(uuidRegex.test(field));
+        console.log(uuidRegex.test(type));
+        console.log(uuidRegex.test(exp_req));*/
+        console.log(itskill);
+        console.log(languages);
+
+        //if (!fieldRegex.test(title) || !uuidRegex.test(companyId) || !fieldRegex.test(description) || !uuidRegex.test(field) || !uuidRegex.test(type) || !uuidRegex.test(location) || !positiveNumberRegex.test(salary) || !uuidRegex.test(exp_req) || !positiveNumberRegex.test(lapse) || !arrayUUID.test(itskill) || !arrayUUID.test(languages))
+        if (!fieldRegex.test(title) || !fieldRegex.test(description) || !positiveNumberRegex.test(salary) || !positiveNumberRegex.test(lapse))
+        return res.status(400).send("Error en la validacion de los campos, revisa que tengan el formato correcto.");
+
         const siklls = Array.isArray(itskill) ? itskill : [itskill];
         const lang = Array.isArray(languages) ? languages : [languages];
         const itskillPromises = siklls.map(async (sikllId) => {
@@ -111,7 +131,7 @@ const getAllCompanyProjects = async (req, res) => {
             where: {
                 id_company: req.params.id_company,
                 state: true
-              },
+            },
             attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse'],
         });
 
@@ -152,7 +172,7 @@ const getAllCompanyProjects = async (req, res) => {
 // Obtener un proyecto por ID
 const getProjectById = async (req, res) => {
     try {
-        const project = await Project.findByPk(req.params.id,{
+        const project = await Project.findByPk(req.params.id, {
             attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse'],
         });
 
@@ -244,7 +264,7 @@ const acceptedProyectProfessional = async (req, res) => {
         // Agrega al profesional a "Acepted_Professionals"
         await professional.addAcceptedProjects(project);
 
-        res.status(200).json( { message: 'Aceptacion exitosa.' });
+        res.status(200).json({ message: 'Aceptacion exitosa.' });
 
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -282,7 +302,7 @@ const refuceProyectProfessional = async (req, res) => {
 
 const getProfessionalPostulant = async (req, res) => {
     try {
-        const {projectId} = req.params;
+        const { projectId } = req.params;
         const project = await Project.findByPk(projectId);
         console.log(projectId);
 

@@ -33,7 +33,7 @@ module.exports = {
             }, // 1 admin 2 profesional 3 empresa
             auth0Id: {
                 type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: true,
                 unique: true,
             },
             state: {

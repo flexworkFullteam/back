@@ -77,7 +77,6 @@ const { Project, Professional, User, Review, Itskills, Language, Company, Nation
 
 //Professional
 
-
 Project.belongsToMany(Professional, { through: 'Postulate_Professionals', as: 'PostulatingProfessionals' });
 Professional.belongsToMany(Project, { through: 'Postulate_Professionals', as: 'PostulatedProjects' });
 
@@ -118,8 +117,7 @@ Project.belongsToMany(Professional, { through: 'Acepted_Professionals', as: 'Acc
 Professional.belongsToMany(Project, { through: "Refused_Professionals", as: 'RefusedProjects' });
 Project.belongsToMany(Professional, { through: "Refused_Professionals", as: 'RefusedProfessionals' });
 
-//Review
-
+//Review:  1 -> N
 
 User.hasMany(Review, { foreignKey: 'id_user', as: 'user'});
 Review.belongsTo(User, { foreignKey: 'id_user', as:'user'});
@@ -127,7 +125,6 @@ Review.belongsTo(User, { foreignKey: 'id_user', as:'user'});
 
 User.hasMany(Review, { foreignKey: 'review_by', as: 'reviewBy'});
 Review.belongsTo(User, { foreignKey: 'review_by', as:'reviewBy'});
-
 
 
 module.exports = {
