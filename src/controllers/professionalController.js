@@ -1,4 +1,4 @@
-const { Professional, Language, Nationality, Itskills } = require('../DB_connection');
+const { Professional, Language, Nationality, Itskills, Project } = require('../DB_connection');
 
 
 const getProfessionals = async (req, res) => {
@@ -30,6 +30,7 @@ const getProfessionals = async (req, res) => {
         extra_information: professio.extra_information,
         portfolio: professio.portfolio,
         cci: professio.cci,
+        image: professio.image,
         itskills: skills.map((skill) => skill.it_skill),
         Languages: languages.map((language) => language.language),
       };
@@ -75,6 +76,7 @@ const getProfessional = async (req, res) => {
         extra_information: professional.extra_information,
         portfolio: professional.portfolio,
         cci: professional.cci,
+        image: professional.image,
         itskills: professionalSkills,
         languages: professionalLang,
       };
@@ -91,18 +93,31 @@ const getProfessional = async (req, res) => {
 const createProfessional = async (req, res) => {
   try {
     const {
-      user,
-      nationality,
-      data,
-      experience,
-      education,
-      extra_information,
-      portfolio,
-      cci,
-      itskill,
-      languages
+      user, // UUID
+      nationality, // UUID
+      data, // Obj
+      experience, // Obj
+      education, // [Obj]
+      extra_information, // string
+      portfolio, // string
+      cci, // int
+      itskill, // relacion [UUID]
+      languages, // relacion [UUID]
+      image // string
 
     } = req.body
+
+    const fieldRegex = /^[^\n\r\t\v\f\p{P}]{5,}$/u; //   Esto asegurará que la cadena cumpla con la longitud mínima de 5 caracteres y no contenga signos de puntuación.
+    const positiveNumberRegex = /^[1-9]\d*$/;
+    const arrayUUID = /^\[\s*([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}(?:,\s*)?)+\s*\]$/;
+    const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+    const linkRegex = /^https?:\/\/(?:www\.)?[\w\.-]+\.\w{2,}(?:\/\S*)?$/;
+
+    if (!typeof data === "object" || data === null || !typeof experience === "object" || experience === null ||
+      !typeof education === "object" || education === null || !fieldRegex.test(extra_information)
+      || !linkRegex.test(portfolio) || !positiveNumberRegex.test(cci) || !linkRegex.test(image))
+      return res.status(400).send("Error en la validacion de datos, revisa los campos y vuelve a intentarlo")
+
     const siklls = Array.isArray(itskill) ? itskill : [itskill];
     const lang = Array.isArray(languages) ? languages : [languages];
 
@@ -137,7 +152,8 @@ const createProfessional = async (req, res) => {
       education: education,
       extra_information: extra_information,
       portfolio: portfolio,
-      cci: cci
+      cci: cci,
+      image: image
     });
 
     await professional.setItskills(validSiklls);
@@ -165,17 +181,28 @@ const updateProfessional = async (req, res) => {
       languages
     } = req.body;
 
+    const fieldRegex = /^[^\n\r\t\v\f\p{P}]{5,}$/u; //   Esto asegurará que la cadena cumpla con la longitud mínima de 5 caracteres y no contenga signos de puntuación.
+    const positiveNumberRegex = /^[1-9]\d*$/;
+    const arrayUUID = /^\[\s*([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}(?:,\s*)?)+\s*\]$/;
+    const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+    const linkRegex = /^https?:\/\/(?:www\.)?[\w\.-]+\.\w{2,}(?:\/\S*)?$/;
+
+    if (!typeof data === "object" || data === null || !typeof experience === "object" || experience === null ||
+      !typeof education === "object" || education === null || !fieldRegex.test(extra_information)
+      || !linkRegex.test(portfolio) || !positiveNumberRegex.test(cci) || !linkRegex.test(image))
+      return res.status(400).send("Error en la validacion de datos, revisa los campos y vuelve a intentarlo");
+
     const skills = Array.isArray(itskill) ? itskill : [itskill];
     const languageIds = Array.isArray(languages) ? languages : [languages];
 
     const skillsPromises = skills.map(async (skillId) => {
       const skill = await Itskills.findByPk(skillId);
-      return skill; 
+      return skill;
     });
 
     const languagePromises = languageIds.map(async (languageId) => {
       const language = await Language.findByPk(languageId);
-      return language; 
+      return language;
     });
 
     const resolvedSkills = await Promise.all(skillsPromises);
@@ -209,6 +236,7 @@ const updateProfessional = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 const addSkillOrLanguageToProfessional = async (req, res) => {
   try {
     const { id, type, itemId } = req.params
@@ -251,6 +279,7 @@ const addSkillOrLanguageToProfessional = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 const removeSkillOrLanguageFromProfessional = async (req, res) => {
   try {
     const { id, type, itemId } = req.params; // ID del profesional, tipo (sikll o language), e ID de la habilidad o idioma
@@ -294,6 +323,32 @@ const removeSkillOrLanguageFromProfessional = async (req, res) => {
   }
 };
 
+const addProyectProfessional = async (req, res) => {
+  try {
+    const { projectId, professionalId } = req.params
+
+    // Busca el profesional por su ID
+    const professional = await Professional.findByPk(professionalId);
+
+    if (!professional) {
+      return res.status(404).json({ message: 'Profesional no encontrado.' });
+    }
+
+    const project = await Project.findByPk(projectId);
+
+    if (!project) {
+      return res.status(404).json({ message: 'Proyecto no encontrado.' });
+    }
+
+    // Agrega el idioma al profesional
+    await professional.addPostulatedProjects(project);
+
+    res.status(200).json({ message: 'Postulacion exitosa.' });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 const deleteProfessional = async (req, res) => {
   const { id } = req.params;
   try {
@@ -317,5 +372,6 @@ module.exports = {
   updateProfessional,
   deleteProfessional,
   addSkillOrLanguageToProfessional,
-  removeSkillOrLanguageFromProfessional
+  removeSkillOrLanguageFromProfessional,
+  addProyectProfessional
 };

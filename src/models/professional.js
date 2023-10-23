@@ -10,14 +10,13 @@ module.exports = {
   define: (sequelize) => {
     const Professional = sequelize.define('Professional', {
       id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        allowNull: false,
-        unique: true,
-        autoIncrement: true
-      },
+        defaultValue: DataTypes.UUIDV4, // Puedes usar una función para generar UUIDs aleatorios
+        allowNull: false
+    },
       userId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
           model: 'Users', // Nombre del modelo de usuario
@@ -25,7 +24,7 @@ module.exports = {
         },
       },
       id_nationality: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
           model: 'Nationalities', // Nombre del modelo de usuario
@@ -105,6 +104,10 @@ module.exports = {
       cci: {
         type: DataTypes.INTEGER,
         allowNull: false,
+      },
+      image: {
+        type: DataTypes.STRING,
+        allowNull: false
       },
       state: {
         type: DataTypes.BOOLEAN,

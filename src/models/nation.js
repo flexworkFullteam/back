@@ -1,16 +1,16 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = {
-    name: 'Location',
+    name: 'Nation',
     define: (sequelize) => {
-        sequelize.define('Location', {
+        sequelize.define('Nation', {
             id: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 primaryKey: true,
-                autoIncrement: true,
+                defaultValue: DataTypes.UUIDV4, // Puedes usar una función para generar UUIDs aleatorios
                 allowNull: false
             },
-            location: {
+            nation: {
                 type: DataTypes.STRING,
                 allowNull: false
             },

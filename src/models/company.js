@@ -18,12 +18,13 @@ module.exports = {
     define: (sequelize) => {
         sequelize.define('Company', {
             id: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 primaryKey: true,
-                autoIncrement: true
+                defaultValue: DataTypes.UUIDV4, // Puedes usar una función para generar UUIDs aleatorios
+                allowNull: false
             },
             userId: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
                     model: 'Users', // Nombre del modelo de usuario
@@ -31,7 +32,7 @@ module.exports = {
                 },
             },
             id_nationality: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
                     model: 'Nationalities', // Nombre del modelo de usuario
@@ -47,14 +48,22 @@ module.exports = {
                 allowNull: false
             },
             start_date: {
-                //type: DataTypes.DATE,
-                type: DataTypes.STRING,
+                type: DataTypes.DATE,
+                //type: DataTypes.STRING,
                 allowNull: false
             },
             fiscal_address: {
                 type: DataTypes.STRING,
                 allowNull: false
             },
+            ruc: {
+                type: DataTypes.STRING(11),
+                allowNull: false,
+                validate: {
+                  isNumeric: true,
+                  len: [11, 11], // Validar exactamente 11 caracteres
+                },
+              },
             legal_representative: {
                 type: DataTypes.STRING,
                 allowNull: false
@@ -78,6 +87,10 @@ module.exports = {
             },
             Bank_account: {
                 type: DataTypes.INTEGER,
+                allowNull: false
+            },
+            image: {
+                type: DataTypes.TEXT,
                 allowNull: false
             },
             state: {
