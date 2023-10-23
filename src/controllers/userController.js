@@ -151,7 +151,7 @@ const login = async (req, res) => {
                 break;
         }
 
-        res.send({ token, userMapped });
+        res.status(200).send({ token, userMapped });
     } catch (error) {
         res.status(500).send({ message: 'Error al iniciar sesión.', error: error ? error.message : 'No se proporciona mensaje de error.' });
 
@@ -169,46 +169,115 @@ const getAllUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
     try {
-      const userMapped = {};
-      const user = await User.findOne({
-        where: { id: req.params.id },
-        include: [
-          {
-            model: Professional,
-            include: [Language],
-          },
-          {
-            model: Nationality,
-          },
-        ],
-      });
-      if (user) {
-        userMapped.id = user.id;
-        userMapped.email = user.email;
-        userMapped.type = user.type;
-        userMapped.state = user.state;
-        if (user.Professional) {
-          userMapped.data = {
-            name: user.Professional.name,
-            lastname: user.Professional.lastname,
-            age: user.Professional.age,
-            dni: user.Professional.dni,
-          };
-          userMapped.experience = user.Professional.experience;
-          userMapped.password = user.Professional.password;
-          userMapped.languages = user.Professional.Languages;
+        let userMapped = {};
+        const user = await User.findOne({ where: { id: req.params.id } });
+        if (!user) {
+            return res.status(400).send({ message: 'Usuario o contraseña incorrectos.' });
         }
-        if (user.Nationality) {
-          userMapped.nationality = user.Nationality.nationality;
+        switch (user.type) {
+            case 1: //admin
+
+                break;
+            case 2: //profecional
+
+                const professional = await Professional.findOne({
+                    where: { userId: user.id }
+                });
+
+                if (professional) {
+
+                    const languages = await Language.findAll({ attributes: ['id', 'language'] });
+                    const nationality = await Nationality.findAll({ attributes: ['id', 'nationality'] });
+                    const itskills = await Itskills.findAll({ attributes: ['id', 'it_skill'] });
+
+                    const languagesMap = new Map(languages.map((lang) => [lang.id, lang.language]));
+                    const nationalityMap = new Map(nationality.map((national) => [national.id, national.nationality]));
+                    const itskillsMap = new Map(itskills.map((it) => [it.id, it.it_skill]));
+
+                    // Obten las habilidades del profesional a través de la tabla intermedia
+                    const professionalItskills = await professional.getItskills();
+                    // Obten los idiomas del profesional a través de la tabla intermedia
+                    const professionalLanguages = await professional.getLanguages();
+
+                    const professionalSkills = professionalItskills.map((skill) => itskillsMap.get(skill.id));
+                    const professionalLang = professionalLanguages.map((language) => languagesMap.get(language.id));
+
+                    userMapped = {
+                        id: user.id,
+                        email: user.email,
+                        username: user.username,
+                        type: user.type,
+                        professional_id: professional.id,
+                        nationality: nationalityMap.get(professional.id_nationality),
+                        data: professional.data,
+                        experience: professional.experience,
+                        education: professional.education,
+                        extra_information: professional.extra_information,
+                        portfolio: professional.portfolio,
+                        cci: professional.cci,
+                        itskills: professionalSkills,
+                        languages: professionalLang,
+                    }
+                } else {
+                    userMapped = {
+                        id: user.id,
+                        email: user.email,
+                        username: user.username,
+                        type: user.type,
+                    }
+                };
+                break;
+            case 3: //empresa
+                const company = await Company.findOne({
+                    where: { userId: user.id },
+                    include: [
+                        { model: Nationality, as: 'nationality' }, // Relación con el modelo Nationality (id_nationality)
+                        {
+                            model: Language,
+                            as: "Languages",
+                            attributes: ['language'], // Puedes especificar las columnas que deseas seleccionar
+                            through: { attributes: [] } // Excluye las columnas de la tabla intermedia si no las necesitas
+                        }
+                    ]
+                })
+                console.log(company);
+                if (company) {
+                    userMapped = {
+                        id: user.id,
+                        email: user.email,
+                        username: user.username,
+                        type: user.type,
+                        company_id: company.id,
+                        businessName: company.business_name,
+                        activityType: company.activity_type,
+                        startDate: company.start_date,
+                        fiscalAddress: company.fiscal_address,
+                        legalRepresentative: company.legal_representative,
+                        contactData: company.data,
+                        bankAccount: company.Bank_account,
+                        id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
+                        languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
+                    }
+                } else {
+                    userMapped = {
+                        id: user.id,
+                        email: user.email,
+                        username: user.username,
+                        type: user.type,
+                    }
+                };
+                break;
+
+            default:
+                break;
         }
-        res.status(200).json(userMapped);
-      } else {
-        res.status(404).json({ message: "Usuario no encontrado" });
-      }
+
+        res.status(200).send({ userMapped });
     } catch (error) {
       res.status(500).json({ message: "Error al obtener el usuario", error });
     }
   };
+
 const updateUser = async (req, res) => {
     try {
         const user = await User.findByPk(req.params.id);
