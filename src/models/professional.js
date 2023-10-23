@@ -14,7 +14,7 @@ module.exports = {
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4, // Puedes usar una función para generar UUIDs aleatorios
         allowNull: false
-    },
+      },
       userId: {
         type: DataTypes.UUID,
         allowNull: false,
@@ -108,6 +108,11 @@ module.exports = {
       image: {
         type: DataTypes.STRING,
         allowNull: false
+      },
+      validate: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
       },
       state: {
         type: DataTypes.BOOLEAN,

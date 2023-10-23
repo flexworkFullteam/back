@@ -35,7 +35,7 @@ const createProject = async (req, res) => {
 
         //if (!fieldRegex.test(title) || !uuidRegex.test(companyId) || !fieldRegex.test(description) || !uuidRegex.test(field) || !uuidRegex.test(type) || !uuidRegex.test(location) || !positiveNumberRegex.test(salary) || !uuidRegex.test(exp_req) || !positiveNumberRegex.test(lapse) || !arrayUUID.test(itskill) || !arrayUUID.test(languages))
         if (!fieldRegex.test(title) || !fieldRegex.test(description) || !positiveNumberRegex.test(salary) || !positiveNumberRegex.test(lapse))
-        return res.status(400).send("Error en la validacion de los campos, revisa que tengan el formato correcto.");
+            return res.status(400).send("Error en la validacion de los campos, revisa que tengan el formato correcto.");
 
         const siklls = Array.isArray(itskill) ? itskill : [itskill];
         const lang = Array.isArray(languages) ? languages : [languages];
@@ -87,6 +87,9 @@ const createProject = async (req, res) => {
 const getAllProjects = async (req, res) => {
     try {
         const projects = await Project.findAll({
+            where: {
+                state: true
+            },
             attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse'],
         });
 
@@ -173,6 +176,9 @@ const getAllCompanyProjects = async (req, res) => {
 const getProjectById = async (req, res) => {
     try {
         const project = await Project.findByPk(req.params.id, {
+            where: {
+                state: true
+            },
             attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse'],
         });
 
