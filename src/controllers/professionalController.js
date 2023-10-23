@@ -5,6 +5,9 @@ const getProfessionals = async (req, res) => {
   try {
     const professionals = await Professional.findAll(
       {
+        where: {
+          state: true
+        },
         attributes: ['id', 'id_nationality', 'name', 'lastname', 'age', 'dni', 'experience', 'education', 'extra_information', 'portfolio', 'cci'],
       }
     );
@@ -50,7 +53,13 @@ const getProfessionals = async (req, res) => {
 const getProfessional = async (req, res) => {
   const { id } = req.params;
   try {
-    const professional = await Professional.findByPk(id);
+    const professional = await Professional.findByPk(id,
+      {
+        where: {
+          state: true
+        }
+      }
+    );
 
     if (professional) {
 
@@ -74,10 +83,10 @@ const getProfessional = async (req, res) => {
         id: professional.id,
         nationality: nationalityMap.get(professional.id_nationality),
         // data: {
-          name: professional.name,
-          lastname: professional.lastname,
-          age: professional.age,
-          dni: professional.dni,
+        name: professional.name,
+        lastname: professional.lastname,
+        age: professional.age,
+        dni: professional.dni,
         // },
         experience: professional.experience,
         education: professional.education,

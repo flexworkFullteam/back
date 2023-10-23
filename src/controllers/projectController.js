@@ -79,6 +79,9 @@ const createProject = async (req, res) => {
 const getAllProjects = async (req, res) => {
   try {
     const projects = await Project.findAll({
+      where: {
+        state: true
+      },
       attributes: [
         "id",
         "title",
@@ -229,7 +232,13 @@ const getAllCompanyProjects = async (req, res) => {
 // Obtener un proyecto por ID
 const getProjectById = async (req, res) => {
   try {
-    const project = await Project.findByPk(req.params.id);
+    const project = await Project.findByPk(req.params.id,
+      {
+        where: {
+          state: true
+        },
+      }
+    );
 
     if (project) {
       // Obtén información adicional de las tablas relacionadas

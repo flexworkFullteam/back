@@ -34,7 +34,7 @@ const getCompanies = async (req, res) => {
                     createdAt: company.createdAt,
                     image: company.image,
                     id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
-                    userId: company.user.username, // Obtiene el nombre de usuario
+                    id: company.id, // Obtiene id
                     languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
                 })
             );
