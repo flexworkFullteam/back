@@ -5,6 +5,9 @@ const getProfessionals = async (req, res) => {
   try {
     const professionals = await Professional.findAll(
       {
+        where: {
+          state: true
+        },
         attributes: ['id', 'id_nationality', 'data', 'experience', 'education', 'extra_information', 'portfolio', 'cci'],
       }
     );
@@ -47,7 +50,11 @@ const getProfessionals = async (req, res) => {
 const getProfessional = async (req, res) => {
   const { id } = req.params;
   try {
-    const professional = await Professional.findByPk(id);
+    const professional = await Professional.findByPk(id, {
+      where: {
+        state: true
+      },
+    });
 
     if (professional) {
 

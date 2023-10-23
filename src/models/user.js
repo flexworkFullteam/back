@@ -36,6 +36,16 @@ module.exports = {
                 allowNull: true,
                 unique: true,
             },
+            tc: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: true,
+            },
+            validate: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: true,
+            },
             state: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
