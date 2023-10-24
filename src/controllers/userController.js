@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 const { User, Professional, Language, Nationality, Itskills, Company } = require('../DB_connection');
 const { SECRET } = require('../config.js')
@@ -26,6 +27,8 @@ const createUser = async (req, res) => {
             to: email, // list of receivers
             subject: "Hello ✔", // Subject line
             html: "<b>Hello world?</b>", // html body
+
+            //flexworks/verifi/128numeros
         });*/
 
 
