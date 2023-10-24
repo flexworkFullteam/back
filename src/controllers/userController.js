@@ -28,8 +28,6 @@ const createUser = async (req, res) => {
             html: "<b>Hello world?</b>", // html body
         });*/
 
-
-
         res.status(201).json(user);
     } catch (error) {
         console.log(error)
