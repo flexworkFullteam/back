@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 const { User, Professional, Language, Nationality, Itskills, Company } = require('../DB_connection');
 const { SECRET } = require('../config.js')
@@ -17,7 +18,7 @@ const createUser = async (req, res) => {
             email,
             password: hashedPassword,
             type,
-            state: false
+            emailToken: crypto.randomBytes(64).toString("hex")
         });
         /*const fromEmail = `"Fred Foo 👻" <${process.env.MAIL_USERNAME}>`;
 
@@ -26,6 +27,8 @@ const createUser = async (req, res) => {
             to: email, // list of receivers
             subject: "Hello ✔", // Subject line
             html: "<b>Hello world?</b>", // html body
+
+            //flexworks/verifi/128numeros
         });*/
 
 
@@ -34,6 +37,27 @@ const createUser = async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: "Error al crear el usuario", error: error.message });
+    }
+};
+
+const verifyemail = async (req, res) => {
+    try {
+        const { emailToken } = req.body;
+        if (!emailToken) {
+            return res.status(404).json( {message: "Error al validar el email"});
+        }
+        const user = await User.findOne({ where: { emailToken } });
+        if (user) {
+            user.emailToken =null;
+            user.validate = true;
+            await user.save()
+            res.status(200).json({message: "Email verificado"});
+        } else {
+            res.status(404).json({message: "Invalid Token"});
+        }
+
+    } catch (error) {
+        res.status(500).json(error.message);
     }
 };
 
@@ -83,6 +107,7 @@ const login = async (req, res) => {
 
                     userMapped = {
                         id: user.id,
+                        validate: user.validate,
                         email: user.email,
                         username: user.username,
                         type: user.type,
@@ -123,6 +148,7 @@ const login = async (req, res) => {
                 if (company) {
                     userMapped = {
                         id: user.id,
+                        validate: user.validate,
                         email: user.email,
                         username: user.username,
                         type: user.type,
@@ -217,5 +243,6 @@ module.exports = {
     getUserById,
     updateUser,
     deleteUser,
-    login
+    login,
+    verifyemail
 };

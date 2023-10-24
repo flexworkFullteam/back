@@ -103,7 +103,7 @@ const getCompanyById = async (req, res) => {
 }
 
 const postCompany = async (req, res) => {
-    const fieldRegex = /^[^\n\r\t\v\f\p{P}]{5,}$/u; //   Esto asegurará que la cadena cumpla con la longitud mínima de 5 caracteres y no contenga signos de puntuación.
+    const fieldRegex = /^[a-zA-ZÀ-ÖØ-öø-ÿ\s.,'()-]{5,}$/u; //   Esto asegurará que la cadena cumpla con la longitud mínima de 5 caracteres y no contenga signos de puntuación.
     const dateRegex = /^\d{2}\s*-\s*\d{2}\s*-\s*\d{4}$/;  // MM-DD-YYYY
     const rucRegex = /^[0-9]{11}$/;
     const bankRegex = /^[0-9]+$/;
@@ -112,7 +112,7 @@ const postCompany = async (req, res) => {
     //const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
     const { businessName, activityType, startDate, fiscalAddress, ruc, legalRepresentative, data, bankAccount, nationalityId, userId, languages, imagen } = req.body;
 
-    if (fieldRegex.test(businessName) && fieldRegex.test(activityType) && dateRegex.test(getDatefromDate(new Date(startDate))) && fieldRegex.test(fiscalAddress) && rucRegex.test(ruc) && fieldRegex.test(legalRepresentative) && typeof data === "object" && data !== null && bankRegex.test(bankAccount) && linkRegex.test(imagen))
+    if (fieldRegex.test(businessName))
         try {
             const [newCompany, created] = await Company.findOrCreate(
                 {
