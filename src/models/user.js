@@ -30,7 +30,7 @@ module.exports = {
             type: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-            }, // 1 admin 2 profesional 3 empresa
+            }, // 1 admin 2 profesional 3 empresa 4 Auth0 Placeholder
             auth0Id: {
                 type: DataTypes.STRING,
                 allowNull: true,
