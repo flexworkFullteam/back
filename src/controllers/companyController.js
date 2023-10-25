@@ -110,8 +110,7 @@ const postCompany = async (req, res) => {
     //const arrayEnterosRegex = /^\[\s*([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}(?:,\s*)?)+\s*\]$/;
     const linkRegex = /^https?:\/\/(?:www\.)?[\w\.-]+\.\w{2,}(?:\/\S*)?$/;
     //const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-    const { businessName, activityType, startDate, fiscalAddress, ruc, legalRepresentative, data, bankAccount, nationalityId, userId, languages, imagen } = req.body;
-
+    const { businessName, activityType, startDate, fiscalAddress, ruc, legalRepresentative, data, bankAccount, nationalityId, userId, languages, imagen } = req.body; 
     if (fieldRegex.test(businessName) && fieldRegex.test(activityType) && dateRegex.test(getDatefromDate(new Date(startDate))) && fieldRegex.test(fiscalAddress) && rucRegex.test(ruc) && fieldRegex.test(legalRepresentative) && typeof data === "object" && data !== null && bankRegex.test(bankAccount) && linkRegex.test(imagen))
         try {
             const [newCompany, created] = await Company.findOrCreate(
@@ -121,7 +120,7 @@ const postCompany = async (req, res) => {
                         userId: userId,
                         activity_type: activityType,
                         start_date: new Date(startDate),
-                        fiscal_address: fiscalAddress,
+                        fiscal_address: fiscalAddress,  
                         legal_representative: legalRepresentative,
                         data: data,
                         Bank_account: bankAccount,
