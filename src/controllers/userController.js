@@ -1,18 +1,22 @@
+require("dotenv").config();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 
+
 const { User, Professional, Language, Nationality, Itskills, Company } = require('../DB_connection');
-const { SECRET } = require('../config.js')
 const dotenv = require('dotenv');
 const transporter = require('../utils/emailConfig');
+const { JWT_SECRET } = process.env;
 
 dotenv.config({ path: '../.env' });
+const saltRounds = 10;
 
 const createUser = async (req, res) => {
     const { username, email, password, type } = req.body;
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const salt = await bcrypt.genSalt(saltRounds);
+        const hashedPassword = await bcrypt.hash(password, salt);
         const user = await User.create({
             username,
             email,
@@ -73,7 +77,7 @@ const login = async (req, res) => {
         if (!validPassword) {
             return res.status(400).send({ message: 'Usuario o contraseña incorrectos.' });
         }
-        const token = jwt.sign({ userId: user.id, type: user.type }, SECRET, {
+        const token = jwt.sign({ userId: user.id, type: user.type }, JWT_SECRET, {
             expiresIn: '1h' // Sesion dura una hora, *investigar opciones de la duracion de la session (para siempre, por largo tiempo, o por actividad)
         });
 

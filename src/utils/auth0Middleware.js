@@ -1,33 +1,15 @@
-const jwt = require('jsonwebtoken');
-const jwksClient = require('jwks-rsa');
-const { User } = require('../DB_connection');
-
-const client = jwksClient({
-    jwksUri: 'YOUR_JWKS_URI'
-});
-
-function getKey(header, callback){
-    client.getSigningKey(header.kid, function(err, key) {
-        var signingKey = key.publicKey || key.rsaPublicKey;
-        callback(null, signingKey);
-    });
-}
-
 const auth0Middleware = (req, res, next) => {
-    const token = req.headers.authorization;
-    
-    jwt.verify(token, getKey, {
-        audience: 'YOUR_AUTH0_AUDIENCE',
-        issuer: 'YOUR_AUTH0_ISSUER',
-        algorithms: ['RS256']
-    }, async (err, decoded) => {
-        if (err) return res.status(401).send({ message: 'Unauthorized' });
-
-        req.auth0Id = decoded.sub;
-        req.email = decoded.email;
-
-        next();
-    });
+    console.log('Received JSON:', req.body);  // Log the received JSON
+    const { name, sub } = req.body;
+    const provider = sub.split('|')[0];  // Extract the provider from the sub property
+    // Normalize provider name (e.g., google-oauth2 -> google, linkedin -> linkedin)
+    const normalizedProvider = provider.replace('-oauth2', '');
+    // Construct auth0Id
+    const auth0Id = `${normalizedProvider}${name}Auth0`;
+    // Attach extracted data to the request object
+    req.auth0Id = auth0Id;
+    req.email = req.body.email;
+    next();
 };
 
 module.exports = auth0Middleware;
