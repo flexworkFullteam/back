@@ -1,17 +1,29 @@
+require('dotenv').config();
+const { AUTH0_DOMAIN, AUTH0_AUDIENCE } = process.env;
 const express = require('express');
 const routes = require('./routes/index');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
-require('dotenv').config();
 const { conn } = require('./DB_connection');
 const server = express();
+
+// auth0
+const { auth } = require('express-oauth2-jwt-bearer');
+const port = process.env.PORT || 8080;
+const jwtCheck = auth({
+    audience: AUTH0_AUDIENCE,
+    issuerBaseURL: AUTH0_DOMAIN,
+    tokenSigningAlg: 'RS256'
+});
+
 
 server.use(morgan('dev'));
 server.use(cors());
 server.use(express.json());
 server.use(cookieParser());
+
 
 server.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 server.use(bodyParser.json({ limit: '50mb' }));
