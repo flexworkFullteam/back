@@ -3,11 +3,6 @@ const { Project, Company, ProjectType, ProjectFields, ExperienceLevel, Language,
 // Crear un proyecto
 const createProject = async (req, res) => {
 
-    const fieldRegex = /^[^\n\r\t\v\f\p{P}]{5,}$/u; //   Esto asegurará que la cadena cumpla con la longitud mínima de 5 caracteres y no contenga signos de puntuación.
-    const positiveNumberRegex = /^[1-9]\d*$/;
-    const arrayUUID = /^\[\s*([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}(?:,\s*)?)+\s*\]$/;
-    const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-
     try {
         const {
             title,  // New Project",
@@ -22,20 +17,6 @@ const createProject = async (req, res) => {
             itskill, // [1]
             languages // [1]
         } = req.body;
-        /*console.log(fieldRegex.test(title));
-        console.log(fieldRegex.test(description));
-        console.log(positiveNumberRegex.test(salary));
-        console.log(positiveNumberRegex.test(lapse));*/
-        /*console.log(uuidRegex.test(companyId));
-        console.log(uuidRegex.test(field));
-        console.log(uuidRegex.test(type));
-        console.log(uuidRegex.test(exp_req));*/
-        console.log(itskill);
-        console.log(languages);
-
-        //if (!fieldRegex.test(title) || !uuidRegex.test(companyId) || !fieldRegex.test(description) || !uuidRegex.test(field) || !uuidRegex.test(type) || !uuidRegex.test(location) || !positiveNumberRegex.test(salary) || !uuidRegex.test(exp_req) || !positiveNumberRegex.test(lapse) || !arrayUUID.test(itskill) || !arrayUUID.test(languages))
-        if (!fieldRegex.test(title) || !fieldRegex.test(description) || !positiveNumberRegex.test(salary) || !positiveNumberRegex.test(lapse))
-            return res.status(400).send("Error en la validacion de los campos, revisa que tengan el formato correcto.");
 
         const siklls = Array.isArray(itskill) ? itskill : [itskill];
         const lang = Array.isArray(languages) ? languages : [languages];
@@ -315,10 +296,19 @@ const getProfessionalPostulant = async (req, res) => {
         if (!project) {
             return res.status(404).json({ message: 'Proyecto no encontrado.' });
         }
+        const postulados = await project.getPostulatingProfessionals({
+            attributes: ['id', 'data'],
+            separate: true,
+            include: [],
+        });
+        const postulate = postulados.map((item) => ({
+            id: item.id,
+            data: item.data,
+          }));
+        const accepted = await project.getAcceptedProfessionals();
+        const rejected = await project.getRefusedProfessionals();
 
-        const postulados = await project.getPostulatingProfessionals();
-
-        res.status(200).json(postulados);
+        res.status(200).json({ postulate, accepted, rejected });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
