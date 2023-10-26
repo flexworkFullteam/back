@@ -152,58 +152,47 @@ const postCompany = async (req, res) => {
 
 const editCompany = async (req, res) => {
     const { businessName, activityType, startDate, fiscalAddress, ruc, legalRepresentative, data, bankAccount, nationalityId, userId, languages, imagen } = req.body;
-
+    
     const { id } = req.params;
-    const fieldRegex = /^[^\n\r\t\v\f\p{P}]{5,}$/u; //   Esto asegurará que la cadena cumpla con la longitud mínima de 5 caracteres y no contenga signos de puntuación.
-    const dateRegex = /^\d{2}\s*-\s*\d{2}\s*-\s*\d{4}$/;  // MM-DD-YYYY
-    const rucRegex = /^[0-9]{11}$/;
-    const bankRegex = /^[0-9]+$/;
-    //const arrayEnterosRegex = /^\[?(-?\d+(, ?-?\d+)*)\]?/;
-    const linkRegex = /^https?:\/\/(?:www\.)?[\w\.-]+\.\w{2,}(?:\/\S*)?$/;
-    //const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-
-    if (fieldRegex.test(businessName) && fieldRegex.test(activityType) && dateRegex.test(getDatefromDate(new Date(startDate))) && fieldRegex.test(fiscalAddress) && rucRegex.test(ruc) && fieldRegex.test(legalRepresentative) && typeof data === "object" && data !== null && bankRegex.test(bankAccount) && linkRegex.test(imagen))
-        if (id)
-            try {
-                const company = await Company.findByPk(id,
-                    {
-                        where: {
-                            state: true
-                        }
-                    })
-                if (company) {
-                    const response = {
-                        business_name: businessName,
-                        userId: userId,
-                        activity_type: activityType,
-                        start_date: startDate,
-                        ruc,
-                        fiscal_address: fiscalAddress,
-                        legal_representative: legalRepresentative,
-                        data: contactData,
-                        Bank_account: bankAccount,
-                        id_nationality: nationalityId,
-                    };
-                    const update = await company.update(response);
-                    if (update) {
-                        const languageToSet = await Language.findAll({
-                            where: {
-                                id: { [Op.in]: languages },
-                            }
-                        });
-                        company.setLanguages(languageToSet);
-                        return res.status(200).json(response);
-                    }
-                    else
-                        return res.status(400).send("Error actualizando");
+    try {
+        const company = await Company.findByPk(id,
+            {
+                where: {
+                    state: true
                 }
-                else
-                    return res.status(404).send("No se encontro empresa o esta borrada");
-            } catch (error) {
-                return res.status(500).send(error.message);
+            })
+        if (company) {
+            const response = {
+                business_name: businessName,
+                userId: userId,
+                activity_type: activityType,
+                start_date: startDate,
+                ruc: ruc,
+                fiscal_address: fiscalAddress,
+                legal_representative: legalRepresentative,
+                data: data,
+                Bank_account: bankAccount,
+                id_nationality: nationalityId,
+            };
+            const update = await company.update(response);
+            if (update) {
+                /*const languageToSet = await Language.findAll({
+                    where: {
+                        id: { [Op.in]: languages },
+                    }
+                });
+                company.setLanguages(languageToSet);*/
+                return res.status(200).json(response);
             }
+            else
+                return res.status(400).send("Error actualizando");
+        }
         else
-            return res.status(400).send("No se detecto id de empresa");
+            return res.status(404).send("No se encontro empresa o esta borrada");
+    } catch (error) {
+        console.log(businessName);
+        return res.status(500).send(error.message);
+    }
 
 };
 
