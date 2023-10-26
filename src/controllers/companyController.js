@@ -152,7 +152,7 @@ const postCompany = async (req, res) => {
 
 const editCompany = async (req, res) => {
     const { businessName, activityType, startDate, fiscalAddress, ruc, legalRepresentative, data, bankAccount, nationalityId, userId, languages, imagen } = req.body;
-    
+
     const { id } = req.params;
     try {
         const company = await Company.findByPk(id,
@@ -176,12 +176,14 @@ const editCompany = async (req, res) => {
             };
             const update = await company.update(response);
             if (update) {
-                /*const languageToSet = await Language.findAll({
-                    where: {
-                        id: { [Op.in]: languages },
-                    }
+                const languageIds = Array.isArray(languages) ? languages : [languages];
+                const languagePromises = languageIds.map(async (languageId) => {
+                    const language = await Language.findByPk(languageId);
+                    return language;
                 });
-                company.setLanguages(languageToSet);*/
+                const resolvedLanguages = await Promise.all(languagePromises);
+                const validLanguages = resolvedLanguages.filter((language) => language !== null);
+                await update.setLanguages(validLanguages);
                 return res.status(200).json(response);
             }
             else
