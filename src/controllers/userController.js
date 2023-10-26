@@ -48,16 +48,16 @@ const verifyemail = async (req, res) => {
     try {
         const { emailToken } = req.body;
         if (!emailToken) {
-            return res.status(404).json( {message: "Error al validar el email"});
+            return res.status(404).json({ message: "Error al validar el email" });
         }
         const user = await User.findOne({ where: { emailToken } });
         if (user) {
-            user.emailToken =null;
+            user.emailToken = null;
             user.validate = true;
             await user.save()
-            res.status(200).json({message: "Email verificado"});
+            res.status(200).json({ message: "Email verificado" });
         } else {
-            res.status(404).json({message: "Invalid Token"});
+            res.status(404).json({ message: "Invalid Token" });
         }
 
     } catch (error) {
@@ -83,7 +83,12 @@ const login = async (req, res) => {
 
         switch (user.type) {
             case 1: //admin
-
+                userMapped = {
+                    id: user.id,
+                    email: user.email,
+                    username: user.username,
+                    type: user.type,
+                }
                 break;
             case 2: //profecional
 
@@ -202,32 +207,32 @@ const getAllUsers = async (req, res) => {
         for (const user of users) {
             switch (user.type) {
                 case 1: //admin
-    
+
                     break;
                 case 2: //profecional
-    
+
                     const professional = await Professional.findOne({
                         where: { userId: user.id }
                     });
-    
+
                     if (professional) {
-    
+
                         const languages = await Language.findAll({ attributes: ['id', 'language'] });
                         const nationality = await Nationality.findAll({ attributes: ['id', 'nationality'] });
                         const itskills = await Itskills.findAll({ attributes: ['id', 'it_skill'] });
-    
+
                         const languagesMap = new Map(languages.map((lang) => [lang.id, lang.language]));
                         const nationalityMap = new Map(nationality.map((national) => [national.id, national.nationality]));
                         const itskillsMap = new Map(itskills.map((it) => [it.id, it.it_skill]));
-    
+
                         // Obten las habilidades del profesional a través de la tabla intermedia
                         const professionalItskills = await professional.getItskills();
                         // Obten los idiomas del profesional a través de la tabla intermedia
                         const professionalLanguages = await professional.getLanguages();
-    
+
                         const professionalSkills = professionalItskills.map((skill) => itskillsMap.get(skill.id));
                         const professionalLang = professionalLanguages.map((language) => languagesMap.get(language.id));
-                        
+
                         userFor = {
                             id: user.id,
                             email: user.email,
@@ -293,7 +298,7 @@ const getAllUsers = async (req, res) => {
                         }
                     };
                     break;
-    
+
                 default:
                     break;
             }
@@ -413,9 +418,9 @@ const getUserById = async (req, res) => {
 
         res.status(200).send({ userMapped });
     } catch (error) {
-      res.status(500).json({ message: "Error al obtener el usuario", error });
+        res.status(500).json({ message: "Error al obtener el usuario", error });
     }
-  };
+};
 
 const updateUser = async (req, res) => {
     try {
