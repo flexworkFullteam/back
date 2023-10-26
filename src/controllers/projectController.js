@@ -68,10 +68,7 @@ const createProject = async (req, res) => {
 const getAllProjects = async (req, res) => {
     try {
         const projects = await Project.findAll({
-            where: {
-                state: true
-            },
-            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse'],
+            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state'],
         });
 
         if (projects.length === 0) {
@@ -113,10 +110,9 @@ const getAllCompanyProjects = async (req, res) => {
     try {
         const projects = await Project.findAll({
             where: {
-                id_company: req.params.id_company,
-                state: true
+                id_company: req.params.id_company
             },
-            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse'],
+            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state'],
         });
 
         if (projects.length === 0) {
