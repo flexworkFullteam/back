@@ -142,6 +142,7 @@ const getAllCompanyProjects = async (req, res) => {
             salary: project.salary,
             exp_req: experienceLevelMap.get(project.exp_req),
             lapse: project.lapse,
+            state: project.state
         }));
         console.log(projectsWithMappedData);
         res.status(200).json(projectsWithMappedData);
