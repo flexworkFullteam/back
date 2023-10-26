@@ -1,83 +1,108 @@
 
 const { DataTypes } = require('sequelize');
 
+const modelDependencies = {
+    'Company': ['User', 'Nationality']
+};
+
 const data = {
     nombre: DataTypes.STRING,
     telefono: DataTypes.INTEGER,
     email: DataTypes.STRING,
-    nacionalidad: DataTypes.INTEGER,
-    idioma: DataTypes.ARRAY(DataTypes.INTEGER),
     horario: DataTypes.STRING,
     contacto: DataTypes.STRING
 };
 
-module.exports = (sequelize) => {
-    const Company = sequelize.define('Company', {
-        id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true
-        },
-        razon_Social: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        tipo_Actividad: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        fecha_Inicio: {
-            type: DataTypes.DATE,
-            allowNull: false
-        },
-        domicilio_Fiscal: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        representante_Legal: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        data: {
-            type: DataTypes.JSONB,
-            allowNull: false,
-            defaultValue: data,            
-            validate: {
-                isValidData(value) {
-                    if (
-                        typeof value.nombre !== 'string' ||
-                        typeof value.telefono !== 'number' ||
-                        typeof value.email !== 'string' ||
-                        typeof value.nacionalidad !== 'number' ||
-                        typeof value.idioma !== 'objet' ||
-                        typeof value.horario !== 'string' ||
-                        typeof value.contacto !== 'string'
-                    )
-                        throw new Error("Error: las propiedades deben ser string");
+module.exports = {
+    name: 'Company',
+    define: (sequelize) => {
+        sequelize.define('Company', {
+            id: {
+                type: DataTypes.UUID,
+                primaryKey: true,
+                defaultValue: DataTypes.UUIDV4, // Puedes usar una función para generar UUIDs aleatorios
+                allowNull: false
+            },
+            userId: {
+                type: DataTypes.UUID,
+                allowNull: false,
+                references: {
+                    model: 'Users', // Nombre del modelo de usuario
+                    key: 'id',      // Clave primaria en el modelo de usuario
+                },
+            },
+            id_nationality: {
+                type: DataTypes.UUID,
+                allowNull: false,
+                references: {
+                    model: 'Nationalities', // Nombre del modelo de usuario
+                    key: 'id',      // Clave primaria en el modelo de usuario
+                },
+            },
+            business_name: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
+            activity_type: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
+            start_date: {
+                type: DataTypes.DATE,
+                //type: DataTypes.STRING,
+                allowNull: false
+            },
+            fiscal_address: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
+            ruc: {
+                type: DataTypes.STRING(11),
+                allowNull: false,
+                validate: {
+                  isNumeric: true,
+                  len: [11, 11], // Validar exactamente 11 caracteres
+                },
+              },
+            legal_representative: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
+            data: {
+                type: DataTypes.JSONB,
+                allowNull: false,
+                defaultValue: data,
+                validate: {
+                    isValidData(value) {
+                        if (
+                            typeof value.nombre !== 'string' ||
+                            typeof value.telefono !== 'number' ||
+                            typeof value.email !== 'string' ||
+                            typeof value.horario !== 'string' ||
+                            typeof value.contacto !== 'string'
+                        )
+                            throw new Error("Error: revisa las propiedades del objeto data");
+                    }
                 }
+            },
+            Bank_account: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
+            image: {
+                type: DataTypes.TEXT,
+                allowNull: false
+            },
+            validate: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: true,
+            },
+            state: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: true,
             }
-        },
-        /*
-        ESTE CAMPO DEBE SER ELABORADO CON UNA CONSULTA AL CREAR LOS CONTROLADORES
-
-        RESEÑA:{
-            id: tabla relacional
-        }
-
-        calificacion: {
-            type: DataTypes.FLOAT,
-            allowNull: false
-        },*/
-        cuenta_Banco: {
-            type: DataTypes.FLOAT,
-            allowNull: false
-        },
-
-        state: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-        },
-    });
-
-    return Company;
+        });
+    }
 };
