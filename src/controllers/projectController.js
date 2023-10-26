@@ -276,6 +276,7 @@ const refuceProyectProfessional = async (req, res) => {
         }
 
         // Agrega al profesional
+        const check = await professional.removePostulatedProjects(project);
         if (check !== null && check !== undefined) {
             await professional.removeAcceptedProjects(project);
         }
