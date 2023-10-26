@@ -1,5 +1,4 @@
 require('dotenv').config();
-const { AUTH0_DOMAIN, AUTH0_AUDIENCE } = process.env;
 const express = require('express');
 const routes = require('./routes/index');
 const cors = require('cors');
@@ -8,15 +7,6 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const { conn } = require('./DB_connection');
 const server = express();
-
-// auth0
-const { auth } = require('express-oauth2-jwt-bearer');
-const port = process.env.PORT || 8080;
-const jwtCheck = auth({
-    audience: AUTH0_AUDIENCE,
-    issuerBaseURL: AUTH0_DOMAIN,
-    tokenSigningAlg: 'RS256'
-});
 
 
 server.use(morgan('dev'));
@@ -40,7 +30,7 @@ server.use('/', routes);
 
 server.listen(3001, async () => {
     console.log('Server listening at port 3001');
-    await conn.sync({ force: true });
+    await conn.sync({ force: false });
     console.log('Database connected');
 });
 
