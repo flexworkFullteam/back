@@ -93,6 +93,11 @@ module.exports = {
                 type: DataTypes.TEXT,
                 allowNull: false
             },
+            validate: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: true,
+            },
             state: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
