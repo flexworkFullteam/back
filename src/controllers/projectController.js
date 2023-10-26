@@ -297,16 +297,29 @@ const getProfessionalPostulant = async (req, res) => {
             return res.status(404).json({ message: 'Proyecto no encontrado.' });
         }
         const postulados = await project.getPostulatingProfessionals({
-            attributes: ['id', 'data'],
-            separate: true,
-            include: [],
+            attributes: ['id', 'data']
         });
+
         const postulate = postulados.map((item) => ({
             id: item.id,
             data: item.data,
-          }));
-        const accepted = await project.getAcceptedProfessionals();
-        const rejected = await project.getRefusedProfessionals();
+        }));
+
+        const aceptado = await project.getAcceptedProfessionals({
+            attributes: ['id', 'data']
+        });
+        const accepted = aceptado.map((item) => ({
+            id: item.id,
+            data: item.data,
+        }));
+
+        const rechazado = await project.getRefusedProfessionals({
+            attributes: ['id', 'data']
+        });
+        const rejected = rechazado.map((item) => ({
+            id: item.id,
+            data: item.data,
+        }));
 
         res.status(200).json({ postulate, accepted, rejected });
     } catch (error) {
@@ -323,9 +336,15 @@ const getProfessionalAccepted = async (req, res) => {
             return res.status(404).json({ message: 'Proyecto no encontrado.' });
         }
 
-        const aceptados = await project.getAcceptedProfessionals();
+        const aceptado = await project.getAcceptedProfessionals({
+            attributes: ['id', 'data']
+        });
+        const accepted = aceptado.map((item) => ({
+            id: item.id,
+            data: item.data,
+        }));
 
-        res.status(200).json(aceptados);
+        res.status(200).json(accepted);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -340,9 +359,15 @@ const getProfessionalRefused = async (req, res) => {
             return res.status(404).json({ message: 'Proyecto no encontrado.' });
         }
 
-        const rechazados = await project.getRefusedProfessionals();
+        const rechazado = await project.getRefusedProfessionals({
+            attributes: ['id', 'data']
+        });
+        const rejected = rechazado.map((item) => ({
+            id: item.id,
+            data: item.data,
+        }));
 
-        res.status(200).json(rechazados);
+        res.status(200).json(rejected);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
