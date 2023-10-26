@@ -3,11 +3,6 @@ const { Project, Company, ProjectType, ProjectFields, ExperienceLevel, Language,
 // Crear un proyecto
 const createProject = async (req, res) => {
 
-    const fieldRegex = /^[^\n\r\t\v\f\p{P}]{5,}$/u; //   Esto asegurará que la cadena cumpla con la longitud mínima de 5 caracteres y no contenga signos de puntuación.
-    const positiveNumberRegex = /^[1-9]\d*$/;
-    const arrayUUID = /^\[\s*([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}(?:,\s*)?)+\s*\]$/;
-    const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-
     try {
         const {
             title,  // New Project",
@@ -22,20 +17,6 @@ const createProject = async (req, res) => {
             itskill, // [1]
             languages // [1]
         } = req.body;
-        /*console.log(fieldRegex.test(title));
-        console.log(fieldRegex.test(description));
-        console.log(positiveNumberRegex.test(salary));
-        console.log(positiveNumberRegex.test(lapse));*/
-        /*console.log(uuidRegex.test(companyId));
-        console.log(uuidRegex.test(field));
-        console.log(uuidRegex.test(type));
-        console.log(uuidRegex.test(exp_req));*/
-        console.log(itskill);
-        console.log(languages);
-
-        //if (!fieldRegex.test(title) || !uuidRegex.test(companyId) || !fieldRegex.test(description) || !uuidRegex.test(field) || !uuidRegex.test(type) || !uuidRegex.test(location) || !positiveNumberRegex.test(salary) || !uuidRegex.test(exp_req) || !positiveNumberRegex.test(lapse) || !arrayUUID.test(itskill) || !arrayUUID.test(languages))
-        if (!fieldRegex.test(title) || !fieldRegex.test(description) || !positiveNumberRegex.test(salary) || !positiveNumberRegex.test(lapse))
-            return res.status(400).send("Error en la validacion de los campos, revisa que tengan el formato correcto.");
 
         const siklls = Array.isArray(itskill) ? itskill : [itskill];
         const lang = Array.isArray(languages) ? languages : [languages];
@@ -87,10 +68,7 @@ const createProject = async (req, res) => {
 const getAllProjects = async (req, res) => {
     try {
         const projects = await Project.findAll({
-            where: {
-                state: true
-            },
-            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse'],
+            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state'],
         });
 
         if (projects.length === 0) {
@@ -132,10 +110,9 @@ const getAllCompanyProjects = async (req, res) => {
     try {
         const projects = await Project.findAll({
             where: {
-                id_company: req.params.id_company,
-                state: true
+                id_company: req.params.id_company
             },
-            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse'],
+            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state'],
         });
 
         if (projects.length === 0) {
@@ -165,6 +142,7 @@ const getAllCompanyProjects = async (req, res) => {
             salary: project.salary,
             exp_req: experienceLevelMap.get(project.exp_req),
             lapse: project.lapse,
+            state: project.state
         }));
         console.log(projectsWithMappedData);
         res.status(200).json(projectsWithMappedData);
@@ -266,7 +244,11 @@ const acceptedProyectProfessional = async (req, res) => {
         }
 
         // Agrega al profesional
-        await professional.removePostulatedProjects(project);
+        const check = await professional.removePostulatedProjects(project);
+        if (check !== null && check !== undefined) {
+            await professional.removeRefusedProjects(project);
+        }
+
         // Agrega al profesional a "Acepted_Professionals"
         await professional.addAcceptedProjects(project);
 
@@ -295,7 +277,10 @@ const refuceProyectProfessional = async (req, res) => {
         }
 
         // Agrega al profesional
-        await professional.removePostulatedProjects(project);
+        const check = await professional.removePostulatedProjects(project);
+        if (check !== null && check !== undefined) {
+            await professional.removeAcceptedProjects(project);
+        }
         // Agrega al profesional a "Refused_Professionals"
         await professional.addRefusedProjects(project);
 
@@ -315,10 +300,32 @@ const getProfessionalPostulant = async (req, res) => {
         if (!project) {
             return res.status(404).json({ message: 'Proyecto no encontrado.' });
         }
+        const postulados = await project.getPostulatingProfessionals({
+            attributes: ['id', 'data']
+        });
 
-        const postulados = await project.getPostulatingProfessionals();
+        const postulate = postulados.map((item) => ({
+            id: item.id,
+            data: item.data,
+        }));
 
-        res.status(200).json(postulados);
+        const aceptado = await project.getAcceptedProfessionals({
+            attributes: ['id', 'data']
+        });
+        const accepted = aceptado.map((item) => ({
+            id: item.id,
+            data: item.data,
+        }));
+
+        const rechazado = await project.getRefusedProfessionals({
+            attributes: ['id', 'data']
+        });
+        const rejected = rechazado.map((item) => ({
+            id: item.id,
+            data: item.data,
+        }));
+
+        res.status(200).json({ postulate, accepted, rejected });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -333,9 +340,15 @@ const getProfessionalAccepted = async (req, res) => {
             return res.status(404).json({ message: 'Proyecto no encontrado.' });
         }
 
-        const aceptados = await project.getAcceptedProfessionals();
+        const aceptado = await project.getAcceptedProfessionals({
+            attributes: ['id', 'data']
+        });
+        const accepted = aceptado.map((item) => ({
+            id: item.id,
+            data: item.data,
+        }));
 
-        res.status(200).json(aceptados);
+        res.status(200).json(accepted);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -350,9 +363,15 @@ const getProfessionalRefused = async (req, res) => {
             return res.status(404).json({ message: 'Proyecto no encontrado.' });
         }
 
-        const rechazados = await project.getRefusedProfessionals();
+        const rechazado = await project.getRefusedProfessionals({
+            attributes: ['id', 'data']
+        });
+        const rejected = rechazado.map((item) => ({
+            id: item.id,
+            data: item.data,
+        }));
 
-        res.status(200).json(rechazados);
+        res.status(200).json(rejected);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
