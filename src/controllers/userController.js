@@ -169,6 +169,7 @@ const login = async (req, res) => {
                         legalRepresentative: company.legal_representative,
                         contactData: company.data,
                         bankAccount: company.Bank_account,
+                        ruc: company.ruc,
                         id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
                         languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
                     }
@@ -207,34 +208,40 @@ const getAllUsers = async (req, res) => {
         for (const user of users) {
             switch (user.type) {
                 case 1: //admin
-
+                    userMapped = {
+                        id: user.id,
+                        email: user.email,
+                        username: user.username,
+                        type: user.type,
+                    }
                     break;
                 case 2: //profecional
-
+    
                     const professional = await Professional.findOne({
                         where: { userId: user.id }
                     });
-
+    
                     if (professional) {
-
+    
                         const languages = await Language.findAll({ attributes: ['id', 'language'] });
                         const nationality = await Nationality.findAll({ attributes: ['id', 'nationality'] });
                         const itskills = await Itskills.findAll({ attributes: ['id', 'it_skill'] });
-
+    
                         const languagesMap = new Map(languages.map((lang) => [lang.id, lang.language]));
                         const nationalityMap = new Map(nationality.map((national) => [national.id, national.nationality]));
                         const itskillsMap = new Map(itskills.map((it) => [it.id, it.it_skill]));
-
+    
                         // Obten las habilidades del profesional a través de la tabla intermedia
                         const professionalItskills = await professional.getItskills();
                         // Obten los idiomas del profesional a través de la tabla intermedia
                         const professionalLanguages = await professional.getLanguages();
-
+    
                         const professionalSkills = professionalItskills.map((skill) => itskillsMap.get(skill.id));
                         const professionalLang = professionalLanguages.map((language) => languagesMap.get(language.id));
-
-                        userFor = {
+    
+                        userMapped = {
                             id: user.id,
+                            validate: user.validate,
                             email: user.email,
                             username: user.username,
                             type: user.type,
@@ -250,7 +257,7 @@ const getAllUsers = async (req, res) => {
                             languages: professionalLang,
                         }
                     } else {
-                        userFor = {
+                        userMapped = {
                             id: user.id,
                             email: user.email,
                             username: user.username,
@@ -273,8 +280,9 @@ const getAllUsers = async (req, res) => {
                     })
                     console.log(company);
                     if (company) {
-                        userFor = {
+                        userMapped = {
                             id: user.id,
+                            validate: user.validate,
                             email: user.email,
                             username: user.username,
                             type: user.type,
@@ -286,11 +294,12 @@ const getAllUsers = async (req, res) => {
                             legalRepresentative: company.legal_representative,
                             contactData: company.data,
                             bankAccount: company.Bank_account,
+                            ruc: company.ruc,
                             id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
                             languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
                         }
                     } else {
-                        userFor = {
+                        userMapped = {
                             id: user.id,
                             email: user.email,
                             username: user.username,
@@ -298,8 +307,14 @@ const getAllUsers = async (req, res) => {
                         }
                     };
                     break;
-
+    
                 default:
+                    userMapped = {
+                        id: user.id,
+                        email: user.email,
+                        username: user.username,
+                        type: user.type,
+                    }
                     break;
             }
             userMapped.push(userFor);
@@ -320,7 +335,12 @@ const getUserById = async (req, res) => {
         }
         switch (user.type) {
             case 1: //admin
-
+                userMapped = {
+                    id: user.id,
+                    email: user.email,
+                    username: user.username,
+                    type: user.type,
+                }
                 break;
             case 2: //profecional
 
@@ -348,6 +368,7 @@ const getUserById = async (req, res) => {
 
                     userMapped = {
                         id: user.id,
+                        validate: user.validate,
                         email: user.email,
                         username: user.username,
                         type: user.type,
@@ -388,6 +409,7 @@ const getUserById = async (req, res) => {
                 if (company) {
                     userMapped = {
                         id: user.id,
+                        validate: user.validate,
                         email: user.email,
                         username: user.username,
                         type: user.type,
@@ -399,6 +421,7 @@ const getUserById = async (req, res) => {
                         legalRepresentative: company.legal_representative,
                         contactData: company.data,
                         bankAccount: company.Bank_account,
+                        ruc: company.ruc,
                         id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
                         languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
                     }
@@ -413,6 +436,12 @@ const getUserById = async (req, res) => {
                 break;
 
             default:
+                userMapped = {
+                    id: user.id,
+                    email: user.email,
+                    username: user.username,
+                    type: user.type,
+                }
                 break;
         }
 
