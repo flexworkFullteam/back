@@ -68,10 +68,7 @@ const createProject = async (req, res) => {
 const getAllProjects = async (req, res) => {
     try {
         const projects = await Project.findAll({
-            where: {
-                state: true
-            },
-            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse'],
+            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state'],
         });
 
         if (projects.length === 0) {
@@ -113,10 +110,9 @@ const getAllCompanyProjects = async (req, res) => {
     try {
         const projects = await Project.findAll({
             where: {
-                id_company: req.params.id_company,
-                state: true
+                id_company: req.params.id_company
             },
-            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse'],
+            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state'],
         });
 
         if (projects.length === 0) {
@@ -247,7 +243,11 @@ const acceptedProyectProfessional = async (req, res) => {
         }
 
         // Agrega al profesional
-        await professional.removePostulatedProjects(project);
+        const check = await professional.removePostulatedProjects(project);
+        if (check !== null && check !== undefined) {
+            await professional.removeRefusedProjects(project);
+        }
+
         // Agrega al profesional a "Acepted_Professionals"
         await professional.addAcceptedProjects(project);
 
@@ -276,7 +276,9 @@ const refuceProyectProfessional = async (req, res) => {
         }
 
         // Agrega al profesional
-        await professional.removePostulatedProjects(project);
+        if (check !== null && check !== undefined) {
+            await professional.removeAcceptedProjects(project);
+        }
         // Agrega al profesional a "Refused_Professionals"
         await professional.addRefusedProjects(project);
 
@@ -297,16 +299,29 @@ const getProfessionalPostulant = async (req, res) => {
             return res.status(404).json({ message: 'Proyecto no encontrado.' });
         }
         const postulados = await project.getPostulatingProfessionals({
-            attributes: ['id', 'data'],
-            separate: true,
-            include: [],
+            attributes: ['id', 'data']
         });
+
         const postulate = postulados.map((item) => ({
             id: item.id,
             data: item.data,
-          }));
-        const accepted = await project.getAcceptedProfessionals();
-        const rejected = await project.getRefusedProfessionals();
+        }));
+
+        const aceptado = await project.getAcceptedProfessionals({
+            attributes: ['id', 'data']
+        });
+        const accepted = aceptado.map((item) => ({
+            id: item.id,
+            data: item.data,
+        }));
+
+        const rechazado = await project.getRefusedProfessionals({
+            attributes: ['id', 'data']
+        });
+        const rejected = rechazado.map((item) => ({
+            id: item.id,
+            data: item.data,
+        }));
 
         res.status(200).json({ postulate, accepted, rejected });
     } catch (error) {
@@ -323,9 +338,15 @@ const getProfessionalAccepted = async (req, res) => {
             return res.status(404).json({ message: 'Proyecto no encontrado.' });
         }
 
-        const aceptados = await project.getAcceptedProfessionals();
+        const aceptado = await project.getAcceptedProfessionals({
+            attributes: ['id', 'data']
+        });
+        const accepted = aceptado.map((item) => ({
+            id: item.id,
+            data: item.data,
+        }));
 
-        res.status(200).json(aceptados);
+        res.status(200).json(accepted);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -340,9 +361,15 @@ const getProfessionalRefused = async (req, res) => {
             return res.status(404).json({ message: 'Proyecto no encontrado.' });
         }
 
-        const rechazados = await project.getRefusedProfessionals();
+        const rechazado = await project.getRefusedProfessionals({
+            attributes: ['id', 'data']
+        });
+        const rejected = rechazado.map((item) => ({
+            id: item.id,
+            data: item.data,
+        }));
 
-        res.status(200).json(rechazados);
+        res.status(200).json(rejected);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

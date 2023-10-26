@@ -178,6 +178,12 @@ const login = async (req, res) => {
                 break;
 
             default:
+                userMapped = {
+                    id: user.id,
+                    email: user.email,
+                    username: user.username,
+                    type: user.type,
+                }
                 break;
         }
 
