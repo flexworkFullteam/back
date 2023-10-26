@@ -1,4 +1,5 @@
-const { Project, Company, ProjectType, ProjectFields, ExperienceLevel, Language, Itskills, Professional } = require('../DB_connection');
+const { Project, Company, ProjectType, ProjectFields, ExperienceLevel, Language, Itskills, Professional, Nation, Province } = require('../DB_connection');
+const { match } = require('../utils/locationMatcher');
 
 // Crear un proyecto
 const createProject = async (req, res) => {
@@ -10,7 +11,7 @@ const createProject = async (req, res) => {
             description, //  "This is a new project.",
             field, // 2
             type, // 1
-            location, // 1
+            location, // "pais,provincia,direccion?"
             salary, // 50000
             exp_req, // 1
             lapse, // 30
@@ -42,6 +43,11 @@ const createProject = async (req, res) => {
         const validSiklls = resolvedSiklls.filter((sikll) => sikll !== null);
         const validLanguages = resolvedLanguages.filter((language) => language !== null);
 
+        const locationsID = await match(location);
+
+        const nation = locationsID.nation;
+        const province = locationsID.province
+
         const project = await Project.create({
             title: title,
             id_company: companyId,
@@ -52,8 +58,12 @@ const createProject = async (req, res) => {
             salary: salary,
             exp_req: exp_req,
             lapse: lapse,
+            nation_id: nation,
+            province_id: province
         });
+
         console.log(project.id_company);
+
         await project.setItskills(validSiklls);
         await project.setLanguages(validLanguages);
 
@@ -68,7 +78,7 @@ const createProject = async (req, res) => {
 const getAllProjects = async (req, res) => {
     try {
         const projects = await Project.findAll({
-            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state'],
+            attributes: ['id', 'title', 'id_company', 'description', 'nation_id', 'province_id', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state'],
         });
 
         if (projects.length === 0) {
@@ -80,12 +90,16 @@ const getAllProjects = async (req, res) => {
         const projectType = await ProjectType.findAll({ attributes: ['id', 'project_type'] });
         const projectFields = await ProjectFields.findAll({ attributes: ['id', 'project_fields'] });
         const experienceLevel = await ExperienceLevel.findAll({ attributes: ['id', 'experienceLevel'] });
+        const nations = await Nation.findAll({ attributes: ['id', 'nation'] });
+        const provinces = await Province.findAll({ attributes: ['id', 'province'] });
 
         // Crea mapas para mapear IDs a strings correspondientes
         const companysMap = new Map(companys.map((company) => [company.id, company.business_name]));
         const projectTypeMap = new Map(projectType.map((type) => [type.id, type.project_type]));
         const projectFieldsMap = new Map(projectFields.map((field) => [field.id, field.project_fields]));
         const experienceLevelMap = new Map(experienceLevel.map((level) => [level.id, level.experienceLevel]));
+        const nationsMap = new Map(nations.map((nation) => [nation.id, nation.nation]));
+        const provincesMap = new Map(provinces.map((province) => [province.id, province.province]));
 
         // Mapea los IDs de proyectos a sus correspondientes strings
         const projectsWithMappedData = projects.map((project) => ({
@@ -97,22 +111,23 @@ const getAllProjects = async (req, res) => {
             type: projectTypeMap.get(project.type),
             salary: project.salary,
             exp_req: experienceLevelMap.get(project.exp_req),
+            nation_id: nationsMap.get(project.nation_id),
+            province_id: provincesMap.get(project.province_id),
             lapse: project.lapse,
+            state: project.state
         }));
-        console.log(projectsWithMappedData);
         res.status(200).json(projectsWithMappedData);
     } catch (error) {
         res.status(500).json({ message: "Error al obtener los proyectos", error: error.message });
     }
 };
-
 const getAllCompanyProjects = async (req, res) => {
     try {
         const projects = await Project.findAll({
             where: {
                 id_company: req.params.id_company
             },
-            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state'],
+            attributes: ['id', 'title', 'id_company', 'description', 'nation_id', 'province_id', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state'],
         });
 
         if (projects.length === 0) {
@@ -124,12 +139,16 @@ const getAllCompanyProjects = async (req, res) => {
         const projectType = await ProjectType.findAll({ attributes: ['id', 'project_type'] });
         const projectFields = await ProjectFields.findAll({ attributes: ['id', 'project_fields'] });
         const experienceLevel = await ExperienceLevel.findAll({ attributes: ['id', 'experienceLevel'] });
+        const nations = await Nation.findAll({ attributes: ['id', 'nation'] });
+        const provinces = await Province.findAll({ attributes: ['id', 'province'] });
 
         // Crea mapas para mapear IDs a strings correspondientes
         const companysMap = new Map(companys.map((company) => [company.id, company.business_name]));
         const projectTypeMap = new Map(projectType.map((type) => [type.id, type.project_type]));
         const projectFieldsMap = new Map(projectFields.map((field) => [field.id, field.project_fields]));
         const experienceLevelMap = new Map(experienceLevel.map((level) => [level.id, level.experienceLevel]));
+        const nationsMap = new Map(nations.map((nation) => [nation.id, nation.nation]));
+        const provincesMap = new Map(provinces.map((province) => [province.id, province.province]));
 
         // Mapea los IDs de proyectos a sus correspondientes strings
         const projectsWithMappedData = projects.map((project) => ({
@@ -140,6 +159,8 @@ const getAllCompanyProjects = async (req, res) => {
             field: projectFieldsMap.get(project.field),
             type: projectTypeMap.get(project.type),
             salary: project.salary,
+            nation_id: nationsMap.get(project.nation_id),
+            province_id: provincesMap.get(project.province_id),
             exp_req: experienceLevelMap.get(project.exp_req),
             lapse: project.lapse,
             state: project.state
@@ -157,21 +178,25 @@ const getProjectById = async (req, res) => {
             where: {
                 state: true
             },
-            attributes: ['id', 'title', 'id_company', 'description', 'field', 'type', 'salary', 'exp_req', 'lapse'],
+            attributes: ['id', 'title', 'id_company', 'description', 'nation_id', 'province_id', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state'],
         });
 
         if (project) {
-            // Obtén información adicional de las tablas relacionadas
+            // Obtén la información adicional de las tablas relacionadas
             const companys = await Company.findAll({ attributes: ['id', 'business_name'] });
             const projectType = await ProjectType.findAll({ attributes: ['id', 'project_type'] });
             const projectFields = await ProjectFields.findAll({ attributes: ['id', 'project_fields'] });
             const experienceLevel = await ExperienceLevel.findAll({ attributes: ['id', 'experienceLevel'] });
+            const nations = await Nation.findAll({ attributes: ['id', 'nation'] });
+            const provinces = await Province.findAll({ attributes: ['id', 'province'] });
 
             // Crea mapas para mapear IDs a strings correspondientes
             const companysMap = new Map(companys.map((company) => [company.id, company.business_name]));
             const projectTypeMap = new Map(projectType.map((type) => [type.id, type.project_type]));
             const projectFieldsMap = new Map(projectFields.map((field) => [field.id, field.project_fields]));
             const experienceLevelMap = new Map(experienceLevel.map((level) => [level.id, level.experienceLevel]));
+            const nationsMap = new Map(nations.map((nation) => [nation.id, nation.nation]));
+            const provincesMap = new Map(provinces.map((province) => [province.id, province.province]));
 
             // Mapea los IDs del proyecto a sus correspondientes strings
             const projectWithMappedData = {
@@ -181,6 +206,8 @@ const getProjectById = async (req, res) => {
                 description: project.description,
                 field: projectFieldsMap.get(project.field),
                 type: projectTypeMap.get(project.type),
+                nation_id: nationsMap.get(project.nation_id),
+                province_id: provincesMap.get(project.province_id),
                 salary: project.salary,
                 exp_req: experienceLevelMap.get(project.exp_req),
                 lapse: project.lapse,
@@ -194,7 +221,6 @@ const getProjectById = async (req, res) => {
         res.status(500).json({ message: "Error al obtener el proyecto", error });
     }
 };
-
 // Actualizar un proyecto
 const updateProject = async (req, res) => {
     try {
@@ -209,7 +235,6 @@ const updateProject = async (req, res) => {
         res.status(500).json({ message: "Error al actualizar el proyecto", error });
     }
 };
-
 // Borrado lógico de un proyecto
 const deleteProject = async (req, res) => {
     try {
