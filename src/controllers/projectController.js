@@ -243,7 +243,11 @@ const acceptedProyectProfessional = async (req, res) => {
         }
 
         // Agrega al profesional
-        await professional.removePostulatedProjects(project);
+        const check = await professional.removePostulatedProjects(project);
+        if (check !== null && check !== undefined) {
+            await professional.removeRefusedProjects(project);
+        }
+
         // Agrega al profesional a "Acepted_Professionals"
         await professional.addAcceptedProjects(project);
 
@@ -272,7 +276,9 @@ const refuceProyectProfessional = async (req, res) => {
         }
 
         // Agrega al profesional
-        await professional.removePostulatedProjects(project);
+        if (check !== null && check !== undefined) {
+            await professional.removeAcceptedProjects(project);
+        }
         // Agrega al profesional a "Refused_Professionals"
         await professional.addRefusedProjects(project);
 
