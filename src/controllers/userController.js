@@ -35,8 +35,6 @@ const createUser = async (req, res) => {
             //flexworks/verifi/128numeros
         });*/
 
-
-
         res.status(201).json(user);
     } catch (error) {
         console.log(error)

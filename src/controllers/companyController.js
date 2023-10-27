@@ -115,7 +115,7 @@ const postCompany = async (req, res) => {
                         userId: userId,
                         activity_type: activityType,
                         start_date: new Date(startDate),
-                        fiscal_address: fiscalAddress,
+                        fiscal_address: fiscalAddress,  
                         legal_representative: legalRepresentative,
                         data: data,
                         Bank_account: bankAccount,
