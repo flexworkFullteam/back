@@ -80,6 +80,11 @@ module.exports = {
         type: DataTypes.INTEGER, //tiempo revisar fecha inicio y fin tipo date agegar fecha inicio
         allowNull: false
       },
+      finalizado: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
       state: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
