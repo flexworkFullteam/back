@@ -1,29 +1,44 @@
 const { Nation, Province, City } = require('../DB_connection');
 
 async function match(string) {
+    let nation, province, city;
     const parts = string.split(',');
-    const nation = await Nation.findOrCreate(parts[3],
-        {
-            where: { nation: parts[3] },
-            attributes: ['id']
+    const length = parts.length-1;
+    console.log(parts);
+
+    if ((typeof parts[length] !== 'undefined') ) {
+        const [nationData] = await Nation.findOrCreate({
+            where: { nation: parts[length] },
+            defaults: { /* Valores por defecto, si es necesario */ }
         });
-    const province = await Province.findOrCreate(parts[1],
-        {
+    
+        nation = nationData.dataValues.id
+            
+    }
+    if ((typeof parts[length - 1] !== 'undefined') ) {
+        const [provinceData] = await Province.findOrCreate({
             where: {
                 id_nation: nation,
-                province: parts[1]
+                province: parts[length-1]
             },
-            attributes: ['id']
-        });
-    const city = await City.findOrCreate(parts[0],
-        {
+            defaults: { /* Valores por defecto, si es necesario */ }
+        });    
+        province = provinceData.dataValues.id              
+    }
+
+    if ((typeof parts[length - 2] !== 'undefined') ) {
+        const [cityData] = await City.findOrCreate({
             where: {
                 id_province: province,
-                city: parts[0]
+                city: parts[length-2]
             },
-            attributes: ['id']
-        });
-        return {nation,province,city};
+            defaults: { /* Valores por defecto, si es necesario */ }
+        });    
+        city = cityData.dataValues.id        
+    }
+
+    console.log(nation, province, city);
+    return { nation, province, city };
 }
 
-module.exports = {match};
+module.exports = { match };

@@ -11,6 +11,8 @@ const projectRoutes = require('./projectRoutes');
 const companyRouter = require('./companyRouter');
 const experienceLevel = require('./experienceLevelRouter');
 const reviewRouter = require("./reviewRouter");
+const paymentRouter = require("./paymentRouter");
+const adminRouter = require("./adminRouter");
 
 
 router.use(userRoutes);
@@ -24,6 +26,8 @@ router.use(projectRoutes);
 router.use(companyRouter);
 router.use(experienceLevel);
 router.use(reviewRouter);
+router.use(paymentRouter);
+router.use(adminRouter);
 
 
 module.exports = router;

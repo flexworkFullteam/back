@@ -104,12 +104,6 @@ const getCompanyById = async (req, res) => {
 
 const postCompany = async (req, res) => {
     const fieldRegex = /^[a-zA-ZÀ-ÖØ-öø-ÿ\s.,'()-]{5,}$/u; //   Esto asegurará que la cadena cumpla con la longitud mínima de 5 caracteres y no contenga signos de puntuación.
-    const dateRegex = /^\d{2}\s*-\s*\d{2}\s*-\s*\d{4}$/;  // MM-DD-YYYY
-    const rucRegex = /^[0-9]{11}$/;
-    const bankRegex = /^[0-9]+$/;
-    //const arrayEnterosRegex = /^\[\s*([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}(?:,\s*)?)+\s*\]$/;
-    const linkRegex = /^https?:\/\/(?:www\.)?[\w\.-]+\.\w{2,}(?:\/\S*)?$/;
-    //const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
     const { businessName, activityType, startDate, fiscalAddress, ruc, legalRepresentative, data, bankAccount, nationalityId, userId, languages, imagen } = req.body;
 
     if (fieldRegex.test(businessName))
@@ -121,13 +115,13 @@ const postCompany = async (req, res) => {
                         userId: userId,
                         activity_type: activityType,
                         start_date: new Date(startDate),
-                        fiscal_address: fiscalAddress,
+                        fiscal_address: fiscalAddress,  
                         legal_representative: legalRepresentative,
                         data: data,
                         Bank_account: bankAccount,
                         id_nationality: nationalityId,
                         image: imagen,
-                        ruc
+                        ruc: ruc
                     }
                 })
             if (created) {

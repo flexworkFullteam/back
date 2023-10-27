@@ -17,6 +17,7 @@ const server = express();
 // Logging middleware for incoming requests
 server.use(morgan('dev'));
 
+
 // Security middleware to set various HTTP headers
 server.use(helmet());
 
@@ -36,6 +37,7 @@ server.use(express.json({ limit: '50mb' }));
 server.use(cookieParser());
 
 // Middleware to handle CORS pre-flight requests
+
 server.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', FRONT_URL);
     res.header('Access-Control-Allow-Credentials', 'true');
@@ -46,6 +48,7 @@ server.use((req, res, next) => {
 
 // Middleware to handle application routes
 server.use('/', routes);
+
 
 // Centralized error handling middleware
 server.use((err, req, res, next) => {
