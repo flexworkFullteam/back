@@ -240,7 +240,11 @@ const deleteProject = async (req, res) => {
     try {
         const project = await Project.findByPk(req.params.id);
         if (project) {
-            project.state = false;
+            if (project.state === false) {
+                project.state = true;
+            }else{
+                project.state = false;
+            }
             await project.save();
             res.status(204).send();
         } else {
