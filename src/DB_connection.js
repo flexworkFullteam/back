@@ -72,7 +72,7 @@ console.log(sequelize.models);
 
 //Relaciones
 
-const { Project, Professional, User, Review, Itskills, Language, Company, Nationality, Payment } = sequelize.models;
+const { Project, Professional, User, Review, Itskills, Language, Company, Nationality, Payment, Admin } = sequelize.models;
 
 //Professional
 
@@ -118,21 +118,22 @@ Project.belongsToMany(Professional, { through: "Refused_Professionals", as: 'Ref
 
 //Review:  1 -> N
 
-User.hasMany(Review, { foreignKey: 'id_user', as: 'user'});
-Review.belongsTo(User, { foreignKey: 'id_user', as:'user'});
+User.hasMany(Review, { foreignKey: 'id_user', as: 'user' });
+Review.belongsTo(User, { foreignKey: 'id_user', as: 'user' });
 
-User.hasMany(Review, { foreignKey: 'review_by', as: 'reviewBy'});
-Review.belongsTo(User, { foreignKey: 'review_by', as:'reviewBy'});
+User.hasMany(Review, { foreignKey: 'review_by', as: 'reviewBy' });
+Review.belongsTo(User, { foreignKey: 'review_by', as: 'reviewBy' });
 
 //Payments: 1 -> N
-User.hasMany(Payment, {foreignKey: 'username', as: 'from_username' });
-Payment.belongsTo(User, { foreignKey: 'username', as:'from_username'});
+User.hasMany(Payment, { foreignKey: 'username', as: 'from_username' });
+Payment.belongsTo(User, { foreignKey: 'username', as: 'from_username' });
 
-User.hasMany(Payment, {foreignKey: 'username', as: 'to_username' });
-Payment.belongsTo(User, { foreignKey: 'username', as:'to_username'});
+User.hasMany(Payment, { foreignKey: 'username', as: 'to_username' });
+Payment.belongsTo(User, { foreignKey: 'username', as: 'to_username' });
 
-//Project.hasMany(Payment,{foreignKey:'', as: ''});
-//Payment.hasMany(Project,{foreignKey:'', as: ''});
+User.hasMany(Admin, { foreignKey: 'username', as: 'usuario' });
+Admin.belongsTo(User, { foreignKey: 'username', as: 'usuario' });
+
 
 module.exports = {
   ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./DB_connection.js');

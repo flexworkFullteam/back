@@ -14,7 +14,6 @@ server.use(cors());
 server.use(express.json());
 server.use(cookieParser());
 
-
 server.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 server.use(bodyParser.json({ limit: '50mb' }));
 server.use((req, res, next) => {
@@ -30,11 +29,7 @@ server.use('/', routes);
 
 server.listen(3001, async () => {
     console.log('Server listening at port 3001');
-<<<<<<< HEAD
     await conn.sync({ alter: true });
-=======
-    await conn.sync({ force: false });
->>>>>>> 1cffa7c143a076d5bbf14b6c73af78e8e9c324ad
     console.log('Database connected');
 });
 
