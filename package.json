@@ -20,6 +20,7 @@
     "express-oauth2-jwt-bearer": "^1.6.0",
     "jsonwebtoken": "^9.0.2",
     "mercadopago": "^1.5.17",
+    "jwks-rsa": "^3.1.0",
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.6",
     "nodemon": "^3.0.1",
