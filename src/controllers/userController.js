@@ -130,6 +130,7 @@ const login = async (req, res) => {
                         cci: professional.cci,
                         itskills: professionalSkills,
                         languages: professionalLang,
+                        image: professional.image,
                     }
                 } else {
                     userMapped = {
@@ -167,6 +168,7 @@ const login = async (req, res) => {
                         startDate: company.start_date,
                         fiscalAddress: company.fiscal_address,
                         legalRepresentative: company.legal_representative,
+                        image: company.image,
                         contactData: company.data,
                         bankAccount: company.Bank_account,
                         ruc: company.ruc,
@@ -182,7 +184,6 @@ const login = async (req, res) => {
                     }
                 };
                 break;
-
             default:
                 userMapped = {
                     id: user.id,
@@ -255,6 +256,7 @@ const getAllUsers = async (req, res) => {
                             cci: professional.cci,
                             itskills: professionalSkills,
                             languages: professionalLang,
+                            image: professional.image,
                         }
                     } else {
                         userMapped = {
@@ -292,6 +294,7 @@ const getAllUsers = async (req, res) => {
                             startDate: company.start_date,
                             fiscalAddress: company.fiscal_address,
                             legalRepresentative: company.legal_representative,
+                            image: company.image,
                             contactData: company.data,
                             bankAccount: company.Bank_account,
                             ruc: company.ruc,
@@ -307,7 +310,6 @@ const getAllUsers = async (req, res) => {
                         }
                     };
                     break;
-    
                 default:
                     userMapped = {
                         id: user.id,
@@ -382,6 +384,7 @@ const getUserById = async (req, res) => {
                         cci: professional.cci,
                         itskills: professionalSkills,
                         languages: professionalLang,
+                        image: professional.image,
                     }
                 } else {
                     userMapped = {
@@ -419,6 +422,7 @@ const getUserById = async (req, res) => {
                         startDate: company.start_date,
                         fiscalAddress: company.fiscal_address,
                         legalRepresentative: company.legal_representative,
+                        image: company.image,
                         contactData: company.data,
                         bankAccount: company.Bank_account,
                         ruc: company.ruc,
@@ -434,7 +438,6 @@ const getUserById = async (req, res) => {
                     }
                 };
                 break;
-
             default:
                 userMapped = {
                     id: user.id,
