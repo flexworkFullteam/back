@@ -188,17 +188,6 @@ const updateProfessional = async (req, res) => {
       languages
     } = req.body;
 
-    const fieldRegex = /^[^\n\r\t\v\f\p{P}]{5,}$/u; //   Esto asegurará que la cadena cumpla con la longitud mínima de 5 caracteres y no contenga signos de puntuación.
-    const positiveNumberRegex = /^[1-9]\d*$/;
-    const arrayUUID = /^\[\s*([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}(?:,\s*)?)+\s*\]$/;
-    const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-    const linkRegex = /^https?:\/\/(?:www\.)?[\w\.-]+\.\w{2,}(?:\/\S*)?$/;
-
-    if (!typeof data === "object" || data === null || !typeof experience === "object" || experience === null ||
-      !typeof education === "object" || education === null || !fieldRegex.test(extra_information)
-      || !linkRegex.test(portfolio) || !positiveNumberRegex.test(cci) || !linkRegex.test(image))
-      return res.status(400).send("Error en la validacion de datos, revisa los campos y vuelve a intentarlo");
-
     const skills = Array.isArray(itskill) ? itskill : [itskill];
     const languageIds = Array.isArray(languages) ? languages : [languages];
 

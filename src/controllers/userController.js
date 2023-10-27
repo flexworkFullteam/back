@@ -46,16 +46,16 @@ const verifyemail = async (req, res) => {
     try {
         const { emailToken } = req.body;
         if (!emailToken) {
-            return res.status(404).json( {message: "Error al validar el email"});
+            return res.status(404).json({ message: "Error al validar el email" });
         }
         const user = await User.findOne({ where: { emailToken } });
         if (user) {
-            user.emailToken =null;
+            user.emailToken = null;
             user.validate = true;
             await user.save()
-            res.status(200).json({message: "Email verificado"});
+            res.status(200).json({ message: "Email verificado" });
         } else {
-            res.status(404).json({message: "Invalid Token"});
+            res.status(404).json({ message: "Invalid Token" });
         }
 
     } catch (error) {
@@ -81,7 +81,12 @@ const login = async (req, res) => {
 
         switch (user.type) {
             case 1: //admin
-
+                userMapped = {
+                    id: user.id,
+                    email: user.email,
+                    username: user.username,
+                    type: user.type,
+                }
                 break;
             case 2: //profecional
 
@@ -162,6 +167,7 @@ const login = async (req, res) => {
                         legalRepresentative: company.legal_representative,
                         contactData: company.data,
                         bankAccount: company.Bank_account,
+                        ruc: company.ruc,
                         id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
                         languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
                     }
@@ -176,6 +182,12 @@ const login = async (req, res) => {
                 break;
 
             default:
+                userMapped = {
+                    id: user.id,
+                    email: user.email,
+                    username: user.username,
+                    type: user.type,
+                }
                 break;
         }
 
@@ -194,7 +206,12 @@ const getAllUsers = async (req, res) => {
         for (const user of users) {
             switch (user.type) {
                 case 1: //admin
-    
+                    userMapped = {
+                        id: user.id,
+                        email: user.email,
+                        username: user.username,
+                        type: user.type,
+                    }
                     break;
                 case 2: //profecional
     
@@ -219,9 +236,10 @@ const getAllUsers = async (req, res) => {
     
                         const professionalSkills = professionalItskills.map((skill) => itskillsMap.get(skill.id));
                         const professionalLang = professionalLanguages.map((language) => languagesMap.get(language.id));
-                        
-                        userFor = {
+    
+                        userMapped = {
                             id: user.id,
+                            validate: user.validate,
                             email: user.email,
                             username: user.username,
                             type: user.type,
@@ -237,7 +255,7 @@ const getAllUsers = async (req, res) => {
                             languages: professionalLang,
                         }
                     } else {
-                        userFor = {
+                        userMapped = {
                             id: user.id,
                             email: user.email,
                             username: user.username,
@@ -260,8 +278,9 @@ const getAllUsers = async (req, res) => {
                     })
                     console.log(company);
                     if (company) {
-                        userFor = {
+                        userMapped = {
                             id: user.id,
+                            validate: user.validate,
                             email: user.email,
                             username: user.username,
                             type: user.type,
@@ -273,11 +292,12 @@ const getAllUsers = async (req, res) => {
                             legalRepresentative: company.legal_representative,
                             contactData: company.data,
                             bankAccount: company.Bank_account,
+                            ruc: company.ruc,
                             id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
                             languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
                         }
                     } else {
-                        userFor = {
+                        userMapped = {
                             id: user.id,
                             email: user.email,
                             username: user.username,
@@ -287,6 +307,12 @@ const getAllUsers = async (req, res) => {
                     break;
     
                 default:
+                    userMapped = {
+                        id: user.id,
+                        email: user.email,
+                        username: user.username,
+                        type: user.type,
+                    }
                     break;
             }
             userMapped.push(userFor);
@@ -307,7 +333,12 @@ const getUserById = async (req, res) => {
         }
         switch (user.type) {
             case 1: //admin
-
+                userMapped = {
+                    id: user.id,
+                    email: user.email,
+                    username: user.username,
+                    type: user.type,
+                }
                 break;
             case 2: //profecional
 
@@ -335,6 +366,7 @@ const getUserById = async (req, res) => {
 
                     userMapped = {
                         id: user.id,
+                        validate: user.validate,
                         email: user.email,
                         username: user.username,
                         type: user.type,
@@ -375,6 +407,7 @@ const getUserById = async (req, res) => {
                 if (company) {
                     userMapped = {
                         id: user.id,
+                        validate: user.validate,
                         email: user.email,
                         username: user.username,
                         type: user.type,
@@ -386,6 +419,7 @@ const getUserById = async (req, res) => {
                         legalRepresentative: company.legal_representative,
                         contactData: company.data,
                         bankAccount: company.Bank_account,
+                        ruc: company.ruc,
                         id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
                         languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
                     }
@@ -400,14 +434,20 @@ const getUserById = async (req, res) => {
                 break;
 
             default:
+                userMapped = {
+                    id: user.id,
+                    email: user.email,
+                    username: user.username,
+                    type: user.type,
+                }
                 break;
         }
 
         res.status(200).send({ userMapped });
     } catch (error) {
-      res.status(500).json({ message: "Error al obtener el usuario", error });
+        res.status(500).json({ message: "Error al obtener el usuario", error });
     }
-  };
+};
 
 const updateUser = async (req, res) => {
     try {
