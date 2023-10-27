@@ -11,7 +11,8 @@ const {
     refuceProyectProfessional,
     getProfessionalPostulant,
     getProfessionalAccepted,
-    getProfessionalRefused
+    getProfessionalRefused,
+    finalizarProject
 } = require('../controllers/projectController');
 
 router.post('/project', createProject);
@@ -24,6 +25,7 @@ router.get("/project/:projectId/accepted", getProfessionalAccepted);
 router.get("/project/:projectId/refuced", getProfessionalRefused);
 
 router.put('/project/:id', updateProject);
+router.put('/project/finish/:id', finalizarProject);
 router.put('/project/:projectId/accepted/:professionalId', acceptedProyectProfessional);
 router.put('/project/:projectId/refuced/:professionalId', refuceProyectProfessional);
 
