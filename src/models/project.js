@@ -57,7 +57,7 @@ module.exports = {
       },
       province_id: {
         type: DataTypes.UUID,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'Provinces', // Nombre del modelo de Empresa
           key: 'id' // Clave primaria en el modelo de Empresa
