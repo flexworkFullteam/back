@@ -133,7 +133,19 @@ const postCompany = async (req, res) => {
                     }
                 });
                 await newCompany.setLanguages(languageToSet);
-                return res.status(200).send("Se creo, exitosamente la empresa");
+                const company = await Company.findOne({
+                    where: { userId: user.id },
+                    include: [
+                        { model: Nationality, as: 'nationality' }, // Relación con el modelo Nationality (id_nationality)
+                        {
+                            model: Language,
+                            as: "Languages",
+                            attributes: ['language'], // Puedes especificar las columnas que deseas seleccionar
+                            through: { attributes: [] } // Excluye las columnas de la tabla intermedia si no las necesitas
+                        }
+                    ]
+                })
+                return res.status(200).json({company});
             }
 
             else
