@@ -12,6 +12,8 @@ const { JWT_SECRET } = process.env;
 dotenv.config({ path: '../.env' });
 const saltRounds = 10;
 
+const urlFront = "http://localhost:5173";
+
 const createUser = async (req, res) => {
     const { username, email, password, type } = req.body;
     try {
@@ -33,7 +35,7 @@ const createUser = async (req, res) => {
             html: `
                 <p>¡Bienvenido a nuestra plataforma!</p>
                 <p>Para verificar tu dirección de correo electrónico, por favor haz clic en el siguiente enlace:</p>
-                <a href="http://localhost:5173/verify/${user.id}/${user.emailToken}">
+                <a href="${urlFront}/verify/${user.id}/${user.emailToken}">
                     Verificar mi correo electrónico
                 </a>
                 <p>Gracias por unirte a nosotros.</p>

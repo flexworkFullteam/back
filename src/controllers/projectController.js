@@ -113,6 +113,7 @@ const getAllProjects = async (req, res) => {
             nation_id: nationsMap.get(project.nation_id),
             province_id: provincesMap.get(project.province_id),
             lapse: project.lapse,
+            entregado: project.entregado,
             finalizado: project.finalizado,
             state: project.state
         }));
@@ -163,6 +164,7 @@ const getAllCompanyProjects = async (req, res) => {
             province_id: provincesMap.get(project.province_id),
             exp_req: experienceLevelMap.get(project.exp_req),
             lapse: project.lapse,
+            entregado: project.entregado,
             finalizado: project.finalizado,
             state: project.state
         }));
@@ -212,7 +214,8 @@ const getProjectById = async (req, res) => {
                 salary: project.salary,
                 exp_req: experienceLevelMap.get(project.exp_req),
                 lapse: project.lapse,
-                finalizado: project.finalizado
+                finalizado: project.finalizado,
+                entregado: project.entregado,
             };
 
             res.status(200).json(projectWithMappedData);
@@ -271,9 +274,10 @@ const finalizarProject = async (req, res) => {
             res.status(404).json({ message: "Proyecto no encontrado" });
         }
     } catch (error) {
-        res.status(500).json({ message: "Error al borrar el proyecto", error });
+        res.status(500).json({ message: "Error al finalizar el proyecto", error });
     }
 };
+
 const acceptedProyectProfessional = async (req, res) => {
     try {
         const { projectId, professionalId } = req.params
