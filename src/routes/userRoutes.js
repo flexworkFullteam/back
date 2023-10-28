@@ -13,7 +13,7 @@ router.delete('/user/:id', userController.deleteUser);
 router.post('/user/login', userController.login);
 
 router.post('/user/auth0/loginOrSignup', userAuth0Middleware, userAuth0Controller.loginOrSignup);
-router.put('/user/auth0/register', updateAuth0UserTypeController.updateAuth0UserTypeController )
+router.put('/user/auth0/register', updateAuth0UserTypeController )
 
 router.post('/user/verifyemail', userController.verifyemail);
 
