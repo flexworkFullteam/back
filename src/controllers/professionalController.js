@@ -1,4 +1,4 @@
-const { Professional, Language, Nationality, Itskills, Project } = require('../DB_connection');
+const { Professional, Language, Nationality, Itskills, Project, Company } = require('../DB_connection');
 
 
 const getProfessionals = async (req, res) => {
@@ -322,36 +322,41 @@ const getProjectsForProfessional = async (req, res) => {
   try {
     const { professionalId } = req.params; // Suponemos que el ID del profesional se pasa como parámetro
     const professional = await Professional.findByPk(professionalId); // Reemplaza "Professional" con el nombre de tu modelo de profesional
-    console.log(professionalId);
+    const companys = await Company.findAll({ attributes: ['id', 'business_name'] });
+    const companysMap = new Map(companys.map((company) => [company.id, company.business_name]));
+
     if (!professional) {
       return res.status(404).json({ message: 'Profesional no encontrado.' });
     }
 
     const postulados = await professional.getPostulatedProjects({
-      attributes: ['id', 'title', 'description'] // Especifica las propiedades que deseas incluir en la respuesta
+      attributes: ['id', 'title', 'description', 'id_company'] // Especifica las propiedades que deseas incluir en la respuesta
     });
     const postulate = postulados.map((item) => ({
       id: item.id,
       title: item.title,
-      description: item.description
+      description: item.description,
+      company: companysMap.get(item.id_company)
     }));
 
     const aceptados = await professional.getAcceptedProjects({
-      attributes: ['id', 'title', 'description']
+      attributes: ['id', 'title', 'description', 'id_company']
     });
     const accepted = aceptados.map((item) => ({
       id: item.id,
       title: item.title,
-      description: item.description
+      description: item.description,
+      company: companysMap.get(item.id_company)
     }));
 
     const rechazados = await professional.getRefusedProjects({
-      attributes: ['id', 'title', 'description']
+      attributes: ['id', 'title', 'description', 'id_company']
     });
     const rejected = rechazados.map((item) => ({
       id: item.id,
       title: item.title,
-      description: item.description
+      description: item.description,
+      company: companysMap.get(item.id_company)
     }));
 
     res.status(200).json({ postulate, accepted, rejected });
