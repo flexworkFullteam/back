@@ -15,12 +15,12 @@ const {
 
 router.get('/professional', getProfessionals);
 router.get('/professional/:id', getProfessional);
+router.get('/professional/:professionalId/projects', getProjectsForProfessional);
 
 router.post('/professional', createProfessional);
 router.post('/professional/:id/:type/:itemId', addSkillOrLanguageToProfessional);
 
 router.put('/professional/:id', updateProfessional);
-router.put('/professional/:professionalId/projects', getProjectsForProfessional);
 router.put('/professional/:professionalId/:projectId', addProyectProfessional);
 
 router.delete('/professional/:id', deleteProfessional);

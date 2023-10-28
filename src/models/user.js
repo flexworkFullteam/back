@@ -44,7 +44,7 @@ module.exports = {
                 allowNull: false,
                 defaultValue: true,
             },
-            validate: {
+            valid: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: false,
