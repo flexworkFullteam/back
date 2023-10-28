@@ -32,4 +32,3 @@ server.listen(3001, async () => {
     await conn.sync({ force: true });
     console.log('Database connected');
 });
-

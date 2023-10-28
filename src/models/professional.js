@@ -102,7 +102,7 @@ module.exports = {
         allowNull: false,
       },
       cci: {
-        type: DataTypes.BIGINT ,
+        type: DataTypes.BIGINT,
         allowNull: false,
       },
       image: {
