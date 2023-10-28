@@ -8,7 +8,7 @@ const getProfessionals = async (req, res) => {
         where: {
           state: true
         },
-        attributes: ['id', 'id_nationality', 'data', 'experience', 'education', 'extra_information', 'portfolio', 'cci'],
+        attributes: ['id', 'id_nationality', 'data', 'experience', 'education', 'extra_information', 'portfolio', 'cci','valid'],
       }
     );
 
@@ -36,6 +36,7 @@ const getProfessionals = async (req, res) => {
         image: professio.image,
         itskills: skills.map((skill) => skill.it_skill),
         Languages: languages.map((language) => language.language),
+        valid: professio.valid
       };
     });
 
@@ -86,6 +87,7 @@ const getProfessional = async (req, res) => {
         image: professional.image,
         itskills: professionalSkills,
         languages: professionalLang,
+        valid: professional.valid
       };
 
       res.json(professionalsWithMappedData);
