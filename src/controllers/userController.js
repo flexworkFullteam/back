@@ -24,16 +24,14 @@ const createUser = async (req, res) => {
             type,
             emailToken: crypto.randomBytes(64).toString("hex")
         });
-        /*const fromEmail = `"Fred Foo 👻" <${process.env.MAIL_USERNAME}>`;
+        const fromEmail = `"" <${process.env.MAIL_USERNAME}>`;
 
         await transporter.sendMail({
             from: fromEmail, // sender address
             to: email, // list of receivers
-            subject: "Hello ✔", // Subject line
-            html: "<b>Hello world?</b>", // html body
-
-            //flexworks/verifi/128numeros
-        });*/
+            subject: "", // Subject line
+            html: `<b>Por favor accede al sigiente email para verificar tu email:  http://localhost:5173/verify/${user.id}/${user.emailToken} </b>`,// html body            
+        });
 
         res.status(201).json(user);
     } catch (error) {
@@ -44,14 +42,12 @@ const createUser = async (req, res) => {
 
 const verifyemail = async (req, res) => {
     try {
-        const { emailToken } = req.body;
-        if (!emailToken) {
-            return res.status(404).json({ message: "Error al validar el email" });
-        }
-        const user = await User.findOne({ where: { emailToken } });
-        if (user) {
+        const { token, id } = req.body;
+        const user = await User.findOne({ where: { id } });
+        const validToken = user.emailToken
+        if (validToken === token) { 
             user.emailToken = null;
-            user.validate = true;
+            user.valid = true;
             await user.save()
             res.status(200).json({ message: "Email verificado" });
         } else {
@@ -60,6 +56,7 @@ const verifyemail = async (req, res) => {
 
     } catch (error) {
         res.status(500).json(error.message);
+        console.log(error.message);
     }
 };
 
@@ -76,7 +73,7 @@ const login = async (req, res) => {
             return res.status(400).send({ message: 'Usuario o contraseña incorrectos.' });
         }
         const token = jwt.sign({ userId: user.id, type: user.type }, JWT_SECRET, {
-            expiresIn: '1h' // Sesion dura una hora, *investigar opciones de la duracion de la session (para siempre, por largo tiempo, o por actividad)
+            expiresIn: '3h' // Sesion dura una hora, *investigar opciones de la duracion de la session (para siempre, por largo tiempo, o por actividad)
         });
 
         switch (user.type) {
@@ -86,6 +83,7 @@ const login = async (req, res) => {
                     email: user.email,
                     username: user.username,
                     type: user.type,
+                    valid: user.valid
                 }
                 break;
             case 2: //profecional
@@ -136,6 +134,7 @@ const login = async (req, res) => {
                         email: user.email,
                         username: user.username,
                         type: user.type,
+                        valid: user.valid
                     }
                 };
                 break;
@@ -179,6 +178,7 @@ const login = async (req, res) => {
                         email: user.email,
                         username: user.username,
                         type: user.type,
+                        valid: user.valid
                     }
                 };
                 break;
@@ -188,6 +188,7 @@ const login = async (req, res) => {
                     email: user.email,
                     username: user.username,
                     type: user.type,
+                    valid: user.valid
                 }
                 break;
         }
@@ -212,6 +213,7 @@ const getAllUsers = async (req, res) => {
                         email: user.email,
                         username: user.username,
                         type: user.type,
+                        valid: user.valid
                     }
                     break;
                 case 2: //profecional
@@ -262,6 +264,7 @@ const getAllUsers = async (req, res) => {
                             email: user.email,
                             username: user.username,
                             type: user.type,
+                            valid: user.valid
                         }
                     };
                     break;
@@ -305,6 +308,7 @@ const getAllUsers = async (req, res) => {
                             email: user.email,
                             username: user.username,
                             type: user.type,
+                            valid: user.valid
                         }
                     };
                     break;
@@ -314,6 +318,7 @@ const getAllUsers = async (req, res) => {
                         email: user.email,
                         username: user.username,
                         type: user.type,
+                        valid: user.valid
                     }
                     break;
             }
@@ -340,6 +345,7 @@ const getUserById = async (req, res) => {
                     email: user.email,
                     username: user.username,
                     type: user.type,
+                    valid: user.valid
                 }
                 break;
             case 2: //profecional
@@ -390,6 +396,7 @@ const getUserById = async (req, res) => {
                         email: user.email,
                         username: user.username,
                         type: user.type,
+                        valid: user.valid
                     }
                 };
                 break;
@@ -433,6 +440,7 @@ const getUserById = async (req, res) => {
                         email: user.email,
                         username: user.username,
                         type: user.type,
+                        valid: user.valid
                     }
                 };
                 break;
@@ -442,6 +450,7 @@ const getUserById = async (req, res) => {
                     email: user.email,
                     username: user.username,
                     type: user.type,
+                    valid: user.valid
                 }
                 break;
         }

@@ -336,7 +336,8 @@ const getProjectsForProfessional = async (req, res) => {
       id: item.id,
       title: item.title,
       description: item.description,
-      company: companysMap.get(item.id_company)
+      company: companysMap.get(item.id_company),
+      state: "postulado"
     }));
 
     const aceptados = await professional.getAcceptedProjects({
@@ -346,7 +347,8 @@ const getProjectsForProfessional = async (req, res) => {
       id: item.id,
       title: item.title,
       description: item.description,
-      company: companysMap.get(item.id_company)
+      company: companysMap.get(item.id_company),
+      state: "aceptado"
     }));
 
     const rechazados = await professional.getRefusedProjects({
@@ -356,10 +358,12 @@ const getProjectsForProfessional = async (req, res) => {
       id: item.id,
       title: item.title,
       description: item.description,
-      company: companysMap.get(item.id_company)
+      company: companysMap.get(item.id_company),
+      state: "rechazado"
     }));
+    const projects = postulate.concat(accepted, rejected);
 
-    res.status(200).json({ postulate, accepted, rejected });
+    res.status(200).json({ projects });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
