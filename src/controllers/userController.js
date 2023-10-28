@@ -12,6 +12,8 @@ const { JWT_SECRET } = process.env;
 dotenv.config({ path: '../.env' });
 const saltRounds = 10;
 
+const urlFront = "http://localhost:5173";
+
 const createUser = async (req, res) => {
     const { username, email, password, type } = req.body;
     try {
@@ -24,14 +26,22 @@ const createUser = async (req, res) => {
             type,
             emailToken: crypto.randomBytes(64).toString("hex")
         });
-        const fromEmail = `"" <${process.env.MAIL_USERNAME}>`;
+        const fromEmail = `"Verificación de Correo Electrónico Flexworks" <${process.env.MAIL_USERNAME}>`;
 
         await transporter.sendMail({
-            from: fromEmail, // sender address
-            to: email, // list of receivers
-            subject: "", // Subject line
-            html: `<b>Por favor accede al sigiente email para verificar tu email:  http://localhost:5173/verify/${user.id}/${user.emailToken} </b>`,// html body            
+            from: fromEmail, // Dirección del remitente
+            to: email, // Lista de destinatarios
+            subject: "Verificación de Correo Electrónico", // Línea de Asunto
+            html: `
+                <p>¡Bienvenido a nuestra plataforma!</p>
+                <p>Para verificar tu dirección de correo electrónico, por favor haz clic en el siguiente enlace:</p>
+                <a href="${urlFront}/verify/${user.id}/${user.emailToken}">
+                    Verificar mi correo electrónico
+                </a>
+                <p>Gracias por unirte a nosotros.</p>
+            ` // Cuerpo del correo electrónico en formato HTML
         });
+        
 
         res.status(201).json(user);
     } catch (error) {
