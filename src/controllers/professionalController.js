@@ -318,6 +318,48 @@ const removeSkillOrLanguageFromProfessional = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+const getProjectsForProfessional = async (req, res) => {
+  try {
+    const { professionalId } = req.params; // Suponemos que el ID del profesional se pasa como parámetro
+    const professional = await Professional.findByPk(professionalId); // Reemplaza "Professional" con el nombre de tu modelo de profesional
+    console.log(professionalId);
+    if (!professional) {
+      return res.status(404).json({ message: 'Profesional no encontrado.' });
+    }
+
+    const postulados = await professional.getPostulatedProjects({
+      attributes: ['id', 'title', 'description'] // Especifica las propiedades que deseas incluir en la respuesta
+    });
+    const postulate = postulados.map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description
+    }));
+
+    const aceptados = await professional.getAcceptedProjects({
+      attributes: ['id', 'title', 'description']
+    });
+    const accepted = aceptados.map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description
+    }));
+
+    const rechazados = await professional.getRefusedProjects({
+      attributes: ['id', 'title', 'description']
+    });
+    const rejected = rechazados.map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description
+    }));
+
+    res.status(200).json({ postulate, accepted, rejected });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 const addProyectProfessional = async (req, res) => {
   try {
@@ -369,5 +411,6 @@ module.exports = {
   deleteProfessional,
   addSkillOrLanguageToProfessional,
   removeSkillOrLanguageFromProfessional,
-  addProyectProfessional
+  addProyectProfessional,
+  getProjectsForProfessional
 };
