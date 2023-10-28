@@ -109,7 +109,7 @@ module.exports = {
         type: DataTypes.STRING,
         allowNull: false
       },
-      validate: {
+      valid: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: true,
