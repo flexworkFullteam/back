@@ -112,7 +112,7 @@ module.exports = {
       valid: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: true,
+        defaultValue: false,
       },
       state: {
         type: DataTypes.BOOLEAN,
