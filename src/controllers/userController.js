@@ -28,7 +28,7 @@ const createUser = async (req, res) => {
         });
         const fromEmail = `"Verificación de Correo Electrónico Flexworks" <${process.env.MAIL_USERNAME}>`;
 
-        await transporter.sendMail({
+        transporter.sendMail({
             from: fromEmail, // Dirección del remitente
             to: email, // Lista de destinatarios
             subject: "Verificación de Correo Electrónico", // Línea de Asunto
@@ -216,9 +216,10 @@ const getAllUsers = async (req, res) => {
         const users = await User.findAll();
 
         for (const user of users) {
+            let userFor = {};
             switch (user.type) {
                 case 1: //admin
-                    userMapped = {
+                    userFor = {
                         id: user.id,
                         email: user.email,
                         username: user.username,
@@ -250,7 +251,7 @@ const getAllUsers = async (req, res) => {
                         const professionalSkills = professionalItskills.map((skill) => itskillsMap.get(skill.id));
                         const professionalLang = professionalLanguages.map((language) => languagesMap.get(language.id));
     
-                        userMapped = {
+                        userFor = {
                             id: user.id,
                             validate: user.validate,
                             email: user.email,
@@ -269,7 +270,7 @@ const getAllUsers = async (req, res) => {
                             image: professional.image,
                         }
                     } else {
-                        userMapped = {
+                        userFor = {
                             id: user.id,
                             email: user.email,
                             username: user.username,
@@ -293,7 +294,7 @@ const getAllUsers = async (req, res) => {
                     })
                     console.log(company);
                     if (company) {
-                        userMapped = {
+                        userFor = {
                             id: user.id,
                             validate: user.validate,
                             email: user.email,
@@ -313,7 +314,7 @@ const getAllUsers = async (req, res) => {
                             languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
                         }
                     } else {
-                        userMapped = {
+                        userFor = {
                             id: user.id,
                             email: user.email,
                             username: user.username,
@@ -323,7 +324,7 @@ const getAllUsers = async (req, res) => {
                     };
                     break;
                 default:
-                    userMapped = {
+                    userFor = {
                         id: user.id,
                         email: user.email,
                         username: user.username,
@@ -337,7 +338,7 @@ const getAllUsers = async (req, res) => {
 
         res.status(200).json({ userMapped });
     } catch (error) {
-        res.status(500).json({ message: "Error al obtener los usuarios", error });
+        res.status(500).json({ message: "Error al obtener los usuarios", message: error.message });
     }
 };
 

@@ -134,7 +134,7 @@ const postCompany = async (req, res) => {
                 });
                 await newCompany.setLanguages(languageToSet);
                 const company = await Company.findOne({
-                    where: { userId: user.id },
+                    where: { userId: userId },
                     include: [
                         { model: Nationality, as: 'nationality' }, // Relación con el modelo Nationality (id_nationality)
                         {
