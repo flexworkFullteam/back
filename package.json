@@ -18,13 +18,16 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-oauth2-jwt-bearer": "^1.6.0",
+    "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.2",
     "mercadopago": "^1.5.17",
+    "jwks-rsa": "^3.1.0",
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.6",
     "nodemon": "^3.0.1",
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.33.0"
+    "sequelize": "^6.33.0",
+    "helmet": "^7.0.0"
   }
 }

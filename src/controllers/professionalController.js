@@ -1,4 +1,4 @@
-const { Professional, Language, Nationality, Itskills, Project } = require('../DB_connection');
+const { Professional, Language, Nationality, Itskills, Project, Company } = require('../DB_connection');
 
 
 const getProfessionals = async (req, res) => {
@@ -8,7 +8,7 @@ const getProfessionals = async (req, res) => {
         where: {
           state: true
         },
-        attributes: ['id', 'id_nationality', 'data', 'experience', 'education', 'extra_information', 'portfolio', 'cci'],
+        attributes: ['id', 'id_nationality', 'data', 'experience', 'education', 'extra_information', 'portfolio', 'cci','valid'],
       }
     );
 
@@ -36,6 +36,7 @@ const getProfessionals = async (req, res) => {
         image: professio.image,
         itskills: skills.map((skill) => skill.it_skill),
         Languages: languages.map((language) => language.language),
+        valid: professio.valid
       };
     });
 
@@ -86,6 +87,7 @@ const getProfessional = async (req, res) => {
         image: professional.image,
         itskills: professionalSkills,
         languages: professionalLang,
+        valid: professional.valid
       };
 
       res.json(professionalsWithMappedData);
@@ -318,6 +320,57 @@ const removeSkillOrLanguageFromProfessional = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+const getProjectsForProfessional = async (req, res) => {
+  try {
+    const { professionalId } = req.params; // Suponemos que el ID del profesional se pasa como parámetro
+    const professional = await Professional.findByPk(professionalId); // Reemplaza "Professional" con el nombre de tu modelo de profesional
+    const companys = await Company.findAll({ attributes: ['id', 'business_name'] });
+    const companysMap = new Map(companys.map((company) => [company.id, company.business_name]));
+
+    if (!professional) {
+      return res.status(404).json({ message: 'Profesional no encontrado.' });
+    }
+
+    const postulados = await professional.getPostulatedProjects({
+      attributes: ['id', 'title', 'description', 'id_company'] // Especifica las propiedades que deseas incluir en la respuesta
+    });
+    const postulate = postulados.map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      company: companysMap.get(item.id_company),
+      state: "postulado"
+    }));
+
+    const aceptados = await professional.getAcceptedProjects({
+      attributes: ['id', 'title', 'description', 'id_company']
+    });
+    const accepted = aceptados.map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      company: companysMap.get(item.id_company),
+      state: "aceptado"
+    }));
+
+    const rechazados = await professional.getRefusedProjects({
+      attributes: ['id', 'title', 'description', 'id_company']
+    });
+    const rejected = rechazados.map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      company: companysMap.get(item.id_company),
+      state: "rechazado"
+    }));
+    const projects = postulate.concat(accepted, rejected);
+
+    res.status(200).json({ projects });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 const addProyectProfessional = async (req, res) => {
   try {
@@ -369,5 +422,6 @@ module.exports = {
   deleteProfessional,
   addSkillOrLanguageToProfessional,
   removeSkillOrLanguageFromProfessional,
-  addProyectProfessional
+  addProyectProfessional,
+  getProjectsForProfessional
 };

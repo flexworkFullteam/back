@@ -73,7 +73,6 @@ const createProject = async (req, res) => {
         res.status(500).json({ message: "Error al crear el proyecto", error: error.message });
     }
 };
-
 // Obtener todos los proyectos
 const getAllProjects = async (req, res) => {
     try {
@@ -114,6 +113,8 @@ const getAllProjects = async (req, res) => {
             nation_id: nationsMap.get(project.nation_id),
             province_id: provincesMap.get(project.province_id),
             lapse: project.lapse,
+            entregado: project.entregado,
+            finalizado: project.finalizado,
             state: project.state
         }));
         res.status(200).json(projectsWithMappedData);
@@ -163,6 +164,8 @@ const getAllCompanyProjects = async (req, res) => {
             province_id: provincesMap.get(project.province_id),
             exp_req: experienceLevelMap.get(project.exp_req),
             lapse: project.lapse,
+            entregado: project.entregado,
+            finalizado: project.finalizado,
             state: project.state
         }));
         console.log(projectsWithMappedData);
@@ -211,6 +214,8 @@ const getProjectById = async (req, res) => {
                 salary: project.salary,
                 exp_req: experienceLevelMap.get(project.exp_req),
                 lapse: project.lapse,
+                finalizado: project.finalizado,
+                entregado: project.entregado,
             };
 
             res.status(200).json(projectWithMappedData);
@@ -240,7 +245,11 @@ const deleteProject = async (req, res) => {
     try {
         const project = await Project.findByPk(req.params.id);
         if (project) {
-            project.state = false;
+            if (project.state === false) {
+                project.state = true;
+            } else {
+                project.state = false;
+            }
             await project.save();
             res.status(204).send();
         } else {
@@ -248,6 +257,24 @@ const deleteProject = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ message: "Error al borrar el proyecto", error });
+    }
+};
+const finalizarProject = async (req, res) => {
+    try {
+        const project = await Project.findByPk(req.params.id);
+        if (project) {
+            if (project.finalizado === false) {
+                project.finalizado = true;
+            } else {
+                project.finalizado = false;
+            }
+            await project.save();
+            res.status(204).send();
+        } else {
+            res.status(404).json({ message: "Proyecto no encontrado" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Error al finalizar el proyecto", error });
     }
 };
 
@@ -283,7 +310,6 @@ const acceptedProyectProfessional = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
 const refuceProyectProfessional = async (req, res) => {
     try {
         const { projectId, professionalId } = req.params
@@ -315,7 +341,6 @@ const refuceProyectProfessional = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
 const getProfessionalPostulant = async (req, res) => {
     try {
         const { projectId } = req.params;
@@ -355,7 +380,6 @@ const getProfessionalPostulant = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
 const getProfessionalAccepted = async (req, res) => {
     try {
         const projectId = req.params.projectId;
@@ -378,7 +402,6 @@ const getProfessionalAccepted = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
 const getProfessionalRefused = async (req, res) => {
     try {
         const projectId = req.params.projectId;
@@ -413,5 +436,6 @@ module.exports = {
     refuceProyectProfessional,
     getProfessionalPostulant,
     getProfessionalAccepted,
-    getProfessionalRefused
+    getProfessionalRefused,
+    finalizarProject,
 };

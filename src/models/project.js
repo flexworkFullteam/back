@@ -57,7 +57,7 @@ module.exports = {
       },
       province_id: {
         type: DataTypes.UUID,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'Provinces', // Nombre del modelo de Empresa
           key: 'id' // Clave primaria en el modelo de Empresa
@@ -79,6 +79,11 @@ module.exports = {
       lapse: {
         type: DataTypes.INTEGER, //tiempo revisar fecha inicio y fin tipo date agegar fecha inicio
         allowNull: false
+      },
+      finalizado: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
       state: {
         type: DataTypes.BOOLEAN,
