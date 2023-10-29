@@ -28,7 +28,7 @@ const createUser = async (req, res) => {
         });
         const fromEmail = `"Verificación de Correo Electrónico Flexworks" <${process.env.MAIL_USERNAME}>`;
 
-        await transporter.sendMail({
+        transporter.sendMail({
             from: fromEmail, // Dirección del remitente
             to: email, // Lista de destinatarios
             subject: "Verificación de Correo Electrónico", // Línea de Asunto
