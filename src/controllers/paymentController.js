@@ -8,7 +8,7 @@ const
     ROUTE_FAILURE = "http://localhost:3001/solution/payment/failure";
 
 const createOrder = async (req, res) => {
-    const { id, category_id, title, description, unit_price, quantity, currency_id, from, to, project } = req.body;
+    const { id, category_id, title, description, unit_price, quantity = 1, currency_id, from, to, project } = req.body;
     mercadopago.configure({
         access_token: MP_ACCESS_TOKEN,
     });
@@ -16,12 +16,12 @@ const createOrder = async (req, res) => {
         items: [
             {
                 id,
-                category_id,
-                description,
-                title,
-                unit_price,
-                currency_id,
-                quantity,
+                category_id, 
+                description, 
+                title, /// pago de proyecto X
+                unit_price, // 1000
+                currency_id, // PEN
+                quantity,  // 1
             }
         ],
         back_urls: {
