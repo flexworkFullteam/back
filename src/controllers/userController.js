@@ -20,8 +20,8 @@ const createUser = async (req, res) => {
         const salt = await bcrypt.genSalt(saltRounds);
         const hashedPassword = await bcrypt.hash(password, salt);
         const user = await User.create({
-            username,
-            email,
+            username: username.toLowerCase(),
+            email: email.toLowerCase(),
             password: hashedPassword,
             type,
             emailToken: crypto.randomBytes(64).toString("hex")
@@ -41,7 +41,7 @@ const createUser = async (req, res) => {
                 <p>Gracias por unirte a nosotros.</p>
             ` // Cuerpo del correo electrónico en formato HTML
         });
-        
+
 
         res.status(201).json(user);
     } catch (error) {
@@ -55,7 +55,7 @@ const verifyemail = async (req, res) => {
         const { token, id } = req.body;
         const user = await User.findOne({ where: { id } });
         const validToken = user.emailToken
-        if (validToken === token) { 
+        if (validToken === token) {
             user.emailToken = null;
             user.valid = true;
             await user.save()
@@ -228,29 +228,29 @@ const getAllUsers = async (req, res) => {
                     }
                     break;
                 case 2: //profecional
-    
+
                     const professional = await Professional.findOne({
                         where: { userId: user.id }
                     });
-    
+
                     if (professional) {
-    
+
                         const languages = await Language.findAll({ attributes: ['id', 'language'] });
                         const nationality = await Nationality.findAll({ attributes: ['id', 'nationality'] });
                         const itskills = await Itskills.findAll({ attributes: ['id', 'it_skill'] });
-    
+
                         const languagesMap = new Map(languages.map((lang) => [lang.id, lang.language]));
                         const nationalityMap = new Map(nationality.map((national) => [national.id, national.nationality]));
                         const itskillsMap = new Map(itskills.map((it) => [it.id, it.it_skill]));
-    
+
                         // Obten las habilidades del profesional a través de la tabla intermedia
                         const professionalItskills = await professional.getItskills();
                         // Obten los idiomas del profesional a través de la tabla intermedia
                         const professionalLanguages = await professional.getLanguages();
-    
+
                         const professionalSkills = professionalItskills.map((skill) => itskillsMap.get(skill.id));
                         const professionalLang = professionalLanguages.map((language) => languagesMap.get(language.id));
-    
+
                         userFor = {
                             id: user.id,
                             valid: user.valid,
