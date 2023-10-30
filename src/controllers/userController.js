@@ -122,7 +122,7 @@ const login = async (req, res) => {
 
                     userMapped = {
                         id: user.id,
-                        validate: user.validate,
+                        valid: user.valid,
                         email: user.email,
                         username: user.username,
                         type: user.type,
@@ -165,7 +165,7 @@ const login = async (req, res) => {
                 if (company) {
                     userMapped = {
                         id: user.id,
-                        validate: user.validate,
+                        valid: user.valid,
                         email: user.email,
                         username: user.username,
                         type: user.type,
@@ -253,7 +253,7 @@ const getAllUsers = async (req, res) => {
     
                         userFor = {
                             id: user.id,
-                            validate: user.validate,
+                            valid: user.valid,
                             email: user.email,
                             username: user.username,
                             type: user.type,
@@ -296,7 +296,7 @@ const getAllUsers = async (req, res) => {
                     if (company) {
                         userFor = {
                             id: user.id,
-                            validate: user.validate,
+                            valid: user.valid,
                             email: user.email,
                             username: user.username,
                             type: user.type,
@@ -356,7 +356,7 @@ const getUserById = async (req, res) => {
                     email: user.email,
                     username: user.username,
                     type: user.type,
-                    valid: user.valid
+                    valid: user.valid,
                 }
                 break;
             case 2: //profecional
@@ -385,7 +385,7 @@ const getUserById = async (req, res) => {
 
                     userMapped = {
                         id: user.id,
-                        validate: user.validate,
+                        valid: user.valid,
                         email: user.email,
                         username: user.username,
                         type: user.type,
@@ -428,7 +428,7 @@ const getUserById = async (req, res) => {
                 if (company) {
                     userMapped = {
                         id: user.id,
-                        validate: user.validate,
+                        valid: user.valid,
                         email: user.email,
                         username: user.username,
                         type: user.type,
