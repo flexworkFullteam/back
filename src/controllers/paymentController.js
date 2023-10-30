@@ -16,8 +16,8 @@ const createOrder = async (req, res) => {
         items: [
             {
                 id,
-                category_id, 
-                description, 
+                category_id,
+                description,
                 title, /// pago de proyecto X
                 unit_price, // 1000
                 currency_id, // PEN
@@ -29,7 +29,7 @@ const createOrder = async (req, res) => {
             pending: ROUTE_PENDING,
             failure: ROUTE_FAILURE
         },
-        notification_url: `https://e80d-38-25-15-175.ngrok.io/solution/webhook/${from}/${to}/${project}`
+        notification_url: `https://f56c-38-25-15-175.ngrok-free.app/solution/webhook/${from}/${to}/${project}`
     });
     //res.redirect(result.response.init_point);
     res.json({
@@ -38,26 +38,29 @@ const createOrder = async (req, res) => {
 };
 
 const successPayment = async (req, res) => {
-    res.send("Success");
+    //res.send("Success");
+    res.redirect("http://localhost:5173/success");
 };
 const pendingPayment = async (req, res) => {
-    res.send("Pending");
+    res.redirect("http://localhost:5173/pending");
 };
 const failurePayment = async (req, res) => {
-    res.send("Failure");
+    res.redirect("http://localhost:5173/failure");
 };
 
 const listenWebhook = async (req, res) => {
     const payment = req.query;
-    console.log(payment);
+
     const { from, to, project } = req.params;
     try {
         if (payment.type === "payment") {
+
             const data = await mercadopago.payment.findById(payment["data.id"]);
+
             const response = {
                 op_id: data.body.id,
                 from,
-                to,
+                to: "07294ca6-c024-4ceb-a075-5919697b9033",
                 project,
                 transaction_amount: data.body.transaction_amount,
                 net_received_amount: data.body.transaction_details.net_received_amount,
@@ -67,13 +70,15 @@ const listenWebhook = async (req, res) => {
                 description: data.body.description,
                 //currency_id:data.body.currency_id,
             };
-            console.log("STATUS DETAIL", data.body.status_detail);
-            const query = await Payment.create(response);
-            res.status(200).json(response);
+            console.log("response: ", response);
+            const queri = await Payment.create(response);
+            console.log("query : ", queri);
+            res.status(200).json(queri);
         }
         return res.status(404).send("No hay pago");
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        return console.log(error.message);
+        //return res.status(500).json({ error: error.message });
     }
 };
 
