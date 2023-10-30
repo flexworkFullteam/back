@@ -289,7 +289,6 @@ const finalizarProject = async (req, res) => {
         res.status(500).json({ message: "Error al finalizar el proyecto", error });
     }
 };
-
 const acceptedProyectProfessional = async (req, res) => {
     try {
         const { projectId, professionalId } = req.params
