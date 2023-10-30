@@ -80,6 +80,18 @@ module.exports = {
         type: DataTypes.INTEGER, //tiempo revisar fecha inicio y fin tipo date agegar fecha inicio
         allowNull: false
       },
+      calendly: {
+        type: DataTypes.JSONB,
+        allowNull: false,
+      },
+      mpTransferencia: {
+        type: DataTypes.INTEGER
+      },
+      pagado: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
       finalizado: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
