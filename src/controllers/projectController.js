@@ -118,7 +118,10 @@ const getAllProjects = async (req, res) => {
             lapse: project.lapse,
             entregado: project.entregado,
             finalizado: project.finalizado,
-            state: project.state
+            state: project.state,
+            pagado: project.pagado,
+            mpTransferencia: project.mpTransferencia,
+            calendly: project.calendly,
         }));
         res.status(200).json(projectsWithMappedData);
     } catch (error) {
@@ -169,7 +172,10 @@ const getAllCompanyProjects = async (req, res) => {
             lapse: project.lapse,
             entregado: project.entregado,
             finalizado: project.finalizado,
-            state: project.state
+            state: project.state,
+            pagado: project.pagado,
+            mpTransferencia: project.mpTransferencia,
+            calendly: project.calendly,
         }));
         console.log(projectsWithMappedData);
         res.status(200).json(projectsWithMappedData);
@@ -219,6 +225,9 @@ const getProjectById = async (req, res) => {
                 lapse: project.lapse,
                 finalizado: project.finalizado,
                 entregado: project.entregado,
+                pagado: project.pagado,
+                mpTransferencia: project.mpTransferencia,
+                calendly: project.calendly,
             };
 
             res.status(200).json(projectWithMappedData);
@@ -304,8 +313,8 @@ const acceptedProyectProfessional = async (req, res) => {
 
                 await professional.removePostulatedProjects(project);
                 await professional.addAcceptedProjects(project);
-                
-                const fromEmail = `"Verificación de Correo Electrónico Flexworks" <${process.env.MAIL_USERNAME}>`;
+
+                const fromEmail = `"Asignacion de reuniones Flexworks" <${process.env.MAIL_USERNAME}>`;
                 const user = await User.findOne({ where: { id: professional.userId } });
                 const company = await Company.findOne({ where: { id: professional.id_company } });
                 transporter.sendMail({
@@ -314,14 +323,14 @@ const acceptedProyectProfessional = async (req, res) => {
                     subject: "Asignacion de reuniones", // Línea de Asunto
                     html: `
                         <p>¡Bienvenido a tu nuevo desafio!</p>
-                        <p>Para agendar una reunion con ${project.id_company} para el proyecto ${company.business_name} haz clic en el siguiente enlace:</p>
+                        <p>Para agendar una reunion con ${company.business_name} para el proyecto ${project.title} haz clic en el siguiente enlace:</p>
                         <a href="${project.calendly}">
                             Agenda tus reuniones aqui
                         </a>
                         <p>Gracias por unirte a nosotros.</p>
                         ` // Cuerpo del correo electrónico en formato HTML
                 });
-            }else{
+            } else {
                 await professional.addAcceptedProjects(project);
             }
 
