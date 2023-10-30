@@ -1,5 +1,6 @@
-const { Project, Company, ProjectType, ProjectFields, ExperienceLevel, Language, Itskills, Professional, Nation, Province } = require('../DB_connection');
+const { Project, Company, ProjectType, ProjectFields, ExperienceLevel, Language, Itskills, Professional, Nation, Province, User, } = require('../DB_connection');
 const { match } = require('../utils/locationMatcher');
+const transporter = require('../utils/emailConfig');
 
 // Crear un proyecto
 const createProject = async (req, res) => {
@@ -16,7 +17,8 @@ const createProject = async (req, res) => {
             exp_req, // 1
             lapse, // 30
             itskill, // [1]
-            languages // [1]
+            languages, // [1]
+            calendly
         } = req.body;
 
         const siklls = Array.isArray(itskill) ? itskill : [itskill];
@@ -59,7 +61,8 @@ const createProject = async (req, res) => {
             exp_req: exp_req,
             lapse: lapse,
             nation_id: nation,
-            province_id: province
+            province_id: province,
+            calendly: calendly
         });
 
         console.log(project.id_company);
@@ -115,7 +118,10 @@ const getAllProjects = async (req, res) => {
             lapse: project.lapse,
             entregado: project.entregado,
             finalizado: project.finalizado,
-            state: project.state
+            state: project.state,
+            pagado: project.pagado,
+            mpTransferencia: project.mpTransferencia,
+            calendly: project.calendly,
         }));
         res.status(200).json(projectsWithMappedData);
     } catch (error) {
@@ -166,7 +172,10 @@ const getAllCompanyProjects = async (req, res) => {
             lapse: project.lapse,
             entregado: project.entregado,
             finalizado: project.finalizado,
-            state: project.state
+            state: project.state,
+            pagado: project.pagado,
+            mpTransferencia: project.mpTransferencia,
+            calendly: project.calendly,
         }));
         console.log(projectsWithMappedData);
         res.status(200).json(projectsWithMappedData);
@@ -216,6 +225,9 @@ const getProjectById = async (req, res) => {
                 lapse: project.lapse,
                 finalizado: project.finalizado,
                 entregado: project.entregado,
+                pagado: project.pagado,
+                mpTransferencia: project.mpTransferencia,
+                calendly: project.calendly,
             };
 
             res.status(200).json(projectWithMappedData);
@@ -294,17 +306,39 @@ const acceptedProyectProfessional = async (req, res) => {
         if (!project) {
             return res.status(404).json({ message: 'Proyecto no encontrado.' });
         }
+        if (project.pagado === true) {
+            const check = await professional.removeRefusedProjects(project);
 
-        // Agrega al profesional
-        const check = await professional.removePostulatedProjects(project);
-        if (check !== null && check !== undefined) {
-            await professional.removeRefusedProjects(project);
+            if (check !== null && check !== undefined) {
+
+                await professional.removePostulatedProjects(project);
+                await professional.addAcceptedProjects(project);
+
+                const fromEmail = `"Asignacion de reuniones Flexworks" <${process.env.MAIL_USERNAME}>`;
+                const user = await User.findOne({ where: { id: professional.userId } });
+                const company = await Company.findOne({ where: { id: professional.id_company } });
+                transporter.sendMail({
+                    from: fromEmail, // Dirección del remitente
+                    to: user.email, // Lista de destinatarios
+                    subject: "Asignacion de reuniones", // Línea de Asunto
+                    html: `
+                        <p>¡Bienvenido a tu nuevo desafio!</p>
+                        <p>Para agendar una reunion con ${company.business_name} para el proyecto ${project.title} haz clic en el siguiente enlace:</p>
+                        <a href="${project.calendly}">
+                            Agenda tus reuniones aqui
+                        </a>
+                        <p>Gracias por unirte a nosotros.</p>
+                        ` // Cuerpo del correo electrónico en formato HTML
+                });
+            } else {
+                await professional.addAcceptedProjects(project);
+            }
+
+            res.status(200).json({ message: 'Aceptacion exitosa.' });
+
+        } else {
+            return res.status(404).json({ message: 'Proyecto no pagado.' });
         }
-
-        // Agrega al profesional a "Acepted_Professionals"
-        await professional.addAcceptedProjects(project);
-
-        res.status(200).json({ message: 'Aceptacion exitosa.' });
 
     } catch (error) {
         res.status(500).json({ error: error.message });

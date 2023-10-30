@@ -1,6 +1,6 @@
 const mercadopago = require("mercadopago");
 require("dotenv").config();
-const { Payment } = require("../DB_connection");
+const { Payment, Project, } = require("../DB_connection");
 const { MP_ACCESS_TOKEN } = process.env;
 const
     ROUTE_SUCCESS = "http://localhost:3001/solution/payment/success",
@@ -70,10 +70,13 @@ const listenWebhook = async (req, res) => {
                 description: data.body.description,
                 //currency_id:data.body.currency_id,
             };
-            console.log("response: ", response);
-            const queri = await Payment.create(response);
-            console.log("query : ", queri);
-            res.status(200).json(queri);
+            const proyecto = await Project.findById(project);
+            proyecto.pagado = true
+            proyecto.mpTransferencia = data.body.id
+            await proyecto.save();
+
+            await Payment.create(response);
+            res.status(200).json(response);
         }
         return res.status(404).send("No hay pago");
     } catch (error) {
