@@ -45,7 +45,7 @@ const createUser = async (req, res) => {
 
         res.status(201).json(user);
     } catch (error) {
-        console.log(error)
+        //console.log(error)
         res.status(500).json({ message: "Error al crear el usuario", error: error.message });
     }
 };
@@ -66,7 +66,7 @@ const verifyemail = async (req, res) => {
 
     } catch (error) {
         res.status(500).json(error.message);
-        console.log(error.message);
+        //console.log(error.message);
     }
 };
 
@@ -161,7 +161,7 @@ const login = async (req, res) => {
                         }
                     ]
                 })
-                console.log(company);
+                //console.log(company);
                 if (company) {
                     userMapped = {
                         id: user.id,
@@ -292,7 +292,7 @@ const getAllUsers = async (req, res) => {
                             }
                         ]
                     })
-                    console.log(company);
+                    //console.log(company);
                     if (company) {
                         userFor = {
                             id: user.id,
@@ -424,7 +424,7 @@ const getUserById = async (req, res) => {
                         }
                     ]
                 })
-                console.log(company);
+                //console.log(company);
                 if (company) {
                     userMapped = {
                         id: user.id,

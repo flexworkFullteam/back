@@ -51,7 +51,7 @@ const failurePayment = async (req, res) => {
 const listenWebhook = async (req, res) => {
     const payment = req.query;
 
-    const { from, to, project } = req.params;
+    const { from, project } = req.params;
     try {
         if (payment.type === "payment") {
 
@@ -60,7 +60,7 @@ const listenWebhook = async (req, res) => {
             const response = {
                 op_id: data.body.id,
                 from,
-                to: "07294ca6-c024-4ceb-a075-5919697b9033",
+                to: "f00d8ff1-c13e-4f6a-b1dd-984742f1b7ba",
                 project,
                 transaction_amount: data.body.transaction_amount,
                 net_received_amount: data.body.transaction_details.net_received_amount,
@@ -70,17 +70,29 @@ const listenWebhook = async (req, res) => {
                 description: data.body.description,
                 //currency_id:data.body.currency_id,
             };
-            const proyecto = await Project.findById(project);
-            proyecto.pagado = true
-            proyecto.mpTransferencia = data.body.id
-            await proyecto.save();
 
-            await Payment.create(response);
-            res.status(200).json(response);
+            const proyecto = await Project.findByPk(project);
+            //console.log("proyecto: ",proyecto);
+            if (proyecto) {
+                const updated = await Project.update(
+                    {
+                        pagado: true,
+                        mpTransferencia: data.body.id
+                    },
+                    {
+                        where: { id: project }
+                    }
+                );
+                //console.log("updated: ",updated);
+                if (updated)
+                    return res.status(200).json(updated);
+                return res.status(400).send("no se pudo actualizar la informacion del pago realizado");
+            }
+            res.status(402).send("no se encontro proyecto");
         }
         return res.status(404).send("No hay pago");
     } catch (error) {
-        return console.log(error.message);
+        return //console.log(error.message);
         //return res.status(500).json({ error: error.message });
     }
 };

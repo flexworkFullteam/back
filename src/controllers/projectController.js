@@ -65,7 +65,7 @@ const createProject = async (req, res) => {
             calendly: calendly
         });
 
-        console.log(project.id_company);
+        ////console.log(project.id_company);
 
         await project.setItskills(validSiklls);
         await project.setLanguages(validLanguages);
@@ -177,7 +177,7 @@ const getAllCompanyProjects = async (req, res) => {
             mpTransferencia: project.mpTransferencia,
             calendly: project.calendly,
         }));
-        console.log(projectsWithMappedData);
+        ////console.log(projectsWithMappedData);
         res.status(200).json(projectsWithMappedData);
     } catch (error) {
         res.status(500).json({ message: "Error al obtener los proyectos", error: error.message });
@@ -295,27 +295,31 @@ const acceptedProyectProfessional = async (req, res) => {
 
         // Busca el profesional por su ID
         const professional = await Professional.findByPk(professionalId);
-
+        
         if (!professional) {
             return res.status(404).json({ message: 'Profesional no encontrado.' });
         }
 
         const project = await Project.findByPk(projectId);
-
+        
         if (!project) {
             return res.status(404).json({ message: 'Proyecto no encontrado.' });
         }
         if (project.pagado === true) {
+            
             const check = await professional.removeRefusedProjects(project);
-
+            
             if (check !== null && check !== undefined) {
-
+                
                 await professional.removePostulatedProjects(project);
                 await professional.addAcceptedProjects(project);
-
+                
+                
                 const fromEmail = `"Asignacion de reuniones Flexworks" <${process.env.MAIL_USERNAME}>`;
-                const user = await User.findOne({ where: { id: professional.userId } });
-                const company = await Company.findOne({ where: { id: professional.id_company } });
+                const user = await User.findOne({ where: { id: professional.dataValues.userId } });
+                
+                const company = await Company.findOne({ where: { id: project.dataValues.id_company } });
+                
                 transporter.sendMail({
                     from: fromEmail, // Dirección del remitente
                     to: user.email, // Lista de destinatarios
@@ -331,6 +335,7 @@ const acceptedProyectProfessional = async (req, res) => {
                 });
             } else {
                 await professional.addAcceptedProjects(project);
+                
             }
 
             res.status(200).json({ message: 'Aceptacion exitosa.' });
@@ -340,6 +345,7 @@ const acceptedProyectProfessional = async (req, res) => {
         }
 
     } catch (error) {
+        console.log("ERRRRROOOORR:  ",error.message);
         res.status(500).json({ error: error.message });
     }
 };
@@ -378,7 +384,7 @@ const getProfessionalPostulant = async (req, res) => {
     try {
         const { projectId } = req.params;
         const project = await Project.findByPk(projectId);
-        console.log(projectId);
+        ////console.log(projectId);
 
         if (!project) {
             return res.status(404).json({ message: 'Proyecto no encontrado.' });

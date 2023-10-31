@@ -30,7 +30,7 @@ const postAdmin = async (req, res) => {
         const [newAdmin, created] = await Admin.findOrCreate({
             where: { user_id }
         });
-        console.log(newAdmin);
+        ////console.log(newAdmin);
         if (created)
             return res.status(200).json(newAdmin);
         return res.status(400).send("Error al crear usuario, ya existe");

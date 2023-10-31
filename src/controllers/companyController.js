@@ -200,7 +200,7 @@ const editCompany = async (req, res) => {
         else
             return res.status(404).send("No se encontro empresa o esta borrada");
     } catch (error) {
-        console.log(businessName);
+        ////console.log(businessName);
         return res.status(500).send(error.message);
     }
 

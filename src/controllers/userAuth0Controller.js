@@ -9,7 +9,7 @@ const userAuth0Controller = {};
 
 userAuth0Controller.loginOrSignup = async (req, res) => {
     try {
-        console.log("Received email and auth0Id: ", req.email, req.auth0Id);
+        //console.log("Received email and auth0Id: ", req.email, req.auth0Id);
         // Extract email and Auth0 ID from the request
         const email = req.email;
         const auth0Id = req.auth0Id;
