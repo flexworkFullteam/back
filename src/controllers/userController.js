@@ -12,7 +12,7 @@ const { JWT_SECRET } = process.env;
 dotenv.config({ path: '../.env' });
 const saltRounds = 10;
 
-const urlFront = "https://front-chi-bice.vercel.app/";
+const urlFront = "https://front-virid-sigma.vercel.app/";
 
 const createUser = async (req, res) => {
     const { username, email, password, type } = req.body;
@@ -504,12 +504,12 @@ const deleteUser = async (req, res) => {
 };
 
 const changePassword = async (req, res) => {
-    const { userId, currentPassword, newPassword } = req.body;
+    const {userId,currentPassword,newPassword} = req.body;
 
     try {
         // Obtén el usuario de la base de datos
         const user = await User.findByPk(userId);
-
+        console.log(user);
         if (!user) {
             return res.status(404).json({ message: "Usuario no encontrado" });
         }
@@ -531,8 +531,9 @@ const changePassword = async (req, res) => {
 
         res.status(200).json({ message: "Contraseña actualizada con éxito" });
     } catch (error) {
-        res.status(500).json({ message: "Error al cambiar la contraseña", error });
+        res.status(500).json({ message: "Error interno del servidor", error: error.message });
     }
+    
 };
 
 
