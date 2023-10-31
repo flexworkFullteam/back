@@ -75,7 +75,7 @@ const login = async (req, res) => {
     try {
         let userMapped = {};
         const emaillow = email.toLowerCase();
-        const user = await User.findOne({ where: { emaillow } });
+        const user = await User.findOne({ where: { email: emaillow } });
         if (!user) {
             return res.status(400).send({ message: 'Usuario o contraseña incorrectos.' });
         }
