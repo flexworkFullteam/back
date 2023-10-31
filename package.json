@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm install && nodemon src/server.js"
+    "start": "npm install --no-optional && nodemon src/server.js"
   },
   "author": "",
   "license": "ISC",
@@ -28,5 +28,8 @@
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.33.0"
+  }.
+    "optionalDependencies": {
+    "fsevents": "^2.3.3"
   }
 }
