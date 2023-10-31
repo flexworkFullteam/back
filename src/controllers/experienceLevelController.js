@@ -1,5 +1,5 @@
 const { ExperienceLevel } = require('../DB_connection');
-const textRegex = /^[A-Za-záéíóúñÁÉÍÓÚ]+([- ][A-Za-záéíóúñÁÉÍÓÚ]+)*$/;
+const textRegex = /^[A-Za-záéíóúñÁÉÍÓÚ+#]+([- ][A-Za-záéíóúñÁÉÍÓÚ+#]+)*$/;
 
 const DB = ExperienceLevel;
 const fieldName = "experienceLevel";
