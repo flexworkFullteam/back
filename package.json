@@ -28,7 +28,7 @@
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.33.0"
-  }.
+  },
     "optionalDependencies": {
     "fsevents": "^2.3.3"
   }
