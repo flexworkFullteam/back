@@ -110,48 +110,50 @@ const postCompany = async (req, res) => {
 
     if (fieldRegex.test(businessName))
         try {
-            const [newCompany, created] = await Company.findOrCreate(
-                {
-                    where: { business_name: businessName },
-                    defaults: {
-                        userId: userId,
-                        activity_type: activityType,
-                        start_date: new Date(startDate),
-                        fiscal_address: fiscalAddress,  
-                        legal_representative: legalRepresentative,
-                        data: data,
-                        Bank_account: bankAccount,
-                        id_nationality: nationalityId,
-                        image: imagen,
-                        ruc: ruc
-                    }
-                })
-            if (created) {
-                const languageToSet = await Language.findAll({
-                    where: {
-                        id: { [Op.in]: languages },
-                    }
-                });
-                await newCompany.setLanguages(languageToSet);
-                const company = await Company.findOne({
-                    where: { userId: userId },
-                    include: [
-                        { model: Nationality, as: 'nationality' }, // Relación con el modelo Nationality (id_nationality)
-                        {
-                            model: Language,
-                            as: "Languages",
-                            attributes: ['language'], // Puedes especificar las columnas que deseas seleccionar
-                            through: { attributes: [] } // Excluye las columnas de la tabla intermedia si no las necesitas
+            const userparam = await User.findByPk(userId);
+            if (userparam.type === 3) {
+                const [newCompany, created] = await Company.findOrCreate(
+                    {
+                        where: { business_name: businessName },
+                        defaults: {
+                            userId: userId,
+                            activity_type: activityType,
+                            start_date: new Date(startDate),
+                            fiscal_address: fiscalAddress,
+                            legal_representative: legalRepresentative,
+                            data: data,
+                            Bank_account: bankAccount,
+                            id_nationality: nationalityId,
+                            image: imagen,
+                            ruc: ruc
                         }
-                    ]
-                })
-                return res.status(200).json({company});
+                    })
+                if (created) {
+                    const languageToSet = await Language.findAll({
+                        where: {
+                            id: { [Op.in]: languages },
+                        }
+                    });
+                    await newCompany.setLanguages(languageToSet);
+                    const company = await Company.findOne({
+                        where: { userId: userId },
+                        include: [
+                            { model: Nationality, as: 'nationality' }, // Relación con el modelo Nationality (id_nationality)
+                            {
+                                model: Language,
+                                as: "Languages",
+                                attributes: ['language'], // Puedes especificar las columnas que deseas seleccionar
+                                through: { attributes: [] } // Excluye las columnas de la tabla intermedia si no las necesitas
+                            }
+                        ]
+                    })
+                    return res.status(200).json({ company });
+                } else {
+                    return res.status(400).send("nombre de empresa ya existe");
+                }
+            } else {
+                res.status(404).json({ message: "Usuario no valido" });
             }
-
-            else
-                return res.status(400).send("nombre de empresa ya existe");
-
-
         } catch (error) {
             return res.status(500).send(error.message);
         }
@@ -181,6 +183,7 @@ const editCompany = async (req, res) => {
                 data: data,
                 Bank_account: bankAccount,
                 id_nationality: nationalityId,
+                imagen: imagen
             };
             const update = await company.update(response);
             if (update) {
