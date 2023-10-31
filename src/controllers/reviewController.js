@@ -2,7 +2,7 @@ const { User, Review } = require("../DB_connection");
 
 const postReview = async (req, res) => {
     const { value, description, id_user, review_by } = req.body;
-    //console.log(value,description,id_user);
+    ////console.log(value,description,id_user);
     try {
         const response = await Review.create({
             value,

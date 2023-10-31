@@ -4,7 +4,7 @@ async function match(string) {
     let nation, province, city;
     const parts = string.split(',');
     const length = parts.length-1;
-    console.log(parts);
+    //console.log(parts);
 
     if ((typeof parts[length] !== 'undefined') ) {
         const [nationData] = await Nation.findOrCreate({
@@ -37,7 +37,7 @@ async function match(string) {
         city = cityData.dataValues.id        
     }
 
-    console.log(nation, province, city);
+    //console.log(nation, province, city);
     return { nation, province, city };
 }
 

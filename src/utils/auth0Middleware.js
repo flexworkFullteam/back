@@ -1,5 +1,5 @@
 const auth0Middleware = (req, res, next) => {
-    console.log('Received JSON:', req.body);  // Log the received JSON
+    //console.log('Received JSON:', req.body);  // Log the received JSON
     const { sub, email, name } = req.body;
     const provider = sub.split('|')[0];  // Extract the provider from the sub property
     // Normalize provider name (e.g., google-oauth2 -> google, linkedin -> linkedin)

@@ -3,7 +3,7 @@ const { getPaymentsById,createOrder, successPayment,pendingPayment,failurePaymen
 
 const router = Router();
 
-router.get('/payments/:from',getPaymentsById)
+router.get('/payments/:from',getPaymentsById);
 router.post('/solution/payment', createOrder);
 router.get('/solution/payment/success',successPayment);
 router.get('/solution/payment/pending',pendingPayment);

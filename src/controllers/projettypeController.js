@@ -7,7 +7,7 @@ const text = "Projet Type" ;
 
 const getAll = async (req, res) => {
     try {
-        console.log("test");
+        //console.log("test");
         const response = await DB.findAll({
             where: { state: true },
             attributes: ['id', fieldName],
@@ -26,7 +26,7 @@ const post = async (req, res) => {
     try {
         const errors = [];
         let {new_resource} = req.body;
-        console.log(new_resource);
+        //console.log(new_resource);
 
         new_resource = new_resource.trim();
         new_resource = new_resource.charAt(0).toUpperCase() + new_resource.slice(1).toLowerCase();
