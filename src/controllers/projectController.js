@@ -1,5 +1,6 @@
-const { Project, Company, ProjectType, ProjectFields, ExperienceLevel, Language, Itskills, Professional, Nation, Province } = require('../DB_connection');
+const { Project, Company, ProjectType, ProjectFields, ExperienceLevel, Language, Itskills, Professional, Nation, Province, User, } = require('../DB_connection');
 const { match } = require('../utils/locationMatcher');
+const transporter = require('../utils/emailConfig');
 
 // Crear un proyecto
 const createProject = async (req, res) => {
@@ -16,7 +17,8 @@ const createProject = async (req, res) => {
             exp_req, // 1
             lapse, // 30
             itskill, // [1]
-            languages // [1]
+            languages, // [1]
+            calendly
         } = req.body;
 
         const siklls = Array.isArray(itskill) ? itskill : [itskill];
@@ -59,10 +61,11 @@ const createProject = async (req, res) => {
             exp_req: exp_req,
             lapse: lapse,
             nation_id: nation,
-            province_id: province
+            province_id: province,
+            calendly: calendly
         });
 
-        console.log(project.id_company);
+        ////console.log(project.id_company);
 
         await project.setItskills(validSiklls);
         await project.setLanguages(validLanguages);
@@ -77,7 +80,7 @@ const createProject = async (req, res) => {
 const getAllProjects = async (req, res) => {
     try {
         const projects = await Project.findAll({
-            attributes: ['id', 'title', 'id_company', 'description', 'nation_id', 'province_id', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state'],
+            attributes: ['id', 'title', 'id_company', 'description', 'nation_id', 'province_id', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state','pagado','mpTransferencia','calendly'],
         });
 
         if (projects.length === 0) {
@@ -113,8 +116,12 @@ const getAllProjects = async (req, res) => {
             nation_id: nationsMap.get(project.nation_id),
             province_id: provincesMap.get(project.province_id),
             lapse: project.lapse,
+            entregado: project.entregado,
             finalizado: project.finalizado,
-            state: project.state
+            state: project.state,
+            pagado: project.pagado,
+            mpTransferencia: project.mpTransferencia,
+            calendly: project.calendly,
         }));
         res.status(200).json(projectsWithMappedData);
     } catch (error) {
@@ -127,7 +134,7 @@ const getAllCompanyProjects = async (req, res) => {
             where: {
                 id_company: req.params.id_company
             },
-            attributes: ['id', 'title', 'id_company', 'description', 'nation_id', 'province_id', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state'],
+            attributes: ['id', 'title', 'id_company', 'description', 'nation_id', 'province_id', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state','pagado','mpTransferencia','calendly'],
         });
 
         if (projects.length === 0) {
@@ -163,10 +170,14 @@ const getAllCompanyProjects = async (req, res) => {
             province_id: provincesMap.get(project.province_id),
             exp_req: experienceLevelMap.get(project.exp_req),
             lapse: project.lapse,
+            entregado: project.entregado,
             finalizado: project.finalizado,
-            state: project.state
+            state: project.state,
+            pagado: project.pagado,
+            mpTransferencia: project.mpTransferencia,
+            calendly: project.calendly,
         }));
-        console.log(projectsWithMappedData);
+        ////console.log(projectsWithMappedData);
         res.status(200).json(projectsWithMappedData);
     } catch (error) {
         res.status(500).json({ message: "Error al obtener los proyectos", error: error.message });
@@ -179,7 +190,7 @@ const getProjectById = async (req, res) => {
             where: {
                 state: true
             },
-            attributes: ['id', 'title', 'id_company', 'description', 'nation_id', 'province_id', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state'],
+            attributes: ['id', 'title', 'id_company', 'description', 'nation_id', 'province_id', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state','pagado','mpTransferencia','calendly'],
         });
 
         if (project) {
@@ -212,7 +223,11 @@ const getProjectById = async (req, res) => {
                 salary: project.salary,
                 exp_req: experienceLevelMap.get(project.exp_req),
                 lapse: project.lapse,
-                finalizado: project.finalizado
+                finalizado: project.finalizado,
+                entregado: project.entregado,
+                pagado: project.pagado,
+                mpTransferencia: project.mpTransferencia,
+                calendly: project.calendly,
             };
 
             res.status(200).json(projectWithMappedData);
@@ -271,7 +286,7 @@ const finalizarProject = async (req, res) => {
             res.status(404).json({ message: "Proyecto no encontrado" });
         }
     } catch (error) {
-        res.status(500).json({ message: "Error al borrar el proyecto", error });
+        res.status(500).json({ message: "Error al finalizar el proyecto", error });
     }
 };
 const acceptedProyectProfessional = async (req, res) => {
@@ -280,29 +295,57 @@ const acceptedProyectProfessional = async (req, res) => {
 
         // Busca el profesional por su ID
         const professional = await Professional.findByPk(professionalId);
-
+        
         if (!professional) {
             return res.status(404).json({ message: 'Profesional no encontrado.' });
         }
 
         const project = await Project.findByPk(projectId);
-
+        
         if (!project) {
             return res.status(404).json({ message: 'Proyecto no encontrado.' });
         }
+        if (project.pagado === true) {
+            
+            const check = await professional.removeRefusedProjects(project);
+            
+            if (check !== null && check !== undefined) {
+                
+                await professional.removePostulatedProjects(project);
+                await professional.addAcceptedProjects(project);
+                
+                
+                const fromEmail = `"Asignacion de reuniones Flexworks" <${process.env.MAIL_USERNAME}>`;
+                const user = await User.findOne({ where: { id: professional.dataValues.userId } });
+                
+                const company = await Company.findOne({ where: { id: project.dataValues.id_company } });
+                
+                transporter.sendMail({
+                    from: fromEmail, // Dirección del remitente
+                    to: user.email, // Lista de destinatarios
+                    subject: "Asignacion de reuniones", // Línea de Asunto
+                    html: `
+                        <p>¡Bienvenido a tu nuevo desafio!</p>
+                        <p>Para agendar una reunion con ${company.business_name} para el proyecto ${project.title} haz clic en el siguiente enlace:</p>
+                        <a href="${project.calendly}">
+                            Agenda tus reuniones aqui
+                        </a>
+                        <p>Gracias por unirte a nosotros.</p>
+                        ` // Cuerpo del correo electrónico en formato HTML
+                });
+            } else {
+                await professional.addAcceptedProjects(project);
+                
+            }
 
-        // Agrega al profesional
-        const check = await professional.removePostulatedProjects(project);
-        if (check !== null && check !== undefined) {
-            await professional.removeRefusedProjects(project);
+            res.status(200).json({ message: 'Aceptacion exitosa.' });
+
+        } else {
+            return res.status(404).json({ message: 'Proyecto no pagado.' });
         }
 
-        // Agrega al profesional a "Acepted_Professionals"
-        await professional.addAcceptedProjects(project);
-
-        res.status(200).json({ message: 'Aceptacion exitosa.' });
-
     } catch (error) {
+        console.log("ERRRRROOOORR:  ",error.message);
         res.status(500).json({ error: error.message });
     }
 };
@@ -341,7 +384,7 @@ const getProfessionalPostulant = async (req, res) => {
     try {
         const { projectId } = req.params;
         const project = await Project.findByPk(projectId);
-        console.log(projectId);
+        ////console.log(projectId);
 
         if (!project) {
             return res.status(404).json({ message: 'Proyecto no encontrado.' });

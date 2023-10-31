@@ -37,6 +37,7 @@ const getCompanies = async (req, res) => {
                     image: company.image,
                     id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
                     id: company.id, // Obtiene id
+                    valid: company.valid,
                     languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
                 })
             );
@@ -84,6 +85,7 @@ const getCompanyById = async (req, res) => {
                     bankAccount: company.Bank_account,
                     createdAt: company.createdAt,
                     image: company.image,
+                    valid: company.valid,
                     id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
                     userId: company.user.username, // Obtiene el nombre de usuario
                     languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
@@ -131,7 +133,19 @@ const postCompany = async (req, res) => {
                     }
                 });
                 await newCompany.setLanguages(languageToSet);
-                return res.status(200).send("Se creo, exitosamente la empresa");
+                const company = await Company.findOne({
+                    where: { userId: userId },
+                    include: [
+                        { model: Nationality, as: 'nationality' }, // Relación con el modelo Nationality (id_nationality)
+                        {
+                            model: Language,
+                            as: "Languages",
+                            attributes: ['language'], // Puedes especificar las columnas que deseas seleccionar
+                            through: { attributes: [] } // Excluye las columnas de la tabla intermedia si no las necesitas
+                        }
+                    ]
+                })
+                return res.status(200).json({company});
             }
 
             else
@@ -186,7 +200,7 @@ const editCompany = async (req, res) => {
         else
             return res.status(404).send("No se encontro empresa o esta borrada");
     } catch (error) {
-        console.log(businessName);
+        ////console.log(businessName);
         return res.status(500).send(error.message);
     }
 

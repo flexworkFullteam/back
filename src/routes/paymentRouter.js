@@ -1,9 +1,10 @@
 const { Router } = require("express");
-const { getPaymentsById,createOrder, successPayment,pendingPayment,failurePayment, listenWebhook } = require("../controllers/paymentController");
+const { getPayments,getPaymentsById,createOrder, successPayment,pendingPayment,failurePayment, listenWebhook } = require("../controllers/paymentController");
 
 const router = Router();
 
-router.get('/payments/:from',getPaymentsById)
+router.get('/payments',getPayments);
+router.get('/payments/:from',getPaymentsById);
 router.post('/solution/payment', createOrder);
 router.get('/solution/payment/success',successPayment);
 router.get('/solution/payment/pending',pendingPayment);

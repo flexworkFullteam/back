@@ -102,17 +102,17 @@ module.exports = {
         allowNull: false,
       },
       cci: {
-        type: DataTypes.BIGINT ,
+        type: DataTypes.BIGINT,
         allowNull: false,
       },
       image: {
         type: DataTypes.STRING,
         allowNull: false
       },
-      validate: {
+      valid: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: true,
+        defaultValue: false,
       },
       state: {
         type: DataTypes.BOOLEAN,

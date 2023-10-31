@@ -1,7 +1,7 @@
 const { DataTypes, model } = require('sequelize');
 
 const modelDependencies = {
-  'Project': ['Company', 'ProjectType', 'ProjectFields', 'ExperienceLevel','Province','Nation']
+  'Project': ['Company', 'ProjectType', 'ProjectFields', 'ExperienceLevel', 'Province', 'Nation']
 };
 
 module.exports = {
@@ -14,7 +14,7 @@ module.exports = {
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4, // Puedes usar una función para generar UUIDs aleatorios
         allowNull: false
-    },
+      },
       title: {
         type: DataTypes.STRING(100),
         allowNull: false
@@ -79,6 +79,18 @@ module.exports = {
       lapse: {
         type: DataTypes.INTEGER, //tiempo revisar fecha inicio y fin tipo date agegar fecha inicio
         allowNull: false
+      },
+      calendly: {
+        type: DataTypes.JSONB,
+        allowNull: false,
+      },
+      mpTransferencia: {
+        type: DataTypes.INTEGER
+      },
+      pagado: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
       finalizado: {
         type: DataTypes.BOOLEAN,

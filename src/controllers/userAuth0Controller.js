@@ -9,7 +9,7 @@ const userAuth0Controller = {};
 
 userAuth0Controller.loginOrSignup = async (req, res) => {
     try {
-        console.log("Received email and auth0Id: ", req.email, req.auth0Id);
+        //console.log("Received email and auth0Id: ", req.email, req.auth0Id);
         // Extract email and Auth0 ID from the request
         const email = req.email;
         const auth0Id = req.auth0Id;
@@ -33,7 +33,7 @@ userAuth0Controller.loginOrSignup = async (req, res) => {
             });
             // Generating a JWT token for the new user
             const token = jwt.sign({ userId: user.id, email: user.email, type: user.type }, JWT_SECRET, {
-                expiresIn: '1h' 
+                expiresIn: '3h' 
             });
             // Sending the token and user details as a response
             return res.status(201).json({ message: 'Placeholder account created', token, user });
@@ -42,18 +42,19 @@ userAuth0Controller.loginOrSignup = async (req, res) => {
         if (user.auth0Id === auth0Id) {
             // Generating a JWT token for the logged-in user
             const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, {
-                expiresIn: '1h' 
+                expiresIn: '3h' 
             });
             // Sending the token and user details as a response
             return res.status(200).json({ message: 'Logged in using Auth0', token, user });
         } 
         // If user found but Auth0 ID is not set, update the Auth0 ID
         else if (user.auth0Id === null) {
+            user.valid = true;
             user.auth0Id = auth0Id;
             await user.save();       
             // Generating a JWT token for the user after updating Auth0 ID
             const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, {
-                expiresIn: '1h' 
+                expiresIn: '3h' 
             });
             // Sending the token and user details as a response
             return res.status(200).json({ message: 'Auth0 ID added to existing user', token, user });
