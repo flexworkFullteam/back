@@ -65,8 +65,6 @@ const createProject = async (req, res) => {
             calendly: calendly
         });
 
-        ////console.log(project.id_company);
-
         await project.setItskills(validSiklls);
         await project.setLanguages(validLanguages);
 
@@ -241,7 +239,9 @@ const getProjectById = async (req, res) => {
 // Actualizar un proyecto
 const updateProject = async (req, res) => {
     try {
-        const project = await Project.findByPk(req.params.id);
+        const {projectId}=req.params
+
+        const project = await Project.findByPk(projectId);
         if (project) {
             await project.update(req.body);
             res.status(200).json(project);

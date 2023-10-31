@@ -12,7 +12,7 @@ const { JWT_SECRET } = process.env;
 dotenv.config({ path: '../.env' });
 const saltRounds = 10;
 
-const urlFront = "http://localhost:5173";
+const urlFront = "https://front-chi-bice.vercel.app/";
 
 const createUser = async (req, res) => {
     const { username, email, password, type } = req.body;
@@ -503,6 +503,39 @@ const deleteUser = async (req, res) => {
     }
 };
 
+const changePassword = async (req, res) => {
+    const { userId, currentPassword, newPassword } = req.body;
+
+    try {
+        // Obtén el usuario de la base de datos
+        const user = await User.findByPk(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        // Verifica la contraseña actual
+        const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+
+        if (!passwordMatch) {
+            return res.status(400).json({ message: "La contraseña actual es incorrecta" });
+        }
+
+        // Genera un nuevo hash de contraseña para la nueva contraseña
+        const salt = await bcrypt.genSalt(saltRounds);
+        const newHashedPassword = await bcrypt.hash(newPassword, salt);
+
+        // Actualiza la contraseña en la base de datos
+        user.password = newHashedPassword;
+        await user.save();
+
+        res.status(200).json({ message: "Contraseña actualizada con éxito" });
+    } catch (error) {
+        res.status(500).json({ message: "Error al cambiar la contraseña", error });
+    }
+};
+
+
 module.exports = {
     createUser,
     getAllUsers,
@@ -510,5 +543,6 @@ module.exports = {
     updateUser,
     deleteUser,
     login,
-    verifyemail
+    verifyemail,
+    changePassword
 };
