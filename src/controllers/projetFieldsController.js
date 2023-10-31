@@ -8,13 +8,6 @@ const text = "Project Fields" ;
 
 const getAll = async (req, res) => {
     try {
-        const { userId } = req.params;
-        const admin = await Admin.findOne({
-            where:{user_id: userId}
-        });
-        if (!admin) {
-            return res.status(404).json({ message: "Administrador no encontrado" });
-        }
         const response = await DB.findAll({
             where: { state: true },
             attributes: ['id', fieldName],
