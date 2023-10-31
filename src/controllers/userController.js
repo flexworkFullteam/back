@@ -12,7 +12,7 @@ const { JWT_SECRET } = process.env;
 dotenv.config({ path: '../.env' });
 const saltRounds = 10;
 
-const urlFront = "https://front-chi-bice.vercel.app/";
+const urlFront = "https://front-virid-sigma.vercel.app/";
 
 const createUser = async (req, res) => {
     const { username, email, password, type } = req.body;
