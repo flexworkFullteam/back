@@ -1,4 +1,4 @@
-const { Professional, Language, Nationality, Itskills, Project, Company } = require('../DB_connection');
+const { Professional, Language, Nationality, Itskills, Project, Company, User } = require('../DB_connection');
 
 
 const getProfessionals = async (req, res) => {
@@ -8,7 +8,7 @@ const getProfessionals = async (req, res) => {
         where: {
           state: true
         },
-        attributes: ['id', 'id_nationality', 'data', 'experience', 'education', 'extra_information', 'portfolio', 'cci','valid'],
+        attributes: ['id', 'id_nationality', 'data', 'experience', 'education', 'extra_information', 'portfolio', 'cci', 'valid'],
       }
     );
 
@@ -116,59 +116,53 @@ const createProfessional = async (req, res) => {
 
     } = req.body
 
-    const fieldRegex = /^[^\n\r\t\v\f\p{P}]{5,}$/u; //   Esto asegurará que la cadena cumpla con la longitud mínima de 5 caracteres y no contenga signos de puntuación.
-    const positiveNumberRegex = /^[1-9]\d*$/;
-    const arrayUUID = /^\[\s*([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}(?:,\s*)?)+\s*\]$/;
-    const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-    const linkRegex = /^https?:\/\/(?:www\.)?[\w\.-]+\.\w{2,}(?:\/\S*)?$/;
-    /*
-    if (!typeof data === "object" || data === null || !typeof experience === "object" || experience === null ||
-      !typeof education === "object" || education === null || !fieldRegex.test(extra_information)
-      || !linkRegex.test(portfolio) || !positiveNumberRegex.test(cci) || !linkRegex.test(image))
-      return res.status(400).send("Error en la validacion de datos, revisa los campos y vuelve a intentarlo")
-    */
-    const siklls = Array.isArray(itskill) ? itskill : [itskill];
-    const lang = Array.isArray(languages) ? languages : [languages];
+    const userparam = await User.findByPk(user);
+    if (userparam.type === 2) {
+      const siklls = Array.isArray(itskill) ? itskill : [itskill];
+      const lang = Array.isArray(languages) ? languages : [languages];
 
-    const itskillPromises = siklls.map(async (sikllId) => {
-      const sikll = await Itskills.findByPk(sikllId);
-      if (sikll) {
-        return sikll;
-      } else {
-        return null;
-      }
-    });
-    const langPromises = lang.map(async (languageId) => {
-      const language = await Language.findByPk(languageId);
-      if (language) {
-        return language;
-      } else {
-        return null;
-      }
-    });
+      const itskillPromises = siklls.map(async (sikllId) => {
+        const sikll = await Itskills.findByPk(sikllId);
+        if (sikll) {
+          return sikll;
+        } else {
+          return null;
+        }
+      });
+      const langPromises = lang.map(async (languageId) => {
+        const language = await Language.findByPk(languageId);
+        if (language) {
+          return language;
+        } else {
+          return null;
+        }
+      });
 
-    const resolvedSiklls = await Promise.all(itskillPromises);
-    const resolvedLanguages = await Promise.all(langPromises);
+      const resolvedSiklls = await Promise.all(itskillPromises);
+      const resolvedLanguages = await Promise.all(langPromises);
 
-    const validSiklls = resolvedSiklls.filter((sikll) => sikll !== null);
-    const validLanguages = resolvedLanguages.filter((language) => language !== null);
+      const validSiklls = resolvedSiklls.filter((sikll) => sikll !== null);
+      const validLanguages = resolvedLanguages.filter((language) => language !== null);
 
-    const professional = await Professional.create({
-      userId: user,
-      id_nationality: nationality,
-      data: data,
-      experience: experience,
-      education: education,
-      extra_information: extra_information,
-      portfolio: portfolio,
-      cci: cci,
-      image: image
-    });
+      const professional = await Professional.create({
+        userId: user,
+        id_nationality: nationality,
+        data: data,
+        experience: experience,
+        education: education,
+        extra_information: extra_information,
+        portfolio: portfolio,
+        cci: cci,
+        image: image
+      });
 
-    await professional.setItskills(validSiklls);
-    await professional.setLanguages(validLanguages);
+      await professional.setItskills(validSiklls);
+      await professional.setLanguages(validLanguages);
 
-    res.status(201).json(professional);
+      res.status(201).json(professional);
+    } else {
+      res.status(404).json({ message: "Usuario no valido" });
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -322,7 +316,7 @@ const removeSkillOrLanguageFromProfessional = async (req, res) => {
 };
 const getProjectsForProfessional = async (req, res) => {
   try {
-    const { professionalId } = req.params; // Suponemos que el ID del profesional se pasa como parámetro
+    const { professionalId } = req.params;
     const professional = await Professional.findByPk(professionalId); // Reemplaza "Professional" con el nombre de tu modelo de profesional
     const companys = await Company.findAll({ attributes: ['id', 'business_name'] });
     const companysMap = new Map(companys.map((company) => [company.id, company.business_name]));
@@ -388,11 +382,17 @@ const addProyectProfessional = async (req, res) => {
     if (!project) {
       return res.status(404).json({ message: 'Proyecto no encontrado.' });
     }
+    const isPostulated = await professional.hasPostulatedProjects(project);
 
-    // Agrega el idioma al profesional
-    await professional.addPostulatedProjects(project);
+    if (isPostulated) {
+      return res.status(400).json({ message: 'El profesional ya está postulado a este proyecto.' });
+    } else {
 
-    res.status(200).json({ message: 'Postulacion exitosa.' });
+      // Agrega el idioma al profesional
+      await professional.addPostulatedProjects(project);
+
+      res.status(200).json({ message: 'Postulacion exitosa.' });
+    }
 
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -1,6 +1,6 @@
-const { ProjectFields } = require('../DB_connection');
+const { ProjectFields, Admin } = require('../DB_connection');
 
-const textRegex = /^[A-Za-záéíóúñÁÉÍÓÚ]+([- ][A-Za-záéíóúñÁÉÍÓÚ]+)*$/;
+const textRegex = /^[A-Za-záéíóúñÁÉÍÓÚ+#]+([- ][A-Za-záéíóúñÁÉÍÓÚ+#]+)*$/;
 
 const DB = ProjectFields;
 const fieldName = "project_fields" ;
@@ -8,7 +8,6 @@ const text = "Project Fields" ;
 
 const getAll = async (req, res) => {
     try {
-        //console.log("test");
         const response = await DB.findAll({
             where: { state: true },
             attributes: ['id', fieldName],
@@ -24,11 +23,16 @@ const getAll = async (req, res) => {
     }
 };
 const post = async (req, res) => {
+    let { new_resource } = req.body;
     try {
+        const { userId } = req.params;
+        const admin = await Admin.findOne({
+            where:{user_id: userId}
+        });
+        if (!admin) {
+            return res.status(404).json({ message: "Administrador no encontrado" });
+        }
         const errors = [];
-        let {new_resource} = req.body;
-        //console.log(new_resource);
-
         new_resource = new_resource.trim();
         new_resource = new_resource.charAt(0).toUpperCase() + new_resource.slice(1).toLowerCase();
 
@@ -56,22 +60,30 @@ const post = async (req, res) => {
             [fieldName]: new_resource
         });
 
-        res.status(200).json({ message: `${text} successfully registered` , newResource});
+        res.status(200).json({ message: `${text} successfully registered`, newResource });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 const delet = async (req, res) => {
     try {
-        const id = req.params.id;
+        const { userId, id } = req.params;
+
+        const admin = await Admin.findOne({
+            where:{user_id: userId}
+        });
+        
+        if (!admin) {
+            return res.status(404).json({ message: "Administrador no encontrado" });
+        }
+
         const target = await DB.findByPk(id);
         if (!target) {
             return res.status(404).json({ message: `${text} not found` });
         }
         target.state = false;
         await target.save();
-
-        res.status(200).json({ message: `${text} successfully removed`});
+        res.status(200).json({ message: `${text} successfully removed` });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

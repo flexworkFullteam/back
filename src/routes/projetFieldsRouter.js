@@ -3,7 +3,7 @@ const router = Router();
 const projetFields = require('../controllers/projetFieldsController');
 
 router.get("/projetfields", projetFields.getAll);
-router.post("/projetfields", projetFields.post);
-router.delete("/projetfields/:id", projetFields.delet);
+router.post("/projetfields/:userId", projetFields.post);
+router.delete("/projetfields/:userId/:id", projetFields.delet);
 
 module.exports = router;
