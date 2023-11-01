@@ -137,6 +137,7 @@ const login = async (req, res) => {
                         itskills: professionalSkills,
                         languages: professionalLang,
                         image: professional.image,
+                        typevalid: professional.valid
                     }
                 } else {
                     userMapped = {
@@ -180,7 +181,8 @@ const login = async (req, res) => {
                         bankAccount: company.Bank_account,
                         ruc: company.ruc,
                         id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
-                        languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
+                        languages: company.Languages.map(language => language.dataValues.language), // Obtiene los nombres de los idiomas
+                        typevalid: company.valid
                     }
                 } else {
                     userMapped = {
@@ -268,6 +270,7 @@ const getAllUsers = async (req, res) => {
                             itskills: professionalSkills,
                             languages: professionalLang,
                             image: professional.image,
+                            typevalid: professional.valid
                         }
                     } else {
                         userFor = {
@@ -311,7 +314,8 @@ const getAllUsers = async (req, res) => {
                             bankAccount: company.Bank_account,
                             ruc: company.ruc,
                             id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
-                            languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
+                            languages: company.Languages.map(language => language.dataValues.language), // Obtiene los nombres de los idiomas
+                            typevalid: company.valid
                         }
                     } else {
                         userFor = {
@@ -400,6 +404,7 @@ const getUserById = async (req, res) => {
                         itskills: professionalSkills,
                         languages: professionalLang,
                         image: professional.image,
+                        typevalid: professional.valid
                     }
                 } else {
                     userMapped = {
@@ -442,6 +447,7 @@ const getUserById = async (req, res) => {
                         contactData: company.data,
                         bankAccount: company.Bank_account,
                         ruc: company.ruc,
+                        typevalid: company.valid,
                         id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
                         languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
                     }
