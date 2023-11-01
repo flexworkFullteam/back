@@ -12,6 +12,7 @@ const { JWT_SECRET, FRONT_URL } = process.env;
 dotenv.config({ path: '../.env' });
 const saltRounds = 10;
 
+const urlFront = "https://front-virid-sigma.vercel.app/";// espero que exista
 
 const createUser = async (req, res) => {
     const { username, email, password, type } = req.body;
@@ -34,7 +35,7 @@ const createUser = async (req, res) => {
             html: `
                 <p>¡Bienvenido a nuestra plataforma!</p>
                 <p>Para verificar tu dirección de correo electrónico, por favor haz clic en el siguiente enlace:</p>
-                <a href="${FRONT_URL}/verify/${user.id}/${user.emailToken}">
+                <a href="${urlFront}/verify/${user.id}/${user.emailToken}">
                     Verificar mi correo electrónico
                 </a>
                 <p>Gracias por unirte a nosotros.</p>
