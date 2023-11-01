@@ -1,7 +1,7 @@
 const mercadopago = require("mercadopago");
 require("dotenv").config();
-const { Payment, Project, } = require("../DB_connection");
-const { MP_ACCESS_TOKEN, ROUTE_SUCCESS, ROUTE_PENDING, ROUTE_FAILURE, TO, NOTIFICATION_URL, FRONT_URL } = process.env;
+const { Payment, Project, Company } = require("../DB_connection");
+const { MP_ACCESS_TOKEN, ROUTE_SUCCESS, ROUTE_PENDING, ROUTE_FAILURE, TO, NOTIFICATION_URL, FRONTDOMAIN } = process.env;
 
 const createOrder = async (req, res) => {
     const { id, category_id, title, description, unit_price, quantity = 1, currency_id, from, to = TO, project } = req.body;
@@ -46,8 +46,8 @@ const failurePayment = async (req, res) => {
 
 const listenWebhook = async (req, res) => {
     const payment = req.query;
-
     const { from, project } = req.params;
+    console.log(payment);
     try {
         if (payment.type === "payment") {
 
@@ -64,7 +64,6 @@ const listenWebhook = async (req, res) => {
                 approved_date: data.body.date_approved,
                 status: data.body.status,
                 description: data.body.description,
-                //currency_id:data.body.currency_id,
             };
             const proyecto = await Project.findByPk(project);
             //console.log("proyecto: ",proyecto);
@@ -78,10 +77,10 @@ const listenWebhook = async (req, res) => {
                         where: { id: project }
                     }
                 );
-                //console.log("updated: ",updated);
+                
                 if (updated) {
                     await Payment.create(response);
-                    return res.status(200).json({paymentdata: response, projectupdated: proyecto});
+                    return res.status(200).json({ paymentdata: response, projectupdated: proyecto });
                 }
                 return res.status(400).send("no se pudo actualizar la informacion del pago realizado");
             }
@@ -117,15 +116,41 @@ const getPaymentsById = async (req, res) => {
 const getPayments = async (req, res) => {
     try {
         const payments = await Payment.findAll();
-        //console.log(payments);
+        const company = await Company.findAll();
+        const project = await Project.findAll();
+        const response = payments.map(payment => {
+            const tCompany = company.find(comp => {
+                return comp.userId === payment.from
+            });
+            const tProject = project.find(proyecto => proyecto.id === payment.project);
+            return {
+                id: payment.id,
+                op_id: payment.op_id,
+                from: {
+                    id: payment.from,
+                    name: tCompany.dataValues.business_name,
+                },
+                to: TO,
+                project: {
+                    id: payment.project,
+                    name: tProject.dataValues.title,
+                },
+                transaction_amount: payment.transaction_amount,
+                net_received_amount: payment.net_received_amount,
+                payment_date: payment.date_created,
+                approved_date: payment.date_approved,
+                status: payment.status,
+                description: tProject.dataValues.description,
+            }
+        })
         if (payments)
-            return res.status(200).json(payments);
+            return res.status(200).json(response);
         return res.status(404).send("No se encontraron pagos");
     } catch (error) {
+        console.log(error);
         return res.status(500).send(error.message);
     }
 };
-
 
 module.exports = {
     getPaymentsById,
