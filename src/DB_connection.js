@@ -3,13 +3,12 @@ const { Sequelize } = require("sequelize");
 
 const fs = require('fs');
 const path = require('path');
-const {
-  DB_USER, DB_PASSWORD, DB_HOST,
-} = process.env;
+const { DB_USER, DB_PASSWORD, DB_HOST } = process.env;
 
-const sequelize = new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/flexworks`, {
-  logging: false,
-  native: false,
+// Create a new instance of Sequelize with database connection details
+const sequelize = new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/flexworks_40fc`, {
+  logging: false, 
+  native: false, 
 });
 
 //carga automatica de modelos
