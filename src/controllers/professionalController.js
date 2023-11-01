@@ -383,12 +383,13 @@ const addProyectProfessional = async (req, res) => {
       return res.status(404).json({ message: 'Proyecto no encontrado.' });
     }
     const isPostulated = await professional.hasPostulatedProjects(project);
+    const isAccepted = await professional.hasAcceptedProjects(project);
+    const isRefused = await professional.hasRefusedProjects(project);
 
-    if (isPostulated) {
+    if (isPostulated || isAccepted || isRefused) {
       return res.status(400).json({ message: 'El profesional ya está postulado a este proyecto.' });
     } else {
-
-      // Agrega el idioma al profesional
+      
       await professional.addPostulatedProjects(project);
 
       res.status(200).json({ message: 'Postulacion exitosa.' });
