@@ -1,7 +1,7 @@
 const mercadopago = require("mercadopago");
 require("dotenv").config();
 const { Payment, Project, } = require("../DB_connection");
-const { MP_ACCESS_TOKEN, ROUTE_SUCCESS, ROUTE_PENDING, ROUTE_FAILURE, TO, NOTIFICATION_URL, FRONTDOMAIN } = process.env;
+const { MP_ACCESS_TOKEN, ROUTE_SUCCESS, ROUTE_PENDING, ROUTE_FAILURE, TO, NOTIFICATION_URL, FRONT_URL } = process.env;
 
 const createOrder = async (req, res) => {
     const { id, category_id, title, description, unit_price, quantity = 1, currency_id, from, to = TO, project } = req.body;
@@ -119,7 +119,7 @@ const getPayments = async (req, res) => {
         const payments = await Payment.findAll();
         //console.log(payments);
         if (payments)
-            return res.status(200).json(payments)
+            return res.status(200).json(payments);
         return res.status(404).send("No se encontraron pagos");
     } catch (error) {
         return res.status(500).send(error.message);
