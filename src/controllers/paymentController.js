@@ -1,7 +1,9 @@
 const mercadopago = require("mercadopago");
 require("dotenv").config();
-const { Payment, Project, Company } = require("../DB_connection");
-const { MP_ACCESS_TOKEN, ROUTE_SUCCESS, ROUTE_PENDING, ROUTE_FAILURE, TO, NOTIFICATION_URL, FRONTDOMAIN } = process.env;
+
+const { Payment, Project, } = require("../DB_connection");
+const { MP_ACCESS_TOKEN, ROUTE_SUCCESS, ROUTE_PENDING, ROUTE_FAILURE, TO, NOTIFICATION_URL, FRONT_URL } = process.env;
+
 
 const createOrder = async (req, res) => {
     const { id, category_id, title, description, unit_price, quantity = 1, currency_id, from, to = TO, project } = req.body;
@@ -81,7 +83,9 @@ const listenWebhook = async (req, res) => {
                 //console.log("updated: ",updated);
                 if (updated) {
                     await Payment.create(response);
+
                     return res.status(200).json({ paymentdata: response, projectupdated: proyecto });
+
                 }
                 return res.status(400).send("no se pudo actualizar la informacion del pago realizado");
             }
@@ -149,7 +153,6 @@ const getPayments = async (req, res) => {
             return res.status(200).json(response);
         return res.status(404).send("No se encontraron pagos");
     } catch (error) {
-        console.log(error);
         return res.status(500).send(error.message);
     }
 };

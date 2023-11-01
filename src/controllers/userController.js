@@ -7,12 +7,11 @@ const crypto = require('crypto');
 const { User, Professional, Language, Nationality, Itskills, Company } = require('../DB_connection');
 const dotenv = require('dotenv');
 const transporter = require('../utils/emailConfig');
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET, FRONT_URL } = process.env;
 
 dotenv.config({ path: '../.env' });
 const saltRounds = 10;
 
-const urlFront = "https://front-virid-sigma.vercel.app/";
 
 const createUser = async (req, res) => {
     const { username, email, password, type } = req.body;
@@ -35,7 +34,7 @@ const createUser = async (req, res) => {
             html: `
                 <p>¡Bienvenido a nuestra plataforma!</p>
                 <p>Para verificar tu dirección de correo electrónico, por favor haz clic en el siguiente enlace:</p>
-                <a href="${urlFront}/verify/${user.id}/${user.emailToken}">
+                <a href="${FRONT_URL}/verify/${user.id}/${user.emailToken}">
                     Verificar mi correo electrónico
                 </a>
                 <p>Gracias por unirte a nosotros.</p>
@@ -138,6 +137,7 @@ const login = async (req, res) => {
                         itskills: professionalSkills,
                         languages: professionalLang,
                         image: professional.image,
+                        typevalid: professional.valid
                     }
                 } else {
                     userMapped = {
@@ -181,7 +181,8 @@ const login = async (req, res) => {
                         bankAccount: company.Bank_account,
                         ruc: company.ruc,
                         id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
-                        languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
+                        languages: company.Languages.map(language => language.dataValues.language), // Obtiene los nombres de los idiomas
+                        typevalid: company.valid
                     }
                 } else {
                     userMapped = {
@@ -269,6 +270,7 @@ const getAllUsers = async (req, res) => {
                             itskills: professionalSkills,
                             languages: professionalLang,
                             image: professional.image,
+                            typevalid: professional.valid
                         }
                     } else {
                         userFor = {
@@ -312,7 +314,8 @@ const getAllUsers = async (req, res) => {
                             bankAccount: company.Bank_account,
                             ruc: company.ruc,
                             id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
-                            languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
+                            languages: company.Languages.map(language => language.dataValues.language), // Obtiene los nombres de los idiomas
+                            typevalid: company.valid
                         }
                     } else {
                         userFor = {
@@ -401,6 +404,7 @@ const getUserById = async (req, res) => {
                         itskills: professionalSkills,
                         languages: professionalLang,
                         image: professional.image,
+                        typevalid: professional.valid
                     }
                 } else {
                     userMapped = {
@@ -443,6 +447,7 @@ const getUserById = async (req, res) => {
                         contactData: company.data,
                         bankAccount: company.Bank_account,
                         ruc: company.ruc,
+                        typevalid: company.valid,
                         id_nationality: company.nationality.nationality, // Obtiene el nombre de la nacionalidad
                         languages: company.Languages.map(language => language.dataValues.language) // Obtiene los nombres de los idiomas
                     }
