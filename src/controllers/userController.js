@@ -7,12 +7,10 @@ const crypto = require('crypto');
 const { User, Professional, Language, Nationality, Itskills, Company } = require('../DB_connection');
 const dotenv = require('dotenv');
 const transporter = require('../utils/emailConfig');
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET, FRONT_URL } = process.env;
 
 dotenv.config({ path: '../.env' });
 const saltRounds = 10;
-
-
 
 const urlFront = "https://front-virid-sigma.vercel.app/";// espero que exista
 
@@ -47,7 +45,7 @@ const createUser = async (req, res) => {
 
         res.status(201).json(user);
     } catch (error) {
-        //console.log(error)
+        console.log(error)
         res.status(500).json({ message: "Error al crear el usuario", error: error.message });
     }
 };
@@ -68,7 +66,7 @@ const verifyemail = async (req, res) => {
 
     } catch (error) {
         res.status(500).json(error.message);
-        //console.log(error.message);
+        console.log(error.message);
     }
 };
 
