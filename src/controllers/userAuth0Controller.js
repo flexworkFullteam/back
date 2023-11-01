@@ -29,6 +29,7 @@ userAuth0Controller.loginOrSignup = async (req, res) => {
                 password: temporaryPassword,  // Saving a hashed password should be considered
                 auth0Id: auth0Id,
                 type: 4,
+                valid: true
                 // Additional fields should be included if necessary
             });
             // Generating a JWT token for the new user
