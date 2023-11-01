@@ -78,7 +78,7 @@ const createProject = async (req, res) => {
 const getAllProjects = async (req, res) => {
     try {
         const projects = await Project.findAll({
-            attributes: ['id', 'title', 'id_company', 'description', 'nation_id', 'province_id', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state','pagado','mpTransferencia','calendly'],
+            attributes: ['id','finalizado', 'title', 'id_company', 'description', 'nation_id', 'province_id', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state','pagado','mpTransferencia','calendly'],
         });
 
         if (projects.length === 0) {
@@ -132,8 +132,8 @@ const getAllCompanyProjects = async (req, res) => {
             where: {
                 id_company: req.params.id_company
             },
-            attributes: ['id', 'title', 'id_company', 'description', 'nation_id', 'province_id', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state','pagado','mpTransferencia','calendly'],
-        });
+            attributes: ['id','finalizado', 'title', 'id_company', 'description', 'nation_id', 'province_id', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state','pagado','mpTransferencia','calendly'],
+       });
 
         if (projects.length === 0) {
             return res.status(500).json({ message: "Error al obtener los proyectos" });
@@ -188,8 +188,8 @@ const getProjectById = async (req, res) => {
             where: {
                 state: true
             },
-            attributes: ['id', 'title', 'id_company', 'description', 'nation_id', 'province_id', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state','pagado','mpTransferencia','calendly'],
-        });
+            attributes: ['id','finalizado', 'title', 'id_company', 'description', 'nation_id', 'province_id', 'field', 'type', 'salary', 'exp_req', 'lapse', 'state','pagado','mpTransferencia','calendly'],
+       });
 
         if (project) {
             // Obtén la información adicional de las tablas relacionadas

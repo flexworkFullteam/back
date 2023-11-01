@@ -160,8 +160,8 @@ const createProfessional = async (req, res) => {
       await professional.setLanguages(validLanguages);
 
       res.status(201).json(professional);
-    }else{
-      res.status(404).json({message: "Usuario no valido"});
+    } else {
+      res.status(404).json({ message: "Usuario no valido" });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -382,11 +382,17 @@ const addProyectProfessional = async (req, res) => {
     if (!project) {
       return res.status(404).json({ message: 'Proyecto no encontrado.' });
     }
+    const isPostulated = await professional.hasPostulatedProjects(project);
 
-    // Agrega el idioma al profesional
-    await professional.addPostulatedProjects(project);
+    if (isPostulated) {
+      return res.status(400).json({ message: 'El profesional ya está postulado a este proyecto.' });
+    } else {
 
-    res.status(200).json({ message: 'Postulacion exitosa.' });
+      // Agrega el idioma al profesional
+      await professional.addPostulatedProjects(project);
+
+      res.status(200).json({ message: 'Postulacion exitosa.' });
+    }
 
   } catch (error) {
     res.status(500).json({ error: error.message });
