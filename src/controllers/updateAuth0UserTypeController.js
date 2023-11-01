@@ -19,6 +19,7 @@ const updateAuth0UserTypeController = async (req, res) => {
             return res.status(200).json({ message: 'User type already set', user });
         }
         user.type = type;
+        user.valid = true;
         await user.save();
         // Sign a new JWT token with the updated user information
         const token = jwt.sign({ userId: user.id, email: user.email, type: user.type }, JWT_SECRET, {
