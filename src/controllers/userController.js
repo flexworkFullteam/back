@@ -7,12 +7,11 @@ const crypto = require('crypto');
 const { User, Professional, Language, Nationality, Itskills, Company } = require('../DB_connection');
 const dotenv = require('dotenv');
 const transporter = require('../utils/emailConfig');
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET, FRONT_URL } = process.env;
 
 dotenv.config({ path: '../.env' });
 const saltRounds = 10;
 
-const urlFront = "https://front-virid-sigma.vercel.app/";
 
 const createUser = async (req, res) => {
     const { username, email, password, type } = req.body;
@@ -35,7 +34,7 @@ const createUser = async (req, res) => {
             html: `
                 <p>¡Bienvenido a nuestra plataforma!</p>
                 <p>Para verificar tu dirección de correo electrónico, por favor haz clic en el siguiente enlace:</p>
-                <a href="${urlFront}/verify/${user.id}/${user.emailToken}">
+                <a href="${FRONT_URL}/verify/${user.id}/${user.emailToken}">
                     Verificar mi correo electrónico
                 </a>
                 <p>Gracias por unirte a nosotros.</p>
