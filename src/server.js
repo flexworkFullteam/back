@@ -43,7 +43,7 @@ let attempts = 0;
 const tryConnect = async () => {
     try {
         await conn.authenticate();
-        await conn.sync({ force: true });
+        await conn.sync();
         console.log('Database connected successfully.');
         server.listen(3001, () => {
             console.log('Server listening at port 3001');
