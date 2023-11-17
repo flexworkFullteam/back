@@ -72,6 +72,7 @@ let entries = Object.entries(sequelize.models);
 let capsEntries = entries.map(([modelName, modelDefinition]) => [modelName.charAt(0).toUpperCase() + modelName.slice(1), modelDefinition]);
 sequelize.models = Object.fromEntries(capsEntries);
 
+console.log("por aqui")
 console.log(sequelize.models);
 
 //Relaciones
