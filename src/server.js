@@ -49,6 +49,7 @@ const tryConnect = async () => {
             console.log('Server listening at port 3001');
         });
     } catch (error) {
+        console.error('Unable to connect to the database:', error);
         retryConnection();
     }
 };
